@@ -1,0 +1,36 @@
+{
+    "name": "matiz-studio-creative/sri-toolkit",
+    "type": "library",
+    "license": "MIT",
+    "version": "1.0.0",
+    "autoload": {
+        "psr-4": {
+            "MTZ\\Toolkit\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "MTZ\\Toolkit\\Tests\\": "tests/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Sebastian Borja",
+            "email": "43122200+Sebas-DV@users.noreply.github.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {
+        "php": ">=8.2",
+      "ext-soap": "*"
+    },
+    "scripts": {
+        "test": "phpunit",
+        "test:coverage": "XDEBUG_MODE=coverage phpunit --coverage-html coverage"
+    },
+    "prefer-stable": true,
+    "require-dev": {
+        "phpunit/phpunit": "^13.1",
+        "phpstan/phpstan": "^2.1"
+    }
+}
