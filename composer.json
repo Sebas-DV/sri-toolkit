@@ -2,7 +2,7 @@
     "name": "matiz-studio-creative/sri-toolkit",
     "type": "library",
     "license": "MIT",
-    "version": "1.0.0",
+    "description": "PHP Toolkit for SRI Web Services.",
     "autoload": {
         "psr-4": {
             "MTZ\\Toolkit\\": "src/"
@@ -16,7 +16,9 @@
     "authors": [
         {
             "name": "Sebastian Borja",
-            "email": "43122200+Sebas-DV@users.noreply.github.com"
+            "email": "sebastianborja56@gmail.com",
+            "role": "Developer",
+            "homepage": "https://matizstudiocreative.com"
         }
     ],
     "minimum-stability": "stable",
