@@ -24,7 +24,11 @@
     "minimum-stability": "stable",
     "require": {
         "php": ">=8.2",
-      "ext-soap": "*"
+        "ext-soap": "*",
+        "ramsey/uuid": "^4.9",
+        "ext-openssl": "*",
+        "ext-dom": "*",
+        "ext-libxml": "*"
     },
     "scripts": {
         "test": "phpunit",
