@@ -7,10 +7,10 @@ namespace MTZ\Toolkit\AccessKeyGenerator;
 use MTZ\Toolkit\AccessKeyGenerator\Data\AccessKeyData;
 use MTZ\Toolkit\AccessKeyGenerator\Services\CheckDigitCalculator;
 
-final class AccessKeyGenerator
+final readonly class AccessKeyGenerator
 {
     public function __construct(
-        private readonly CheckDigitCalculator $checkDigitCalculator = new CheckDigitCalculator(),
+        private CheckDigitCalculator $checkDigitCalculator = new CheckDigitCalculator(),
     )
     {
     }

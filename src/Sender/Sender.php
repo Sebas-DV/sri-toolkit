@@ -16,16 +16,16 @@ use MTZ\Toolkit\Sender\Services\ResponseParser;
 use MTZ\Toolkit\Sender\Support\NativeSleeper;
 use MTZ\Toolkit\Sender\Support\NativeSoapClientFactory;
 
-final class Sender
+final readonly class Sender
 {
     private ReceptionClient $receptionClient;
     private AuthorizationClient $authorizationClient;
 
     public function __construct(
-        private readonly SenderConfig $config = new SenderConfig(),
+        private SenderConfig $config = new SenderConfig(),
         ?ResponseParser $responseParser = null,
         ?SoapClientFactoryInterface $soapClientFactory = null,
-        private readonly SleeperInterface $sleeper = new NativeSleeper(),
+        private SleeperInterface $sleeper = new NativeSleeper(),
     )
     {
         $responseParser ??= new ResponseParser();
@@ -63,7 +63,8 @@ final class Sender
         {
             return SendResult::failure(
                 error: $reception->error ?? 'An error occurred while validating the XML, voucher not received.',
-                receptionResult: $reception
+                receptionResult: $reception,
+                authorizationResult: null,
             );
         }
 
@@ -80,6 +81,9 @@ final class Sender
             );
         }
 
-        return SendResult::success($reception, $authorization);
+        return SendResult::success(
+            receptionStatus: $reception,
+            authorizationResult: $authorization,
+        );
     }
 }

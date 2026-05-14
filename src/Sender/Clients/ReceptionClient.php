@@ -40,7 +40,7 @@ final class ReceptionClient
             $status = $this->responseParser->receptionStatus($this->lastResponse);
             $messages = $this->responseParser->receptionMessage($this->lastResponse);
 
-            if ($this->responseParser->isReceptionSuccessful($this->lastResponse))
+            if (! $this->responseParser->isReceptionSuccessful($this->lastResponse))
             {
                 return ReceptionResult::failure(
                     status: $status,

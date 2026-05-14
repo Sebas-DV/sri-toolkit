@@ -23,7 +23,7 @@ final readonly class ReceptionResult
         return new self(true, $status, $messages, null, $rawResponse);
     }
 
-    public static function failure(ReceptionStatus $status, string $error = null, array $messages = [], ?object $rawResponse = null): self
+    public static function failure(?ReceptionStatus $status, ?string $error = null, array $messages = [], ?object $rawResponse = null): self
     {
         return new self(false, $status, $messages, $error, $rawResponse);
     }
