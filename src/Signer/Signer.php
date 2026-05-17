@@ -22,7 +22,7 @@ use MTZ\Toolkit\Signer\Support\SystemClock;
 final class Signer
 {
     private ?DOMDocument $document = null;
-    private CertificateData $certificateData;
+    private readonly CertificateData $certificateData;
 
     public function __construct(
         string $certificatePath,

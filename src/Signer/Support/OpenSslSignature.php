@@ -2,9 +2,10 @@
 
 namespace MTZ\Toolkit\Signer\Support;
 
+use MTZ\Toolkit\Signer\Contract\SignatureEngineInterface;
 use MTZ\Toolkit\Signer\Exceptions\CertificateException;
 
-final class OpenSslSignature
+final class OpenSslSignature implements SignatureEngineInterface
 {
     public function signSha1(string $content, string $privateKeyPem): string
     {
@@ -22,6 +23,6 @@ final class OpenSslSignature
             throw new CertificateException('Failed to create digital signature.');
         }
 
-        return base64_decode($signature);
+        return base64_decode((string) $signature);
     }
 }

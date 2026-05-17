@@ -10,10 +10,10 @@ use DOMException;
 use MTZ\Toolkit\Signer\Config\SignerConfig;
 use MTZ\Toolkit\Signer\Contract\ClockInterface;
 use MTZ\Toolkit\Signer\Contract\IdGeneratorInterface;
+use MTZ\Toolkit\Signer\Contract\SignatureEngineInterface;
 use MTZ\Toolkit\Signer\Data\CertificateData;
 use MTZ\Toolkit\Signer\Data\SignedXmlResult;
 use MTZ\Toolkit\Signer\Exceptions\SignerException;
-use MTZ\Toolkit\Signer\Support\OpenSslSignature;
 
 final class XadesBesXmlSigner
 {
@@ -27,7 +27,7 @@ final class XadesBesXmlSigner
         private readonly SignerConfig $config,
         private readonly ClockInterface $clock,
         private readonly IdGeneratorInterface $idGenerator,
-        private readonly OpenSslSignature $openSslSignature,
+        private readonly SignatureEngineInterface $openSslSignature,
     )
     {
     }
