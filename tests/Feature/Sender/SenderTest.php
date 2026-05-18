@@ -67,7 +67,7 @@ final class SenderTest extends TestCase
 
         $this->assertSame(
             '<factura>Autorizada</factura>',
-            $result->authorizationResult->authorizedDocument->xml
+            $result->authorizationResult->authorizedDocument->xml,
         );
     }
 

@@ -6,6 +6,7 @@ namespace MTZ\Toolkit\Tests\Unit\Signer;
 
 use DOMDocument;
 use DOMException;
+use DOMXPath;
 use MTZ\Toolkit\Signer\Config\SignerConfig;
 use MTZ\Toolkit\Signer\Data\CertificateData;
 use MTZ\Toolkit\Signer\Services\XadesBesXmlSigner;
@@ -101,7 +102,7 @@ final class XadesBesXmlSignerTest extends TestCase
         $document = new DOMDocument();
         $document->loadXML($xml);
 
-        $xpath = new \DOMXPath($document);
+        $xpath = new DOMXPath($document);
 
         $nodes = $xpath->query('//*[local-name()="SignatureValue"]');
 

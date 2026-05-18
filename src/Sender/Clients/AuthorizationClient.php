@@ -5,10 +5,13 @@ declare(strict_types=1);
 namespace MTZ\Toolkit\Sender\Clients;
 
 use MTZ\Toolkit\Sender\Config\SenderConfig;
+use MTZ\Toolkit\Sender\Contracts\SleeperInterface;
 use MTZ\Toolkit\Sender\Contracts\SoapClientFactoryInterface;
 use MTZ\Toolkit\Sender\Data\AuthorizationResult;
 use MTZ\Toolkit\Sender\Exceptions\ConnectionException;
 use MTZ\Toolkit\Sender\Exceptions\InvalidAccessKeyException;
+use MTZ\Toolkit\Sender\Services\ResponseParser;
+use MTZ\Toolkit\Sender\Support\NativeSleeper;
 use MTZ\Toolkit\Sender\Support\NativeSoapClientFactory;
 use SoapFault;
 
@@ -18,9 +21,9 @@ final class AuthorizationClient
 
     public function __construct(
         private readonly SenderConfig $config,
-        private readonly \MTZ\Toolkit\Sender\Services\ResponseParser $responseParser = new \MTZ\Toolkit\Sender\Services\ResponseParser(),
+        private readonly ResponseParser $responseParser = new ResponseParser(),
         private readonly SoapClientFactoryInterface $soapClientFactory = new NativeSoapClientFactory(),
-        private readonly \MTZ\Toolkit\Sender\Contracts\SleeperInterface $sleeper = new \MTZ\Toolkit\Sender\Support\NativeSleeper(),
+        private readonly SleeperInterface $sleeper = new NativeSleeper(),
     ) {
     }
 

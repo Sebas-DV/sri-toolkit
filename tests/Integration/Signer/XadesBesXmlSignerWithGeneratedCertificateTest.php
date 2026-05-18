@@ -33,7 +33,7 @@ final class XadesBesXmlSignerWithGeneratedCertificateTest extends TestCase
                 certificatePassword: $certificate->password,
             );
 
-            $document = new \DOMDocument('1.0', 'utf-8');
+            $document = new DOMDocument('1.0', 'utf-8');
             $document->preserveWhiteSpace = false;
             $document->formatOutput = false;
             $document->loadXML('<factura id="comprobante"><infoTributaria/></factura>');
