@@ -9,10 +9,17 @@ use DateTimeZone;
 use Exception;
 use MTZ\Toolkit\Signer\Contract\ClockInterface;
 
+/**
+ * System clock implementation returning the current wall-clock time.
+ */
 class SystemClock implements ClockInterface
 {
     /**
-     * @throws Exception
+     * Return the current date and time in ISO 8601 format.
+     *
+     * @param string $timezone A valid timezone identifier.
+     * @return string The formatted date/time string.
+     * @throws Exception When the timezone is invalid.
      */
     public function now(string $timezone): string
     {

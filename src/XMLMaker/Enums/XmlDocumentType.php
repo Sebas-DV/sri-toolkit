@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace MTZ\Toolkit\XMLMaker\Enums;
 
+/**
+ * Enumeration of supported SRI electronic document types.
+ */
 enum XmlDocumentType: string
 {
     case Invoice = 'invoice';
@@ -12,6 +15,11 @@ enum XmlDocumentType: string
     case DeliveryGuide = 'delivery-guide';
     case WithholdingReceipt = 'withholding-receipt';
 
+    /**
+     * Returns the two-digit SRI document code for this document type.
+     *
+     * @return string The SRI code (e.g. '01' for invoices).
+     */
     public function sriCode(): string
     {
         return match ($this)
@@ -24,6 +32,11 @@ enum XmlDocumentType: string
         };
     }
 
+    /**
+     * Returns the XML root element name for this document type.
+     *
+     * @return string The root element tag name (e.g. 'factura' for invoices).
+     */
     public function rootElement(): string
     {
         return match ($this)
@@ -36,6 +49,11 @@ enum XmlDocumentType: string
         };
     }
 
+    /**
+     * Returns the SRI specification version for this document type.
+     *
+     * @return string The version string (e.g. '2.1.0' for invoices).
+     */
     public function version(): string
     {
         return match ($this)

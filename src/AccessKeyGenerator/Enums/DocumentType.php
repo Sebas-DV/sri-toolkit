@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace MTZ\Toolkit\AccessKeyGenerator\Enums;
 
+/**
+ * SRI electronic document types and their corresponding two-digit codes.
+ */
 enum DocumentType: string
 {
     case Invoice = '01';

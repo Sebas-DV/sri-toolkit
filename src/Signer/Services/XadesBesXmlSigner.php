@@ -15,14 +15,46 @@ use MTZ\Toolkit\Signer\Data\CertificateData;
 use MTZ\Toolkit\Signer\Data\SignedXmlResult;
 use MTZ\Toolkit\Signer\Exceptions\SignerException;
 
+/**
+ * Builds and injects a XAdES-BES (Basic Electronic Signature) into an XML DOM.
+ *
+ * Constructs the full XMLDSig + XAdES structure including SignedInfo,
+ * KeyInfo, SignedProperties, and SignatureValue elements following the
+ * Ecuadorian SRI (Servicio de Rentas Internas) standard.
+ */
 final class XadesBesXmlSigner
 {
+    /**
+     * @var array<string, string> Generated unique IDs for signature components.
+     */
     private array $ids = [];
+
+    /**
+     * @var string The formatted signing timestamp.
+     */
     private string $signedAt = '';
+
+    /**
+     * @var string The Base64-encoded SHA-1 hash of the canonicalized document.
+     */
     private string $hashDocument = '';
+
+    /**
+     * @var string The Base64-encoded SHA-1 hash of the KeyInfo element.
+     */
     private string $hasKeyInfo = '';
+
+    /**
+     * @var string The Base64-encoded SHA-1 hash of the SignedProperties element.
+     */
     private string $hashSignedProperties = '';
 
+    /**
+     * @param SignerConfig $config Configuration for namespaces and document settings.
+     * @param ClockInterface $clock Clock service for generating signing timestamps.
+     * @param IdGeneratorInterface $idGenerator Service for generating unique signature IDs.
+     * @param SignatureEngineInterface $openSslSignature The cryptographic signing engine.
+     */
     public function __construct(
         private readonly SignerConfig $config,
         private readonly ClockInterface $clock,
@@ -32,7 +64,12 @@ final class XadesBesXmlSigner
     }
 
     /**
-     * @throws DOMException
+     * Sign the DOM document by appending the XAdES-BES signature structure.
+     *
+     * @param ?DOMDocument $document The XML document to sign (must have been loaded via loadXml).
+     * @param CertificateData $certificateData The certificate and private key data.
+     * @return SignedXmlResult The signed XML string with metadata.
+     * @throws DOMException When an error occurs during DOM manipulation.
      */
     public function sign(?DOMDocument $document, CertificateData $certificateData): SignedXmlResult
     {
@@ -64,6 +101,11 @@ final class XadesBesXmlSigner
     }
 
     /**
+     * Create the top-level Signature element with all child nodes.
+     *
+     * @param DOMDocument $document The DOM document being signed.
+     * @param CertificateData $certificateData The certificate data to embed.
+     * @return DOMElement The constructed ds:Signature element.
      * @throws DOMException
      */
     private function createSignature(DOMDocument $document, CertificateData $certificateData): DOMElement
@@ -87,6 +129,11 @@ final class XadesBesXmlSigner
     }
 
     /**
+     * Build the ds:KeyInfo element containing the X.509 certificate and RSA key values.
+     *
+     * @param DOMDocument $document The DOM document being signed.
+     * @param CertificateData $certificateData Certificate content, modulus, and exponent.
+     * @return DOMElement The constructed ds:KeyInfo element.
      * @throws DOMException
      */
     private function createKeyInfo(DOMDocument $document, CertificateData $certificateData): DOMElement
@@ -124,6 +171,11 @@ final class XadesBesXmlSigner
     }
 
     /**
+     * Build the xades:SignedProperties element with signing time and certificate reference.
+     *
+     * @param DOMDocument $document The DOM document being signed.
+     * @param CertificateData $certificateData The certificate data for the signing certificate reference.
+     * @return DOMElement The constructed xades:SignedProperties element.
      * @throws DOMException
      */
     private function createSignedProperties(DOMDocument $document, CertificateData $certificateData): DOMElement
@@ -202,6 +254,10 @@ final class XadesBesXmlSigner
     }
 
     /**
+     * Build the ds:SignedInfo element with references to the document, SignedProperties, and certificate.
+     *
+     * @param DOMDocument $document The DOM document being signed.
+     * @return DOMElement The constructed ds:SignedInfo element.
      * @throws DOMException
      */
     private function createSignedInfo(DOMDocument $document): DOMElement
@@ -232,6 +288,10 @@ final class XadesBesXmlSigner
     }
 
     /**
+     * Build the ds:Reference element pointing to the main document to be signed.
+     *
+     * @param DOMDocument $document The DOM document being signed.
+     * @return DOMElement The constructed document reference element.
      * @throws DOMException
      */
     private function createDocumentReference(DOMDocument $document): DOMElement
@@ -259,6 +319,10 @@ final class XadesBesXmlSigner
     }
 
     /**
+     * Build the ds:Reference element referencing the SignedProperties.
+     *
+     * @param DOMDocument $document The DOM document being signed.
+     * @return DOMElement The constructed SignedProperties reference element.
      * @throws DOMException
      */
     private function createSignedPropertiesReference(DOMDocument $document): DOMElement
@@ -279,6 +343,10 @@ final class XadesBesXmlSigner
     }
 
     /**
+     * Build the ds:Reference element referencing the X.509 certificate in KeyInfo.
+     *
+     * @param DOMDocument $document The DOM document being signed.
+     * @return DOMElement The constructed certificate reference element.
      * @throws DOMException
      */
     private function createCertificateReference(DOMDocument $document): DOMElement
@@ -298,6 +366,12 @@ final class XadesBesXmlSigner
     }
 
     /**
+     * Build the ds:SignatureValue element containing the cryptographic signature.
+     *
+     * @param DOMDocument $document The DOM document being signed.
+     * @param DOMElement $signedInfo The SignedInfo element to canonicalize and sign.
+     * @param CertificateData $certificateData The private key used for signing.
+     * @return DOMElement The constructed ds:SignatureValue element.
      * @throws DOMException
      */
     private function createSignatureValue(
@@ -321,6 +395,11 @@ final class XadesBesXmlSigner
     }
 
     /**
+     * Build the ds:Object wrapper containing the XAdES QualifyingProperties.
+     *
+     * @param DOMDocument $document The DOM document being signed.
+     * @param DOMElement $signedProperties The SignedProperties element to wrap.
+     * @return DOMElement The constructed ds:Object element.
      * @throws DOMException
      */
     private function createObject(DOMDocument $document, DOMElement $signedProperties): DOMElement
@@ -339,6 +418,10 @@ final class XadesBesXmlSigner
     }
 
     /**
+     * Build a ds:DigestMethod element configured for SHA-1.
+     *
+     * @param DOMDocument $document The DOM document.
+     * @return DOMElement The digest method element.
      * @throws DOMException
      */
     private function digestMethod(DOMDocument $document): DOMElement
@@ -349,6 +432,18 @@ final class XadesBesXmlSigner
         return $digestMethod;
     }
 
+    /**
+     * Canonicalize an XML element with injected namespace declarations.
+     *
+     * Serializes the element, injects the given namespace attributes, re-parses,
+     * and returns the C14N canonicalized string.
+     *
+     * @param DOMDocument $document The DOM document.
+     * @param DOMElement $element The element to canonicalize.
+     * @param string $tagName The tag name for namespace injection.
+     * @param array<string, string> $nameSpaces Namespace declarations to inject.
+     * @return string The canonicalized XML string.
+     */
     private function canonicalizeElement(
         DOMDocument $document,
         DOMElement $element,
@@ -387,11 +482,22 @@ final class XadesBesXmlSigner
         return $temp->C14N();
     }
 
+    /**
+     * Compute the Base64-encoded SHA-1 hash of a string.
+     *
+     * @param string $content The content to hash.
+     * @return string The Base64-encoded SHA-1 digest.
+     */
     private function sha1Base64(string $content): string
     {
         return base64_encode(sha1($content, true));
     }
 
+    /**
+     * Generate all unique IDs needed for the signature elements.
+     *
+     * @return array<string, string> Map of ID keys to generated UUID strings.
+     */
     private function generateIds(): array
     {
         return [

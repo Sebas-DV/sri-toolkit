@@ -15,18 +15,41 @@ use MTZ\Toolkit\XMLMaker\Exceptions\InvalidXmlDataException;
 use MTZ\Toolkit\XMLMaker\Support\ArrayReader;
 use MTZ\Toolkit\XMLMaker\Support\DomBuilder;
 
+/**
+ * Abstract base class for SRI XML document builders.
+ *
+ * Provides shared infrastructure for constructing Ecuadorian SRI (Servicio de
+ * Rentas Internas) electronic documents: tax information, additional info,
+ * buyer data, modified document references, tax totals, payments, line taxes,
+ * and additional detail fields. Concrete builders implement the
+ * appendDocumentInformation() method for document-type-specific logic.
+ */
 abstract class AbstractXmlDocumentBuilder implements XmlDocumentBuilderInterface
 {
+    /**
+     * @var DOMDocument The XML document being constructed.
+     */
     protected DOMDocument $document;
+
+    /**
+     * @var DomBuilder Convenience wrapper for appending DOM elements.
+     */
     protected DomBuilder $dom;
 
+    /**
+     * @param XmlMakerConfig $config Configuration for XML generation defaults.
+     */
     public function __construct(
         protected readonly XmlMakerConfig $config = new XmlMakerConfig(),
     ) {
     }
 
     /**
-     * @throws DOMException
+     * Builds a complete SRI XML document from generation data.
+     *
+     * @param XmlGenerationData $data The document type, environment, access key, and payload data.
+     * @return GeneratedXml The fully built document wrapper.
+     * @throws DOMException When a required DOM element cannot be created.
      */
     final public function build(XmlGenerationData $data): GeneratedXml
     {
@@ -46,15 +69,31 @@ abstract class AbstractXmlDocumentBuilder implements XmlDocumentBuilderInterface
     }
 
     /**
-     * @throws DOMException
+     * Appends document-type-specific information to the root element.
+     *
+     * @param DOMElement $root The root element of the XML document.
+     * @param XmlGenerationData $data The generation data including the payload.
+     * @throws DOMException When a required DOM element cannot be created.
      */
     abstract protected function appendDocumentInformation(DOMElement $root, XmlGenerationData $data): void;
 
+    /**
+     * Returns optional additional information from the generation data payload.
+     *
+     * @param XmlGenerationData $data The generation data.
+     * @return array<string, string> Key-value pairs for the infoAdicional section.
+     */
     protected function additionalInformation(XmlGenerationData $data): array
     {
         return $data->data['additional_info'] ?? [];
     }
 
+    /**
+     * Creates and configures a new DOMDocument instance.
+     *
+     * @param XmlGenerationData $data The generation data (unused in default implementation).
+     * @return DOMDocument The configured DOMDocument.
+     */
     protected function createDocument(XmlGenerationData $data): DOMDocument
     {
         $this->document = new DOMDocument(
@@ -70,7 +109,11 @@ abstract class AbstractXmlDocumentBuilder implements XmlDocumentBuilderInterface
     }
 
     /**
-     * @throws DOMException
+     * Creates the XML root element with required id and version attributes.
+     *
+     * @param XmlGenerationData $data The generation data containing the document type.
+     * @return DOMElement The root element appended to the document.
+     * @throws DOMException When the root element cannot be created.
      */
     protected function createRoot(XmlGenerationData $data): DOMElement
     {
@@ -84,7 +127,11 @@ abstract class AbstractXmlDocumentBuilder implements XmlDocumentBuilderInterface
     }
 
     /**
-     * @throws DOMException
+     * Appends the infoTributaria (tax information) section to the root element.
+     *
+     * @param DOMElement $root The root element to append to.
+     * @param XmlGenerationData $data The generation data containing company, establishment, and emission point info.
+     * @throws DOMException When a required DOM element cannot be created.
      */
     protected function appendTaxInformation(DOMElement $root, XmlGenerationData $data): void
     {
@@ -113,7 +160,11 @@ abstract class AbstractXmlDocumentBuilder implements XmlDocumentBuilderInterface
     }
 
     /**
-     * @throws DOMException
+     * Appends the infoAdicional (additional information) section to the root element.
+     *
+     * @param DOMElement $root The root element to append to.
+     * @param array<string, string|null> $additionalInformation Key-value pairs for additional fields.
+     * @throws DOMException When a required DOM element cannot be created.
      */
     protected function appendAdditionalInformation(DOMElement $root, array $additionalInformation): void
     {
@@ -140,7 +191,11 @@ abstract class AbstractXmlDocumentBuilder implements XmlDocumentBuilderInterface
     }
 
     /**
-     * @throws DOMException
+     * Appends buyer (comprador) identification fields to a parent element.
+     *
+     * @param DOMElement $parent The parent element to append buyer info to.
+     * @param ArrayReader $buyer Reader wrapping the buyer data array.
+     * @throws DOMException When a required DOM element cannot be created.
      */
     protected function appendBuyerInformation(DOMElement $parent, ArrayReader $buyer): void
     {
@@ -150,7 +205,11 @@ abstract class AbstractXmlDocumentBuilder implements XmlDocumentBuilderInterface
     }
 
     /**
-     * @throws DOMException
+     * Appends modified document reference fields (for credit/debit notes).
+     *
+     * @param DOMElement $parent The parent element to append to.
+     * @param ArrayReader $referencedDocument Reader wrapping the referenced document data.
+     * @throws DOMException When a required DOM element cannot be created.
      */
     protected function appendModifiedDocument(DOMElement $parent, ArrayReader $referencedDocument): void
     {
@@ -160,7 +219,15 @@ abstract class AbstractXmlDocumentBuilder implements XmlDocumentBuilderInterface
     }
 
     /**
-     * @throws DOMException
+     * Appends tax totals (totalConImpuestos) to a parent element.
+     *
+     * @param DOMElement $parent The parent element to append tax totals to.
+     * @param array $taxTotals Array of tax total entries, each with code, percentage_code, taxable_base, and value.
+     * @param string $containerName The container element name (e.g. 'totalConImpuestos' or 'impuestos').
+     * @param string $itemName The per-item element name (e.g. 'totalImpuesto' or 'impuesto').
+     * @param bool $includeRate Whether to include the rate field.
+     * @throws InvalidXmlDataException When tax_totals is empty.
+     * @throws DOMException When a required DOM element cannot be created.
      */
     protected function appendTaxTotals(
         DOMElement $parent,
@@ -193,7 +260,15 @@ abstract class AbstractXmlDocumentBuilder implements XmlDocumentBuilderInterface
     }
 
     /**
-     * @throws DOMException
+     * Appends payment information (pagos) to a parent element.
+     *
+     * @param DOMElement $parent The parent element to append payments to.
+     * @param array $payments Array of payment entries, each with method and total.
+     * @param bool $includeTerms Whether to include term and time_unit fields.
+     * @param string $field The field name used for error messages when payments are required but empty.
+     * @param bool $required Whether to throw an exception when payments are empty.
+     * @throws InvalidXmlDataException When payments are required but empty.
+     * @throws DOMException When a required DOM element cannot be created.
      */
     protected function appendPayments(
         DOMElement $parent,
@@ -228,7 +303,13 @@ abstract class AbstractXmlDocumentBuilder implements XmlDocumentBuilderInterface
     }
 
     /**
-     * @throws DOMException
+     * Appends per-line taxes (impuestos) to a detail element.
+     *
+     * @param DOMElement $parent The detail element to append taxes to.
+     * @param array $taxes Array of tax entries, each with code, percentage_code, rate, taxable_base, and value.
+     * @param string $field The field name used for error messages when taxes are empty.
+     * @throws InvalidXmlDataException When taxes are empty.
+     * @throws DOMException When a required DOM element cannot be created.
      */
     protected function appendLineTaxes(DOMElement $parent, array $taxes, string $field = 'details.*.taxes'): void
     {
@@ -255,7 +336,11 @@ abstract class AbstractXmlDocumentBuilder implements XmlDocumentBuilderInterface
     }
 
     /**
-     * @throws DOMException
+     * Appends detallesAdicionales (additional detail fields) to a detail element.
+     *
+     * @param DOMElement $parent The detail element to append additional fields to.
+     * @param array<string, string|null> $additionalInfo Key-value pairs for additional detail attributes.
+     * @throws DOMException When a required DOM element cannot be created.
      */
     protected function appendAdditionalDetailFields(DOMElement $parent, array $additionalInfo): void
     {

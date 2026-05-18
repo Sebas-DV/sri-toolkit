@@ -10,10 +10,17 @@ use MTZ\Toolkit\XMLMaker\Data\XmlGenerationData;
 use MTZ\Toolkit\XMLMaker\Exceptions\InvalidXmlDataException;
 use MTZ\Toolkit\XMLMaker\Support\ArrayReader;
 
+/**
+ * Builds SRI Invoice (Factura) XML documents.
+ */
 final class InvoiceXmlBuilder extends AbstractXmlDocumentBuilder
 {
     /**
-     * @throws DOMException
+     * Appends invoice-specific information to the root element.
+     *
+     * @param DOMElement $root The root element of the XML document.
+     * @param XmlGenerationData $data The generation data including invoice payload.
+     * @throws DOMException When a required DOM element cannot be created.
      */
     protected function appendDocumentInformation(DOMElement $root, XmlGenerationData $data): void
     {
@@ -54,7 +61,11 @@ final class InvoiceXmlBuilder extends AbstractXmlDocumentBuilder
     }
 
     /**
-     * @throws DOMException
+     * Appends reimbursement totals to the invoice information section.
+     *
+     * @param DOMElement $invoiceInformation The invoice info element to append to.
+     * @param array $reimbursement Array with document_code, total, taxable_base_total, and tax_total fields.
+     * @throws DOMException When a required DOM element cannot be created.
      */
     private function appendReimbursementTotals(DOMElement $invoiceInformation, array $reimbursement): void
     {
@@ -72,7 +83,12 @@ final class InvoiceXmlBuilder extends AbstractXmlDocumentBuilder
     }
 
     /**
-     * @throws DOMException
+     * Appends the invoice detail lines (detalles) to the root element.
+     *
+     * @param DOMElement $root The root element to append details to.
+     * @param XmlGenerationData $data The generation data containing detail lines.
+     * @throws InvalidXmlDataException When details are empty.
+     * @throws DOMException When a required DOM element cannot be created.
      */
     private function appendDetails(DOMElement $root, XmlGenerationData $data): void
     {

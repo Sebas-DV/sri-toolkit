@@ -10,10 +10,17 @@ use MTZ\Toolkit\XMLMaker\Data\XmlGenerationData;
 use MTZ\Toolkit\XMLMaker\Exceptions\InvalidXmlDataException;
 use MTZ\Toolkit\XMLMaker\Support\ArrayReader;
 
+/**
+ * Builds SRI Debit Note (Nota de Débito) XML documents.
+ */
 final class DebitNoteXmlBuilder extends AbstractXmlDocumentBuilder
 {
     /**
-     * @throws DOMException
+     * Appends debit-note-specific information to the root element.
+     *
+     * @param DOMElement $root The root element of the XML document.
+     * @param XmlGenerationData $data The generation data including debit note payload.
+     * @throws DOMException When a required DOM element cannot be created.
      */
     protected function appendDocumentInformation(DOMElement $root, XmlGenerationData $data): void
     {
@@ -55,7 +62,12 @@ final class DebitNoteXmlBuilder extends AbstractXmlDocumentBuilder
     }
 
     /**
-     * @throws DOMException
+     * Appends the debit note reasons (motivos) section to the root element.
+     *
+     * @param DOMElement $root The root element to append reasons to.
+     * @param XmlGenerationData $data The generation data containing reasons.
+     * @throws InvalidXmlDataException When reasons are empty.
+     * @throws DOMException When a required DOM element cannot be created.
      */
     private function appendReasons(DOMElement $root, XmlGenerationData $data): void
     {

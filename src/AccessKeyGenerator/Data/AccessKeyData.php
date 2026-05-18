@@ -13,8 +13,27 @@ use MTZ\Toolkit\AccessKeyGenerator\Support\NumericString;
 use Random\RandomException;
 use Throwable;
 
+/**
+ * Immutable value object holding all fields required to compose an SRI access key.
+ *
+ * Use the static {@see AccessKeyData::make()} factory to create instances with
+ * automatic validation and formatting.
+ */
 final readonly class AccessKeyData
 {
+    /**
+     * Private constructor to prevent direct instantiation. Use the static make() method for creating instances with proper validation and formatting.
+     *
+     * @param DateTimeImmutable $emissionDate
+     * @param DocumentType $documentType
+     * @param string $ruc
+     * @param Environment $environment
+     * @param string $establishmentCode
+     * @param string $emissionPointCode
+     * @param string $sequential
+     * @param string $numericCode
+     * @param EmissionType $emissionType
+     */
     private function __construct(
         public DateTimeImmutable $emissionDate,
         public DocumentType $documentType,
@@ -28,6 +47,21 @@ final readonly class AccessKeyData
     ) {
     }
 
+    /**
+     * Factory method to create an instance of AccessKeyData with proper validation and formatting.
+     *
+     * @param string $emissionDate
+     * @param DocumentType $documentType
+     * @param string $ruc
+     * @param Environment $environment
+     * @param string|int $sequential
+     * @param string|int|null $numericCode
+     * @param string|int $establishmentCode
+     * @param string|int $emissionPointCode
+     * @param EmissionType $emissionType
+     * @return AccessKeyData
+     * @throws RandomException
+     */
     public static function make(
         string $emissionDate,
         DocumentType $documentType,
@@ -52,6 +86,11 @@ final readonly class AccessKeyData
         );
     }
 
+    /**
+     * Generates the base 49-digit access key string (without the check digit).
+     *
+     * @return string The 49-digit base access key.
+     */
     public function toAccessKeyBase(): string
     {
         return $this->emissionDate->format('dmY')
@@ -65,6 +104,13 @@ final readonly class AccessKeyData
             . $this->emissionType->value;
     }
 
+    /**
+     * Parses a date string into a DateTimeImmutable object.
+     *
+     * @param string $date The date string to parse.
+     * @return DateTimeImmutable The parsed date.
+     * @throws AccessKeyException When the date string is invalid.
+     */
     private static function parseDate(string $date): DateTimeImmutable
     {
         try
@@ -77,7 +123,10 @@ final readonly class AccessKeyData
     }
 
     /**
-     * @throws RandomException
+     * Generates a random 8-digit numeric code used as the unique document identifier.
+     *
+     * @return string An 8-digit zero-padded numeric string.
+     * @throws RandomException When the random number generator fails.
      */
     public static function generateNumericCode(): string
     {

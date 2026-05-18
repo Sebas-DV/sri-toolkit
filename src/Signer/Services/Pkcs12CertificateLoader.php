@@ -8,8 +8,23 @@ use MTZ\Toolkit\Signer\Contract\CertificateLoaderInterface;
 use MTZ\Toolkit\Signer\Data\CertificateData;
 use MTZ\Toolkit\Signer\Exceptions\CertificateException;
 
+/**
+ * Loads and parses PKCS#12 (.p12 / .pfx) certificate files.
+ *
+ * Extracts the private key, certificate, and associated metadata required
+ * for XAdES-BES XML digital signatures.
+ */
 class Pkcs12CertificateLoader implements CertificateLoaderInterface
 {
+    /**
+     * Load and parse a PKCS#12 certificate file.
+     *
+     * @param string $certificatePath The filesystem path to the PKCS#12 file.
+     * @param string $certificatePassword The password protecting the certificate.
+     * @return CertificateData The extracted certificate and private key data.
+     * @throws CertificateException When the file is unreadable, the password is invalid,
+     *                              or required key/cert data is missing.
+     */
     public function load(string $certificatePath, string $certificatePassword): CertificateData
     {
         if (! is_file($certificatePath) || ! is_readable($certificatePath))
@@ -59,6 +74,13 @@ class Pkcs12CertificateLoader implements CertificateLoaderInterface
         );
     }
 
+    /**
+     * Extract the Base64 body from a PEM certificate.
+     *
+     * @param string $certificatePem The certificate in PEM format.
+     * @return string The Base64-encoded DER certificate body (whitespace removed).
+     * @throws CertificateException When the PEM headers are not found.
+     */
     private function extractCertificateContent(string $certificatePem): string
     {
         if (! preg_match('/-----BEGIN CERTIFICATE-----\s*(.*?)\s*-----END CERTIFICATE-----/s', $certificatePem, $matches))
@@ -69,6 +91,13 @@ class Pkcs12CertificateLoader implements CertificateLoaderInterface
         return preg_replace('/\s+/', '', $matches[1]) ?? '';
     }
 
+    /**
+     * Parse a PEM certificate into an associative array.
+     *
+     * @param string $certificatePem The X.509 certificate in PEM format.
+     * @return array Parsed certificate details from openssl_x509_parse().
+     * @throws CertificateException When the certificate cannot be parsed.
+     */
     private function parseCertificate(string $certificatePem): array
     {
         $details = openssl_x509_parse($certificatePem);
@@ -81,6 +110,13 @@ class Pkcs12CertificateLoader implements CertificateLoaderInterface
         return $details;
     }
 
+    /**
+     * Extract RSA modulus and exponent from a PEM-encoded private key.
+     *
+     * @param string $privateKeyPem The private key in PEM format.
+     * @return array{modulus: string, exponent: string} The RSA modulus and exponent as raw binary strings.
+     * @throws CertificateException When the private key is invalid or missing RSA details.
+     */
     private function extractPrivateKeyData(string $privateKeyPem): array
     {
         $privateKey = openssl_pkey_get_private($privateKeyPem);
@@ -103,6 +139,12 @@ class Pkcs12CertificateLoader implements CertificateLoaderInterface
         ];
     }
 
+    /**
+     * Format the certificate issuer array into a standard DN string.
+     *
+     * @param array $issuer Associative array from openssl_x509_parse() issuer field.
+     * @return string The formatted issuer distinguished name (e.g. "CN=..., O=...").
+     */
     private function formatIssuer(array $issuer): string
     {
         $items = [];
