@@ -25,8 +25,7 @@ final readonly class AccessKeyData
         public string $sequential,
         public string $numericCode,
         public EmissionType $emissionType,
-    )
-    {
+    ) {
     }
 
     public static function make(
@@ -38,9 +37,8 @@ final readonly class AccessKeyData
         string|int|null $numericCode = null,
         string|int $establishmentCode = '001',
         string|int $emissionPointCode = '001',
-        EmissionType $emissionType = EmissionType::Normal
-    ): AccessKeyData
-    {
+        EmissionType $emissionType = EmissionType::Normal,
+    ): AccessKeyData {
         return new self(
             emissionDate: self::parseDate($emissionDate),
             documentType: $documentType,
@@ -50,7 +48,7 @@ final readonly class AccessKeyData
             emissionPointCode: NumericString::fixed($emissionPointCode, 3, 'emission_point_code'),
             sequential: NumericString::padded($sequential, 9, 'sequential'),
             numericCode: $numericCode === null ? self::generateNumericCode() : NumericString::fixed($numericCode, 8, 'numeric_code'),
-            emissionType: $emissionType
+            emissionType: $emissionType,
         );
     }
 
@@ -72,8 +70,7 @@ final readonly class AccessKeyData
         try
         {
             return new DateTimeImmutable($date);
-        }
-        catch (Throwable)
+        } catch (Throwable)
         {
             throw AccessKeyException::invalidDate($date);
         }
@@ -88,7 +85,7 @@ final readonly class AccessKeyData
             (string) random_int(0, 99999999),
             8,
             '0',
-            STR_PAD_LEFT
+            STR_PAD_LEFT,
         );
     }
 }

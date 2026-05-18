@@ -28,31 +28,31 @@ final class SenderTest extends TestCase
 
         $fakeSoapClient = new FakeSoapClient(
             receptionResponses: [
-                self::receptionResponse(status: 'RECIBIDA')
+                self::receptionResponse(status: 'RECIBIDA'),
             ],
             authorizationResponses: [
                 self::authorizationResponse(
                     status: 'AUTORIZADO',
                     accessKey: self::ACCESS_KEY,
                     xml: '<factura>Autorizada</factura>',
-                    authorizationDate: '2026-05-13T10:30:00-05:00'
-                )
-            ]
+                    authorizationDate: '2026-05-13T10:30:00-05:00',
+                ),
+            ],
         );
 
         $sender = new Sender(
             config: new SenderConfig(
                 maxAttempts: 1,
-                sendDelay: 3
+                sendDelay: 3,
             ),
             responseParser: new ResponseParser(),
             soapClientFactory: new FakeSoapClientFactory($fakeSoapClient),
-            sleeper: $fakeSleeper
+            sleeper: $fakeSleeper,
         );
 
         $result = $sender->send(
             accessKey: self::ACCESS_KEY,
-            signedXml: '<facturaFirmada/>'
+            signedXml: '<facturaFirmada/>',
         );
 
         $this->assertTrue($result->success);
@@ -79,25 +79,25 @@ final class SenderTest extends TestCase
                         type: 'ERROR',
                         code: '43',
                         message: 'CLAVE ACCESO REGISTRADA',
-                        additionalInformation: 'El comprobante ya ha sido recibido'
-                    )
-                ])
+                        additionalInformation: 'El comprobante ya ha sido recibido',
+                    ),
+                ]),
             ],
             authorizationResponses: [
-                self::authorizationResponse(status: 'AUTORIZADO')
-            ]
+                self::authorizationResponse(status: 'AUTORIZADO'),
+            ],
         );
 
         $sender = new Sender(
             config: new SenderConfig(),
             responseParser: new ResponseParser(),
             soapClientFactory: new FakeSoapClientFactory($fakeSoapClient),
-            sleeper: $fakeSleeper
+            sleeper: $fakeSleeper,
         );
 
         $result = $sender->send(
             accessKey: self::ACCESS_KEY,
-            signedXml: '<facturaFirmada/>'
+            signedXml: '<facturaFirmada/>',
         );
 
         $this->assertFalse($result->success);
@@ -123,7 +123,7 @@ final class SenderTest extends TestCase
 
         $fakeSoapClient = new FakeSoapClient(
             receptionResponses: [
-                self::receptionResponse('RECIBIDA')
+                self::receptionResponse('RECIBIDA'),
             ],
             authorizationResponses: [
                 self::authorizationResponse('NO AUTORIZADO', messages: [
@@ -131,25 +131,25 @@ final class SenderTest extends TestCase
                         type: 'ERROR',
                         code: '70',
                         message: 'ERROR EN FIRMA',
-                        additionalInformation: 'Firma invalida'
-                    )
-                ])
-            ]
+                        additionalInformation: 'Firma invalida',
+                    ),
+                ]),
+            ],
         );
 
         $sender = new Sender(
             config: new SenderConfig(
                 maxAttempts: 1,
-                sendDelay: 3
+                sendDelay: 3,
             ),
             responseParser: new ResponseParser(),
             soapClientFactory: new FakeSoapClientFactory($fakeSoapClient),
-            sleeper: $fakeSleeper
+            sleeper: $fakeSleeper,
         );
 
         $result = $sender->send(
             accessKey: self::ACCESS_KEY,
-            signedXml: '<facturaFirmada/>'
+            signedXml: '<facturaFirmada/>',
         );
 
         $this->assertFalse($result->success);

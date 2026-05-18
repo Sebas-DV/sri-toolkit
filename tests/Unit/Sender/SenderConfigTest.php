@@ -24,7 +24,7 @@ final class SenderConfigTest extends TestCase
     public function it_uses_production_wsdl_urls_when_environment_is_production(): void
     {
         $config = new SenderConfig(
-            environment: Environment::Production
+            environment: Environment::Production,
         );
 
         $this->assertStringContainsString('cel.sri.gob.ec', $config->receptionWsdl());
@@ -40,8 +40,8 @@ final class SenderConfigTest extends TestCase
         $config = new SenderConfig(
             soapOptions: [
                 'connection_timeout' => 30,
-                'trace' => 0
-            ]
+                'trace' => 0,
+            ],
         );
 
         $options = $config->normalizedSoapOptions();

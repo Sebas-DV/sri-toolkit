@@ -26,8 +26,7 @@ final readonly class Sender
         ?ResponseParser $responseParser = null,
         ?SoapClientFactoryInterface $soapClientFactory = null,
         private SleeperInterface $sleeper = new NativeSleeper(),
-    )
-    {
+    ) {
         $responseParser ??= new ResponseParser();
         $soapClientFactory ??= new NativeSoapClientFactory();
 

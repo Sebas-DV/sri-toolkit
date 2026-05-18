@@ -107,7 +107,8 @@ class Pkcs12CertificateLoader implements CertificateLoaderInterface
     {
         $items = [];
 
-        foreach (array_reverse($issuer) as $key => $value) {
+        foreach (array_reverse($issuer) as $key => $value)
+        {
             $key = $key === 'E' ? 'EMAILADDRESS' : (string)$key;
             $items[] = "{$key}={$value}";
         }

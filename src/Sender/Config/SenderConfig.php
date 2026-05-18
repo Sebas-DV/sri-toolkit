@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace MTZ\Toolkit\Sender\Config;
 
-use http\Env;
 use MTZ\Toolkit\Sender\Enums\Environment;
 
 final readonly class SenderConfig
@@ -21,8 +20,7 @@ final readonly class SenderConfig
         public int $retryDelay = 1,
         public int $sendDelay = 3,
         public array $soapOptions = [],
-    )
-    {
+    ) {
     }
 
     public function receptionWsdl(): string

@@ -12,8 +12,7 @@ final readonly class XmlDocumentLoader
 {
     public function __construct(
         private SignerConfig $config = new SignerConfig(),
-    )
-    {
+    ) {
     }
 
     public function load(DOMDocument|string $xml): DOMDocument
@@ -21,8 +20,7 @@ final readonly class XmlDocumentLoader
         if ($xml instanceof DOMDocument)
         {
             $document = $xml;
-        }
-        else
+        } else
         {
             $xml = trim($xml);
 

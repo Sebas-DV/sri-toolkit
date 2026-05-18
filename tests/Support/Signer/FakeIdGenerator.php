@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace MTZ\Toolkit\Tests\Support\Signer;
+
 use MTZ\Toolkit\Signer\Contract\IdGeneratorInterface;
 
 final class FakeIdGenerator implements IdGeneratorInterface

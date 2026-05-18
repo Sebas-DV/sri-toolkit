@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace MTZ\Toolkit\Signer\Exceptions;
 
-use http\Exception\RuntimeException;
+use RuntimeException;
 
 class SignerException extends RuntimeException
 {

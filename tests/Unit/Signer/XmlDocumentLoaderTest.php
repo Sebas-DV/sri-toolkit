@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace MTZ\Toolkit\Tests\Unit\Signer;
 
+use DOMDocument;
 use MTZ\Toolkit\Signer\Exceptions\InvalidXmlException;
 use MTZ\Toolkit\Signer\Services\XmlDocumentLoader;
 use PHPUnit\Framework\Attributes\Test;
-use React\Promise\TestCase;
-use DOMDocument;
+use PHPUnit\Framework\TestCase;
 
 final class XmlDocumentLoaderTest extends TestCase
 {
@@ -44,7 +44,7 @@ final class XmlDocumentLoaderTest extends TestCase
         $this->expectException(InvalidXmlException::class);
 
         (new XmlDocumentLoader())->load(
-            '<factura id="comprobante" xmlns:ds="http://www.w3.org/2000/09/xmldsig#"><infoTributaria/></factura>'
+            '<factura id="comprobante" xmlns:ds="http://www.w3.org/2000/09/xmldsig#"><infoTributaria/></factura>',
         );
     }
 }

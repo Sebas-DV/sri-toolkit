@@ -34,7 +34,7 @@ final class AccessKeyGeneratorTest extends TestCase
         $this->assertSame(49, strlen($accessKey));
         $this->assertStringStartsWith(
             '130520260117900123450011001001000000025123456781',
-            $accessKey
+            $accessKey,
         );
         $this->assertStringEndsWith('7', $accessKey);
     }

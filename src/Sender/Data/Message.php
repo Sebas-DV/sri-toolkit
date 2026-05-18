@@ -11,8 +11,7 @@ final readonly class Message
         public string $code,
         public string $message,
         public string $additionalInformation,
-    )
-    {
+    ) {
     }
 
     public function toString(): string

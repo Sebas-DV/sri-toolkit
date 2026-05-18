@@ -25,7 +25,7 @@ final class AccessKeyException extends RuntimeException
 
     public static function invalidSequential(): self
     {
-        return new self("The sequential mus be numeric and cannot exceed 9 digits.");
+        return new self('The sequential mus be numeric and cannot exceed 9 digits.');
     }
 
     public static function invalidDate(string $date): self

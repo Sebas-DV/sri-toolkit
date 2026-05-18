@@ -20,8 +20,7 @@ final class ReceptionClient
         private readonly SenderConfig $config,
         private readonly ResponseParser $responseParser = new ResponseParser(),
         private readonly SoapClientFactoryInterface $soapClientFactory = new NativeSoapClientFactory(),
-    )
-    {
+    ) {
     }
 
     public function validate(string $signedXml): ReceptionResult
@@ -30,7 +29,7 @@ final class ReceptionClient
         {
             $client = $this->soapClientFactory->make(
                 $this->config->receptionWsdl(),
-                $this->config->normalizedSoapOptions()
+                $this->config->normalizedSoapOptions(),
             );
 
             $this->lastResponse = $client->validarComprobante([
@@ -55,8 +54,7 @@ final class ReceptionClient
                 messages: $messages,
                 rawResponse: $this->lastResponse,
             );
-        }
-        catch (SoapFault $exception)
+        } catch (SoapFault $exception)
         {
             return ReceptionResult::failure(
                 status: null,
@@ -78,10 +76,11 @@ final class ReceptionClient
         }
 
         return implode(
-            "\n", array_map(
-                static fn($message): string => $message->toString(),
-                $messages
-            )
+            "\n",
+            array_map(
+                static fn ($message): string => $message->toString(),
+                $messages,
+            ),
         );
     }
 }

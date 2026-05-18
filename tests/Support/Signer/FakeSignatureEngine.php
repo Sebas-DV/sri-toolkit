@@ -14,7 +14,7 @@ final class FakeSignatureEngine implements SignatureEngineInterface
     {
         $this->signedContents[] = [
             'content' => $content,
-            'private_key' => $privateKeyPem
+            'private_key' => $privateKeyPem,
         ];
 
         return base64_encode('FAKE_SIGNATURE_VALUE');

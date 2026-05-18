@@ -14,8 +14,7 @@ final readonly class ReceptionResult
         public array $messages = [],
         public ?string $error = null,
         public ?object $rawResponse = null,
-    )
-    {
+    ) {
     }
 
     public static function success(?ReceptionStatus $status, array $messages = [], ?object $rawResponse = null): self

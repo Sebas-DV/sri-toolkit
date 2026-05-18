@@ -17,8 +17,7 @@ final class FakeSoapClient extends SoapClient
     public function __construct(
         private array $receptionResponses = [],
         private array $authorizationResponses = [],
-    )
-    {
+    ) {
     }
 
     /**

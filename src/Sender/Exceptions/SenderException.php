@@ -6,4 +6,6 @@ namespace MTZ\Toolkit\Sender\Exceptions;
 
 use RuntimeException;
 
-class SenderException extends RuntimeException {}
+class SenderException extends RuntimeException
+{
+}

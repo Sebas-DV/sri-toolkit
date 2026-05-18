@@ -24,14 +24,14 @@ final class ReceptionClientTest extends TestCase
     {
         $fakeSoapClient = new FakeSoapClient(
             receptionResponses: [
-                self::receptionResponse('RECIBIDA')
-            ]
+                self::receptionResponse('RECIBIDA'),
+            ],
         );
 
         $client = new ReceptionClient(
             config: new SenderConfig(),
             responseParser: new ResponseParser(),
-            soapClientFactory: new FakeSoapClientFactory($fakeSoapClient)
+            soapClientFactory: new FakeSoapClientFactory($fakeSoapClient),
         );
 
         $result = $client->validate('<facturaFirmada />');
@@ -54,16 +54,16 @@ final class ReceptionClientTest extends TestCase
                         type: 'ERROR',
                         code: '43',
                         message: 'CLAVE ACCESO REGISTRADA',
-                        additionalInformation: 'La clave de acceso ya ha sido registrada'
-                    )
-                ])
-            ]
+                        additionalInformation: 'La clave de acceso ya ha sido registrada',
+                    ),
+                ]),
+            ],
         );
 
         $client = new ReceptionClient(
             config: new SenderConfig(),
             responseParser: new ResponseParser(),
-            soapClientFactory: new FakeSoapClientFactory($fakeSoapClient)
+            soapClientFactory: new FakeSoapClientFactory($fakeSoapClient),
         );
 
         $result = $client->validate('<facturaFirmada />');
@@ -83,14 +83,14 @@ final class ReceptionClientTest extends TestCase
     {
         $fakeSoapClient = new FakeSoapClient(
             receptionResponses: [
-                new SoapFault('Server', 'Connection failed')
-            ]
+                new SoapFault('Server', 'Connection failed'),
+            ],
         );
 
         $client = new ReceptionClient(
             config: new SenderConfig(),
             responseParser: new ResponseParser(),
-            soapClientFactory: new FakeSoapClientFactory($fakeSoapClient)
+            soapClientFactory: new FakeSoapClientFactory($fakeSoapClient),
         );
 
         $result = $client->validate('<facturaFirmada />');
@@ -108,10 +108,10 @@ final class ReceptionClientTest extends TestCase
                 'estado' => $status,
                 'comprobantes' => (object) [
                     'comprobante' => (object) [
-                        'mensajes' => $messages
-                    ]
-                ]
-            ]
+                        'mensajes' => $messages,
+                    ],
+                ],
+            ],
         ];
     }
 

@@ -11,9 +11,8 @@ final readonly class SignerConfig
         public string $encoding = 'UTF-8',
         public string $timeZone = 'America/Guayaquil',
         public string $documentReferenceId = 'comprobante',
-        public string $signatureNamespace = 'https://www.w3.org/2000/09/xmldsig#',
-        public string $xadesNamespace = 'https://uri.etsi.org/01903/v1.3.2#',
-    )
-    {
+        public string $signatureNamespace = 'http://www.w3.org/2000/09/xmldsig#',
+        public string $xadesNamespace = 'http://uri.etsi.org/01903/v1.3.2#',
+    ) {
     }
 }

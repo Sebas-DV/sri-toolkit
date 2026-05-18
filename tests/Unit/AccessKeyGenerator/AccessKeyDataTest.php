@@ -106,7 +106,7 @@ final class AccessKeyDataTest extends TestCase
             ruc: '1790012345001',
             environment: Environment::Testing,
             sequential: 25,
-            numericCode: '1234'
+            numericCode: '1234',
         );
     }
 }

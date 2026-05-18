@@ -43,7 +43,8 @@ final class CheckDigitCalculator
 
         $result = self::MODULE - ($sum % self::MODULE);
 
-        return match ($result) {
+        return match ($result)
+        {
             11 => 0,
             10 => 1,
             default => $result,

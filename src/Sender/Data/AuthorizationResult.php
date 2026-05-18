@@ -16,8 +16,7 @@ final readonly class AuthorizationResult
         public int $attempts = 0,
         public ?string $error = null,
         public ?object $rawResponse = null,
-    )
-    {
+    ) {
     }
 
     public static function success(
@@ -26,8 +25,7 @@ final readonly class AuthorizationResult
         array $messages = [],
         int $attempts = 1,
         ?object $rawResponse = null,
-    ): self
-    {
+    ): self {
         return new self(true, $status, $authorizedDocument, $messages, $attempts, null, $rawResponse);
     }
 
@@ -37,8 +35,7 @@ final readonly class AuthorizationResult
         array $messages = [],
         int $attempts = 0,
         ?object $rawResponse = null,
-    ): self
-    {
+    ): self {
         return new self(false, $status, null, $messages, $attempts, $error, $rawResponse);
     }
 
@@ -50,7 +47,7 @@ final readonly class AuthorizationResult
             'authorized_document' => $this->authorizedDocument?->toArray(),
             'messages' => array_map(
                 static fn (Message $message): array => $message->toArray(),
-                $this->messages
+                $this->messages,
             ),
             'attempts' => $this->attempts,
             'error' => $this->error,

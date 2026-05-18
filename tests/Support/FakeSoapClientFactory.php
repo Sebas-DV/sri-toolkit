@@ -14,8 +14,7 @@ final class FakeSoapClientFactory implements SoapClientFactoryInterface
 
     public function __construct(
         private readonly FakeSoapClient $soapClient,
-    )
-    {
+    ) {
     }
 
     public function make(string $wsdl, array $options = []): SoapClient

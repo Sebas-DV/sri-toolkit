@@ -9,9 +9,9 @@ final readonly class AuthorizedDocument
     public function __construct(
         public ?string $accessKey,
         public ?string $xml,
-        public ?string $authorizationDate
-    )
-    {}
+        public ?string $authorizationDate,
+    ) {
+    }
 
     public function toArray(): array
     {

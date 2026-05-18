@@ -11,8 +11,7 @@ final readonly class AccessKeyGenerator
 {
     public function __construct(
         private CheckDigitCalculator $checkDigitCalculator = new CheckDigitCalculator(),
-    )
-    {
+    ) {
     }
 
     public function generate(AccessKeyData $data): string

@@ -32,16 +32,16 @@ final class AuthorizationClientTest extends TestCase
                     status: 'AUTORIZADO',
                     accessKey: self::ACCESS_KEY,
                     xml: '<factura>Autorizada</factura>',
-                    authorizationDate: '2026-05-13T10:30:00-05:00'
-                )
-            ]
+                    authorizationDate: '2026-05-13T10:30:00-05:00',
+                ),
+            ],
         );
 
         $client = new AuthorizationClient(
             config: new SenderConfig(),
             responseParser: new ResponseParser(),
             soapClientFactory: new FakeSoapClientFactory($fakeSoapClient),
-            sleeper: new FakeSleeper()
+            sleeper: new FakeSleeper(),
         );
 
         $result = $client->authorize(self::ACCESS_KEY);
@@ -68,18 +68,19 @@ final class AuthorizationClientTest extends TestCase
                     status: 'AUTORIZADO',
                     accessKey: self::ACCESS_KEY,
                     xml: '<factura>Autorizada</factura>',
-                    authorizationDate: '2026-05-13T10:30:00-05:00'
+                    authorizationDate: '2026-05-13T10:30:00-05:00',
                 ),
-            ]
+            ],
         );
 
         $client = new AuthorizationClient(
             config: new SenderConfig(
-                maxAttempts: 2, retryDelay: 1
+                maxAttempts: 2,
+                retryDelay: 1,
             ),
             responseParser: new ResponseParser(),
             soapClientFactory: new FakeSoapClientFactory($fakeSoapClient),
-            sleeper: $fakeSleeper
+            sleeper: $fakeSleeper,
         );
 
         $result = $client->authorize(self::ACCESS_KEY);
@@ -105,27 +106,28 @@ final class AuthorizationClientTest extends TestCase
                         type: 'ERROR',
                         code: '70',
                         message: 'ERROR EN FIRMA',
-                        additionalInformation: 'La firma del comprobante no es válida'
-                    )
+                        additionalInformation: 'La firma del comprobante no es válida',
+                    ),
                 ]),
                 self::authorizationResponse(status: 'NO AUTORIZADO', messages: [
                     self::message(
                         type: 'ERROR',
                         code: '70',
                         message: 'ERROR EN FIRMA',
-                        additionalInformation: 'La firma del comprobante no es válida'
-                    )
+                        additionalInformation: 'La firma del comprobante no es válida',
+                    ),
                 ]),
-            ]
+            ],
         );
 
         $client = new AuthorizationClient(
             config: new SenderConfig(
-                maxAttempts: 2, retryDelay: 1
+                maxAttempts: 2,
+                retryDelay: 1,
             ),
             responseParser: new ResponseParser(),
             soapClientFactory: new FakeSoapClientFactory($fakeSoapClient),
-            sleeper: $fakeSleeper
+            sleeper: $fakeSleeper,
         );
 
         $result = $client->authorize(self::ACCESS_KEY);
@@ -150,16 +152,17 @@ final class AuthorizationClientTest extends TestCase
             authorizationResponses: [
                 new SoapFault('Server', 'Connection failed'),
                 new SoapFault('Server', 'Connection failed again'),
-            ]
+            ],
         );
 
         $client = new AuthorizationClient(
             config: new SenderConfig(
-                maxAttempts: 2, retryDelay: 1
+                maxAttempts: 2,
+                retryDelay: 1,
             ),
             responseParser: new ResponseParser(),
             soapClientFactory: new FakeSoapClientFactory($fakeSoapClient),
-            sleeper: $fakeSleeper
+            sleeper: $fakeSleeper,
         );
 
         $result = $client->authorize(self::ACCESS_KEY);
@@ -179,7 +182,7 @@ final class AuthorizationClientTest extends TestCase
             config: new SenderConfig(),
             responseParser: new ResponseParser(),
             soapClientFactory: new FakeSoapClientFactory(new FakeSoapClient()),
-            sleeper: new FakeSleeper()
+            sleeper: new FakeSleeper(),
         );
 
         $this->expectException(InvalidAccessKeyException::class);
@@ -192,9 +195,8 @@ final class AuthorizationClientTest extends TestCase
         ?string $accessKey = null,
         ?string $xml = null,
         ?string $authorizationDate = null,
-        array $messages = []
-    ): object
-    {
+        array $messages = [],
+    ): object {
         return (object) [
             'RespuestaAutorizacionComprobante' => (object) [
                 'autorizaciones' => (object) [
@@ -203,10 +205,10 @@ final class AuthorizationClientTest extends TestCase
                         'numeroAutorizacion' => $accessKey,
                         'comprobante' => $xml,
                         'fechaAutorizacion' => $authorizationDate,
-                        'mensajes' => $messages
-                    ]
-                ]
-            ]
+                        'mensajes' => $messages,
+                    ],
+                ],
+            ],
         ];
     }
 
@@ -215,8 +217,7 @@ final class AuthorizationClientTest extends TestCase
         string $code,
         string $message,
         string $additionalInformation = '',
-    ): object
-    {
+    ): object {
         return (object) [
             'tipo' => $type,
             'identificador' => $code,

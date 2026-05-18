@@ -8,12 +8,12 @@ final class InvalidXmlException extends SignerException
 {
     public static function empty(): self
     {
-        return new self("The XML is empty.");
+        return new self('The XML is empty.');
     }
 
     public static function cannotLoad(): self
     {
-        return new self("The XML could not be loaded.");
+        return new self('The XML could not be loaded.');
     }
 
     public static function missingDocumentId(string $expectedId): self
@@ -23,6 +23,6 @@ final class InvalidXmlException extends SignerException
 
     public static function rootContainsNamespace(): self
     {
-        return new self("The XML root element should not contain extra namespaces before signing.");
+        return new self('The XML root element should not contain extra namespaces before signing.');
     }
 }

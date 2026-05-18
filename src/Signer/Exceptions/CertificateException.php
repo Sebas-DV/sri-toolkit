@@ -13,21 +13,21 @@ final class CertificateException extends SignerException
 
     public static function invalidPassword(): self
     {
-        return new self("The certificate password is invalid.");
+        return new self('The certificate password is invalid.');
     }
 
     public static function privateKeyNotFound(): self
     {
-        return new self("The private key file was not found.");
+        return new self('The private key file was not found.');
     }
 
     public static function certificateNotFound(): self
     {
-        return new self("The certificate file was not found.");
+        return new self('The certificate file was not found.');
     }
 
     public static function cannotParseCertificate(): self
     {
-        return new self("The certificate file could not be parsed.");
+        return new self('The certificate file could not be parsed.');
     }
 }

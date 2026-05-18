@@ -8,4 +8,3 @@ interface ClockInterface
 {
     public function now(string $timezone): string;
 }
-

@@ -14,5 +14,6 @@ final readonly class CertificateData
         public string $serialNumber,
         public string $modulus,
         public string $exponent,
-    ) {}
+    ) {
+    }
 }

@@ -28,8 +28,7 @@ final class XadesBesXmlSigner
         private readonly ClockInterface $clock,
         private readonly IdGeneratorInterface $idGenerator,
         private readonly SignatureEngineInterface $openSslSignature,
-    )
-    {
+    ) {
     }
 
     /**
@@ -111,7 +110,7 @@ final class XadesBesXmlSigner
         $keyInfo->appendChild($keyValue);
 
         $this->hasKeyInfo = $this->sha1Base64(
-            $this->canonicalizeElement($document, $keyInfo, 'ds:KeyInfo', ['xmlns:ds' => $this->config->signatureNamespace])
+            $this->canonicalizeElement($document, $keyInfo, 'ds:KeyInfo', ['xmlns:ds' => $this->config->signatureNamespace]),
         );
 
         return $keyInfo;
@@ -132,7 +131,7 @@ final class XadesBesXmlSigner
 
         $signedSignatureProperties->appendChild($signingTime);
 
-        $signingCertificate  = $document->createElement('xades:SigningCertificate');
+        $signingCertificate = $document->createElement('xades:SigningCertificate');
         $cert = $document->createElement('xades:Cert');
 
         $certDigest = $document->createElement('xades:CertDigest');
@@ -189,7 +188,7 @@ final class XadesBesXmlSigner
             $this->canonicalizeElement($document, $signedProperties, 'xades:SignedProperties', [
                 'xmlns:ds' => $this->config->signatureNamespace,
                 'xmlns:xades' => $this->config->xadesNamespace,
-            ])
+            ]),
         );
 
         return $signedProperties;
@@ -204,10 +203,16 @@ final class XadesBesXmlSigner
         $signedInfo->setAttribute('Id', 'SignedInfo-' . $this->ids['signedInfo']);
 
         $canonicalizationMethod = $document->createElement('ds:CanonicalizationMethod');
-        $canonicalizationMethod->setAttribute('Algorithm', 'http://www.w3.org/TR/2001/REC-xml-c14n-20010315');
+        $canonicalizationMethod->setAttribute(
+            'Algorithm',
+            'http://www.w3.org/TR/2001/REC-xml-c14n-20010315',
+        );
 
         $signatureMethod = $document->createElement('ds:SignatureMethod');
-        $canonicalizationMethod->setAttribute('Algorithm', 'http://www.w3.org/TR/2001/REC-xml-c14n-20010315');
+        $signatureMethod->setAttribute(
+            'Algorithm',
+            'http://www.w3.org/2000/09/xmldsig#rsa-sha1',
+        );
 
         $signedInfo->appendChild($canonicalizationMethod);
         $signedInfo->appendChild($signatureMethod);
@@ -292,8 +297,7 @@ final class XadesBesXmlSigner
         DOMDocument $document,
         DOMElement $signedInfo,
         CertificateData $certificateData,
-    ): DOMElement
-    {
+    ): DOMElement {
         $signatureValue = $document->createElement('ds:SignatureValue');
         $signatureValue->setAttribute('Id', 'SignatureValue-' . $this->ids['signatureValue']);
 
@@ -342,9 +346,8 @@ final class XadesBesXmlSigner
         DOMDocument $document,
         DOMElement $element,
         string $tagName,
-        array $nameSpaces = []
-    ): string
-    {
+        array $nameSpaces = [],
+    ): string {
         $xml = $document->saveXML($element);
 
         if ($xml === false)
@@ -357,13 +360,13 @@ final class XadesBesXmlSigner
             $namespaceString = implode(' ', array_map(
                 static fn (string $value, string $key): string => "$key=\"$value\"",
                 $nameSpaces,
-                array_keys($nameSpaces)
+                array_keys($nameSpaces),
             ));
 
             $xml = preg_replace(
                 '/<' . preg_quote($tagName, '/') . '([\s>])/',
                 '<' . $tagName . ' ' . $namespaceString . '$1',
-                $xml
+                $xml,
             ) ?? $xml;
         }
 
@@ -388,7 +391,7 @@ final class XadesBesXmlSigner
             'certificate' => $this->idGenerator->generate(),
             'certificateReference' => $this->idGenerator->generate(),
             'signature' => $this->idGenerator->generate(),
-            'signatureProperties' => $this->idGenerator->generate(),
+            'signedProperties' => $this->idGenerator->generate(),
             'signedInfo' => $this->idGenerator->generate(),
             'signedPropertiesReference' => $this->idGenerator->generate(),
             'reference' => $this->idGenerator->generate(),

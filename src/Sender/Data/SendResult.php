@@ -11,15 +11,13 @@ final readonly class SendResult
         public ?ReceptionResult $receptionResult = null,
         public ?AuthorizationResult $authorizationResult = null,
         public ?string $error = null,
-    )
-    {
+    ) {
     }
 
     public static function success(
         ReceptionResult  $receptionStatus,
         AuthorizationResult $authorizationResult,
-    ): self
-    {
+    ): self {
         return new self(true, $receptionStatus, $authorizationResult);
     }
 
@@ -27,8 +25,7 @@ final readonly class SendResult
         string $error,
         ?ReceptionResult $receptionResult = null,
         ?AuthorizationResult $authorizationResult = null,
-    ): self
-    {
+    ): self {
         return new self(false, $receptionResult, $authorizationResult, $error);
     }
 

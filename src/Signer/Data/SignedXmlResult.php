@@ -9,8 +9,9 @@ final readonly class SignedXmlResult
     public function __construct(
         public string $xml,
         public string $signatureId,
-        public string $signedAt
-    ) {}
+        public string $signedAt,
+    ) {
+    }
 
     public function toString(): string
     {

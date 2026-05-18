@@ -21,8 +21,7 @@ final class AuthorizationClient
         private readonly \MTZ\Toolkit\Sender\Services\ResponseParser $responseParser = new \MTZ\Toolkit\Sender\Services\ResponseParser(),
         private readonly SoapClientFactoryInterface $soapClientFactory = new NativeSoapClientFactory(),
         private readonly \MTZ\Toolkit\Sender\Contracts\SleeperInterface $sleeper = new \MTZ\Toolkit\Sender\Support\NativeSleeper(),
-    )
-    {
+    ) {
     }
 
     public function authorize(string $accessKey): AuthorizationResult
@@ -35,7 +34,7 @@ final class AuthorizationClient
         {
             $client = $this->soapClientFactory->make(
                 $this->config->authorizationWsdl(),
-                $this->config->normalizedSoapOptions()
+                $this->config->normalizedSoapOptions(),
             );
 
             while ($attempts < $this->config->maxAttempts)
@@ -45,7 +44,7 @@ final class AuthorizationClient
                 try
                 {
                     $this->lastResponse = $client->autorizacionComprobante([
-                        'claveAccesoComprobante' => $accessKey
+                        'claveAccesoComprobante' => $accessKey,
                     ]);
 
                     $status = $this->responseParser->authorizationStatus($this->lastResponse);
@@ -75,8 +74,7 @@ final class AuthorizationClient
                         attempts: $attempts,
                         rawResponse: $this->lastResponse,
                     );
-                }
-                catch (SoapFault $exception)
+                } catch (SoapFault $exception)
                 {
                     if ($attempts >= $this->config->maxAttempts)
                     {
@@ -96,8 +94,7 @@ final class AuthorizationClient
                 error: 'Max attempts reached, no response received.',
                 attempts: $attempts,
             );
-        }
-        catch (SoapFault $exception)
+        } catch (SoapFault $exception)
         {
             return AuthorizationResult::failure(
                 status: null,
@@ -128,10 +125,11 @@ final class AuthorizationClient
         }
 
         return implode(
-            "\n", array_map(
-                static fn($message): string => $message->toString(),
-                $messages
-            )
+            "\n",
+            array_map(
+                static fn ($message): string => $message->toString(),
+                $messages,
+            ),
         );
     }
 }

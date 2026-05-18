@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace MTZ\Toolkit\Signer\Support;
 
 use MTZ\Toolkit\Signer\Contract\SignatureEngineInterface;
@@ -18,11 +20,18 @@ final class OpenSslSignature implements SignatureEngineInterface
 
         $signature = '';
 
-        if (! openssl_sign($content, $signature, $privateKey, OPENSSL_ALGO_SHA1))
+        $signed = openssl_sign(
+            $content,
+            $signature,
+            $privateKey,
+            OPENSSL_ALGO_SHA1,
+        );
+
+        if (! $signed || $signature === '')
         {
-            throw new CertificateException('Failed to create digital signature.');
+            throw new CertificateException('Failed to create signature');
         }
 
-        return base64_decode((string) $signature);
+        return base64_encode((string) $signature);
     }
 }

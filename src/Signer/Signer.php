@@ -30,9 +30,8 @@ final class Signer
         private readonly SignerConfig $config = new SignerConfig(),
         ?CertificateLoaderInterface $certificateLoader = null,
         private readonly ?ClockInterface $clock = null,
-        private readonly ?IdGeneratorInterface $idGenerator = null
-    )
-    {
+        private readonly ?IdGeneratorInterface $idGenerator = null,
+    ) {
         $certificateLoader ??= new Pkcs12CertificateLoader();
 
         $this->certificateData = $certificateLoader->load(
@@ -67,7 +66,7 @@ final class Signer
             config: $this->config,
             clock: $this->clock ?? new SystemClock(),
             idGenerator: $this->idGenerator ?? new RamseyIdGenerator(),
-            openSslSignature: new OpenSslSignature()
+            openSslSignature: new OpenSslSignature(),
         );
 
         return $signer->sign(

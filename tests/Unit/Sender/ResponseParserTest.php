@@ -21,7 +21,7 @@ final class ResponseParserTest extends TestCase
 
         $this->assertSame(
             ReceptionStatus::Received,
-            $parser->receptionStatus($response)
+            $parser->receptionStatus($response),
         );
 
         $this->assertTrue($parser->isReceptionSuccessful($response));
@@ -37,8 +37,8 @@ final class ResponseParserTest extends TestCase
                 type: 'ERROR',
                 code: '43',
                 message: 'CLAVE ACCESO REGISTRADA',
-                additionalInformation: 'La clave de acceso ya ha sido registrada'
-            )
+                additionalInformation: 'La clave de acceso ya ha sido registrada',
+            ),
         ]);
 
         $messages = $parser->receptionMessage($response);
@@ -61,14 +61,14 @@ final class ResponseParserTest extends TestCase
             status: 'AUTORIZADO',
             accessKey: '1305202601179001234500110010010000000251234567817',
             xml: '<factura>Autorizada</factura>',
-            authorizationDate: '2026-05-13T10:30:00-05:00'
+            authorizationDate: '2026-05-13T10:30:00-05:00',
         );
 
         $document = $parser->authorizedDocument($response);
 
         $this->assertSame(
             AuthorizationStatus::Authorized,
-            $parser->authorizationStatus($response)
+            $parser->authorizationStatus($response),
         );
 
         $this->assertTrue($parser->isAuthorizationSuccessful($response));
@@ -89,9 +89,9 @@ final class ResponseParserTest extends TestCase
                     type: 'ERROR',
                     code: '70',
                     message: 'ERROR EN FIRMA',
-                    additionalInformation: 'Firma invalida'
-                )
-            ]
+                    additionalInformation: 'Firma invalida',
+                ),
+            ],
         );
 
         $messages = $parser->authorizationMessages($response);
@@ -112,10 +112,10 @@ final class ResponseParserTest extends TestCase
                 'estado' => $status,
                 'comprobantes' => (object) [
                     'comprobante' => (object) [
-                        'mensajes' => $messages
-                    ]
-                ]
-            ]
+                        'mensajes' => $messages,
+                    ],
+                ],
+            ],
         ];
     }
 
@@ -124,9 +124,8 @@ final class ResponseParserTest extends TestCase
         ?string $accessKey = null,
         ?string $xml = null,
         ?string $authorizationDate = null,
-        array $messages = []
-    ): object
-    {
+        array $messages = [],
+    ): object {
         return (object) [
             'RespuestaAutorizacionComprobante' => (object) [
                 'autorizaciones' => (object) [
@@ -135,10 +134,10 @@ final class ResponseParserTest extends TestCase
                         'numeroAutorizacion' => $accessKey,
                         'comprobante' => $xml,
                         'fechaAutorizacion' => $authorizationDate,
-                        'mensajes' => $messages
-                    ]
-                ]
-            ]
+                        'mensajes' => $messages,
+                    ],
+                ],
+            ],
         ];
     }
 
@@ -147,8 +146,7 @@ final class ResponseParserTest extends TestCase
         string $code,
         string $message,
         string $additionalInformation = '',
-    ): object
-    {
+    ): object {
         return (object) [
             'tipo' => $type,
             'identificador' => $code,
