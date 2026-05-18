@@ -122,6 +122,13 @@ XML;
         $xpath = new DOMXPath($document);
         $nodes = $xpath->query('//*[local-name()="SignatureValue"]');
 
-        return $nodes?->item(0)?->nodeValue ?? '';
+        if ($nodes === false)
+        {
+            return '';
+        }
+
+        $node = $nodes->item(0);
+
+        return (string)$node?->nodeValue;
     }
 }

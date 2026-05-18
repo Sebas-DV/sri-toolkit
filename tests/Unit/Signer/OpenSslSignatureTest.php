@@ -34,9 +34,16 @@ final class OpenSslSignatureTest extends TestCase
 
             $this->assertNotEmpty($signature);
 
+            $decodedSignature = base64_decode($signature, true);
+
+            if ($decodedSignature === false)
+            {
+                $this->fail('Failed to decode signature');
+            }
+
             $verification = openssl_verify(
                 $content,
-                base64_decode($signature, true),
+                $decodedSignature,
                 $certificateData->certificatePem,
                 OPENSSL_ALGO_SHA1,
             );

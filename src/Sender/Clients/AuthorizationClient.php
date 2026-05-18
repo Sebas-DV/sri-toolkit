@@ -43,21 +43,32 @@ final class AuthorizationClient
 
                 try
                 {
-                    $this->lastResponse = $client->autorizacionComprobante([
+                    $response = $client->autorizacionComprobante([
                         'claveAccesoComprobante' => $accessKey,
                     ]);
 
-                    $status = $this->responseParser->authorizationStatus($this->lastResponse);
-                    $messages = $this->responseParser->authorizationMessages($this->lastResponse);
+                    if (! is_object($response))
+                    {
+                        return AuthorizationResult::failure(
+                            status: null,
+                            error: 'Invalid response from WebService SRI',
+                            attempts: $attempts,
+                        );
+                    }
 
-                    if ($this->responseParser->isAuthorizationSuccessful($this->lastResponse))
+                    $this->lastResponse = $response;
+
+                    $status = $this->responseParser->authorizationStatus($response);
+                    $messages = $this->responseParser->authorizationMessages($response);
+
+                    if ($this->responseParser->isAuthorizationSuccessful($response))
                     {
                         return AuthorizationResult::success(
                             status: $status,
-                            authorizedDocument: $this->responseParser->authorizedDocument($this->lastResponse),
+                            authorizedDocument: $this->responseParser->authorizedDocument($response),
                             messages: $messages,
                             attempts: $attempts,
-                            rawResponse: $this->lastResponse,
+                            rawResponse: $response,
                         );
                     }
 
@@ -72,7 +83,7 @@ final class AuthorizationClient
                         error: $this->messagesToString($messages),
                         messages: $messages,
                         attempts: $attempts,
-                        rawResponse: $this->lastResponse,
+                        rawResponse: $response,
                     );
                 } catch (SoapFault $exception)
                 {

@@ -32,27 +32,37 @@ final class ReceptionClient
                 $this->config->normalizedSoapOptions(),
             );
 
-            $this->lastResponse = $client->validarComprobante([
+            $response = $client->validarComprobante([
                 'xml' => $signedXml,
             ]);
 
-            $status = $this->responseParser->receptionStatus($this->lastResponse);
-            $messages = $this->responseParser->receptionMessage($this->lastResponse);
+            if (! is_object($response))
+            {
+                return ReceptionResult::failure(
+                    status: null,
+                    error: 'Invalid response from WebService SRI',
+                );
+            }
 
-            if (! $this->responseParser->isReceptionSuccessful($this->lastResponse))
+            $this->lastResponse = $response;
+
+            $status = $this->responseParser->receptionStatus($response);
+            $messages = $this->responseParser->receptionMessage($response);
+
+            if (! $this->responseParser->isReceptionSuccessful($response))
             {
                 return ReceptionResult::failure(
                     status: $status,
                     error: $this->messagesToString($messages),
                     messages: $messages,
-                    rawResponse: $this->lastResponse,
+                    rawResponse: $response,
                 );
             }
 
             return ReceptionResult::success(
                 status: $status,
                 messages: $messages,
-                rawResponse: $this->lastResponse,
+                rawResponse: $response,
             );
         } catch (SoapFault $exception)
         {

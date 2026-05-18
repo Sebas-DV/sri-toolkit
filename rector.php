@@ -13,6 +13,7 @@ return RectorConfig::configure()
     ->withSets([
             LevelSetList::UP_TO_PHP_82,
     ])
+    ->withImportNames()
     ->withTypeCoverageLevel(1)
     ->withDeadCodeLevel(1)
     ->withCodeQualityLevel(1);

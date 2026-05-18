@@ -49,8 +49,15 @@ final class XadesBesXmlSigner
 
         $document->documentElement->appendChild($signature);
 
+        $xml = $document->saveXML();
+
+        if ($xml === false)
+        {
+            throw new SignerException('Could not serialize signed XML.');
+        }
+
         return new SignedXmlResult(
-            xml: $document->saveXML(),
+            xml: $xml,
             signatureId: $this->ids['signature'],
             signedAt: $this->signedAt,
         );

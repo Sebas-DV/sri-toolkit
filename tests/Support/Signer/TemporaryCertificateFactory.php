@@ -71,7 +71,7 @@ final class TemporaryCertificateFactory
                 ],
             );
 
-            if ($csr === false)
+            if ($csr === false || $csr === true)
             {
                 throw new RuntimeException('Failed to generate CSR: ' . self::openSslError());
             }

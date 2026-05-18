@@ -105,6 +105,13 @@ final class XadesBesXmlSignerTest extends TestCase
 
         $nodes = $xpath->query('//*[local-name()="SignatureValue"]');
 
-        return $nodes?->item(0)?->nodeValue ?? '';
+        if ($nodes === false)
+        {
+            return '';
+        }
+
+        $node = $nodes->item(0);
+
+        return (string)$node?->nodeValue;
     }
 }

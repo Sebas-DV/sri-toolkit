@@ -61,7 +61,14 @@ final class SenderTest extends TestCase
         $this->assertSame(['<facturaFirmada/>'], $fakeSoapClient->receivedXmls);
         $this->assertSame([self::ACCESS_KEY], $fakeSoapClient->authorizedAccessKeys);
         $this->assertSame([3], $fakeSleeper->sleepSeconds);
-        $this->assertSame('<factura>Autorizada</factura>', $result->authorizationResult?->authorizedDocument?->xml);
+
+        $this->assertNotNull($result->authorizationResult);
+        $this->assertNotNull($result->authorizationResult->authorizedDocument);
+
+        $this->assertSame(
+            '<factura>Autorizada</factura>',
+            $result->authorizationResult->authorizedDocument->xml
+        );
     }
 
     /**

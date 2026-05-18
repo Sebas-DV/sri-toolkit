@@ -73,8 +73,8 @@ final class ResponseParserTest extends TestCase
 
         $this->assertTrue($parser->isAuthorizationSuccessful($response));
         $this->assertSame('1305202601179001234500110010010000000251234567817', $document?->accessKey);
-        $this->assertSame('<factura>Autorizada</factura>', $document?->xml);
-        $this->assertSame('2026-05-13T10:30:00-05:00', $document?->authorizationDate);
+        $this->assertSame('<factura>Autorizada</factura>', $document->xml);
+        $this->assertSame('2026-05-13T10:30:00-05:00', $document->authorizationDate);
     }
 
     #[Test]

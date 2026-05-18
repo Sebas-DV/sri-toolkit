@@ -1,0 +1,21 @@
+parameters:
+    level: 9
+
+    paths:
+        - src
+        - tests
+
+    phpVersion: 80200
+
+    tmpDir: var/phpstan
+
+    reportUnmatchedIgnoredErrors: false
+
+    ignoreErrors:
+        -
+            identifier: missingType.iterableValue
+        -
+            identifier: missingType.generics
+        -
+            identifier: method.unused
+            path: tests/Support/FakeSoapClient.php

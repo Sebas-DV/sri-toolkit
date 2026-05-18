@@ -38,10 +38,13 @@
         "rector:test": "rector process --dry-run",
         "cs": "php-cs-fixer fix --diff --verbose",
         "cs:test": "php-cs-fixer check --diff --verbose",
+        "stan": "phpstan analyse --memory-limit=1G",
+        "stan:baseline": "phpstan analyse --generate-baseline",
         "analyze": [
             "@cs:test",
             "@rector:test",
-            "@test"
+            "@test",
+            "@stan"
         ],
         "fix": [
             "@rector",
@@ -59,9 +62,9 @@
     },
     "prefer-stable": true,
     "require-dev": {
-        "phpunit/phpunit": "^11.5.55",
+        "friendsofphp/php-cs-fixer": "^3.95",
         "phpstan/phpstan": "^2.1",
-        "rector/rector": "^2.4",
-        "friendsofphp/php-cs-fixer": "^3.95"
+        "phpunit/phpunit": "^11.5.55",
+        "rector/rector": "^2.4"
     }
 }

@@ -37,6 +37,9 @@ final class ResponseParser
             : null;
     }
 
+    /**
+     * @return array<int, Message>
+     */
     public function receptionMessage(object $response): array
     {
         $messages = [];
@@ -50,12 +53,20 @@ final class ResponseParser
 
         foreach ($this->normalizeIterable($voucher->mensajes) as $message)
         {
+            if (! is_object($message))
+            {
+                continue;
+            }
+
             $messages[] = $this->messageFromSoapObject($message);
         }
 
         return $messages;
     }
 
+    /**
+     * @return array<int, Message>
+     */
     public function authorizationMessages(object $response): array
     {
         $authorization = $this->authorizationNode($response);
@@ -73,9 +84,19 @@ final class ResponseParser
             {
                 foreach ($message as $item)
                 {
+                    if (! is_object($item))
+                    {
+                        continue;
+                    }
+
                     $messages[] = $this->messageFromSoapObject($item);
                 }
 
+                continue;
+            }
+
+            if (! is_object($message))
+            {
                 continue;
             }
 
@@ -94,10 +115,14 @@ final class ResponseParser
             return null;
         }
 
+        $accessKey = $authorization->numeroAutorizacion ?? null;
+        $xml = $authorization->comprobante ?? null;
+        $authorizationDate = $authorization->fechaAutorizacion ?? null;
+
         return new AuthorizedDocument(
-            accessKey: $authorization->numeroAutorizacion ?? null,
-            xml: $authorization->comprobante ?? null,
-            authorizationDate: $authorization->fechaAutorizacion ?? null,
+            accessKey: is_string($accessKey) ? $accessKey : null,
+            xml: is_string($xml) ? $xml : null,
+            authorizationDate: is_string($authorizationDate) ? $authorizationDate : null,
         );
     }
 
@@ -117,7 +142,9 @@ final class ResponseParser
 
         if (is_array($authorization))
         {
-            return $authorization[0] ?? null;
+            $firstAuthorization = $authorization[0] ?? null;
+
+            return is_object($firstAuthorization) ? $firstAuthorization : null;
         }
 
         return is_object($authorization) ? $authorization : null;
@@ -133,16 +160,19 @@ final class ResponseParser
         );
     }
 
+    /**
+     * @return array<int, mixed>
+     */
     private function normalizeIterable(mixed $value): array
     {
         if (is_array($value))
         {
-            return $value;
+            return array_values($value);
         }
 
         if ($value instanceof Traversable)
         {
-            return iterator_to_array($value);
+            return array_values(iterator_to_array($value));
         }
 
         return [$value];
