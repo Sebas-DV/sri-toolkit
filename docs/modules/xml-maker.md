@@ -2,17 +2,17 @@
 
 `XMLMaker` convierte un payload PHP en un `DOMDocument` compatible con la estructura XML del SRI.
 
+Para ejemplos completos de cada comprobante soportado, revisa [Generar XML por tipo](/guides/xml-by-document-type).
+
 ## Estado de soporte
 
 | Documento | Estado |
 | --- | --- |
 | Factura (`XmlDocumentType::Invoice`) | Implementado |
-| Nota de credito | Pendiente |
-| Nota de debito | Pendiente |
-| Guia de remision | Pendiente |
-| Comprobante de retencion | Pendiente |
-
-Los tipos pendientes existen en el enum, pero sus builders lanzan `UnsupportedDocumentTypeException`.
+| Nota de credito (`XmlDocumentType::CreditNote`) | Implementado |
+| Nota de debito (`XmlDocumentType::DebitNote`) | Implementado |
+| Guia de remision (`XmlDocumentType::DeliveryGuide`) | Implementado |
+| Comprobante de retencion (`XmlDocumentType::WithholdingReceipt`) | Implementado |
 
 ## API principal
 
@@ -154,7 +154,7 @@ Si `currency` esta vacio, el builder usa `DOLAR`.
 El nodo raiz se crea con `id="comprobante"` y la version del tipo documental:
 
 ```xml
-<factura id="comprobante" version="1.1.0">
+<factura id="comprobante" version="2.1.0">
 ```
 
 Ese atributo es necesario para la firma posterior.

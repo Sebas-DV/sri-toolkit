@@ -38,6 +38,7 @@ export default defineConfig({
         text: 'Guias',
         items: [
           { text: 'Workflow completo', link: '/guides/complete-workflow' },
+          { text: 'Generar XML por tipo', link: '/guides/xml-by-document-type' },
           { text: 'Ejemplo de factura', link: '/guides/invoice-example' },
           { text: 'Testing', link: '/guides/testing' },
           { text: 'Troubleshooting', link: '/troubleshooting' }

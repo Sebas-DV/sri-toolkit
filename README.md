@@ -1,5 +1,10 @@
 # SRI Toolkit
 
+[![Latest Version on Packagist](https://img.shields.io/packagist/v/matiz-studio-creative/sri-toolkit.svg?style=flat-square)](https://packagist.org/packages/matiz-studio-creative/sri-toolkit)
+[![Total Downloads](https://img.shields.io/packagist/dt/matiz-studio-creative/sri-toolkit.svg?style=flat-square)](https://packagist.org/packages/matiz-studio-creative/sri-toolkit)
+[![License](https://img.shields.io/packagist/l/matiz-studio-creative/sri-toolkit.svg?style=flat-square)](LICENSE)
+[![PHP Version](https://img.shields.io/packagist/php-v/matiz-studio-creative/sri-toolkit.svg?style=flat-square)](composer.json)
+
 PHP toolkit for Ecuador SRI electronic documents. It helps generate access keys, build XML documents, sign them with XAdES-BES using PKCS#12 certificates, and send signed XML to the SRI reception and authorization web services.
 
 ## Documentation
@@ -8,11 +13,14 @@ Full documentation is available at [sri-toolkit.matizstudiocreative.com](https:/
 
 ## Features
 
-- Generate valid 49-digit SRI access keys.
-- Build XML for supported electronic document types.
-- Sign SRI XML documents with PKCS#12 certificates.
-- Send signed XML to SRI reception and authorization SOAP services.
-- Parse reception and authorization responses into typed result objects.
+- Electronic signing with PKCS#12 certificate files (`.p12` / `.pfx`) using the SRI-compatible XAdES-BES flow.
+- Certificate metadata extraction for issuer, serial number and RSA public key material required by the XML signature.
+- XML generation for the main SRI electronic documents: invoices, credit notes, debit notes, delivery guides and withholding receipts.
+- XML structures aligned with the official SRI document formats and ready for signing.
+- SOAP client for SRI reception and authorization web services.
+- Automatic 49-digit SRI access key generation with the modulo 11 verification digit.
+- Typed reception and authorization response parsing.
+- Support for SRI testing and production environments.
 - Testable internals through injectable SOAP, clock, signer and sleeper dependencies.
 
 ## Requirements
@@ -42,8 +50,10 @@ XML generation currently supports:
 | Document | Enum |
 | --- | --- |
 | Invoice | `XmlDocumentType::Invoice` |
-
-The XML builders for credit notes, debit notes, delivery guides and withholding receipts are declared in the API but currently throw `UnsupportedDocumentTypeException`.
+| Credit note | `XmlDocumentType::CreditNote` |
+| Debit note | `XmlDocumentType::DebitNote` |
+| Delivery guide | `XmlDocumentType::DeliveryGuide` |
+| Withholding receipt | `XmlDocumentType::WithholdingReceipt` |
 
 ## Quick Start
 
@@ -236,7 +246,7 @@ $signedXml = (new Signer(
 The XML root must contain the expected SRI document id:
 
 ```xml
-<factura id="comprobante" version="1.1.0">
+<factura id="comprobante" version="2.1.0">
 ```
 
 The signer uses the SRI-compatible XMLDSig/XAdES-BES structure implemented by this package.

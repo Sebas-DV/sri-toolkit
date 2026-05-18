@@ -2,7 +2,30 @@
     "name": "matiz-studio-creative/sri-toolkit",
     "type": "library",
     "license": "MIT",
-    "description": "PHP Toolkit for SRI Web Services.",
+    "description": "PHP toolkit for Ecuador SRI electronic documents: access keys, XML builders, XAdES-BES signing and SOAP delivery.",
+    "keywords": [
+        "sri",
+        "sri-ecuador",
+        "sri-xml",
+        "ecuador",
+        "servicio-de-rentas-internas",
+        "facturacion-electronica",
+        "factura-electronica",
+        "electronic-invoicing",
+        "comprobantes-electronicos",
+        "clave-acceso",
+        "modulo-11",
+        "xades-bes",
+        "pkcs12",
+        "soap",
+        "xml",
+        "factura",
+        "nota-credito",
+        "nota-debito",
+        "guia-remision",
+        "comprobante-retencion"
+    ],
+    "homepage": "https://sri-toolkit.matizstudiocreative.com",
     "autoload": {
         "psr-4": {
             "MTZ\\Toolkit\\": "src/"
@@ -22,6 +45,11 @@
         }
     ],
     "minimum-stability": "stable",
+    "support": {
+        "docs": "https://sri-toolkit.matizstudiocreative.com",
+        "issues": "https://github.com/Sebas-DV/sri-toolkit/issues",
+        "source": "https://github.com/Sebas-DV/sri-toolkit"
+    },
     "require": {
         "php": ">=8.2",
         "ext-soap": "*",
@@ -58,7 +86,8 @@
         "allow-plugins": {
             "php-http/discovery": true
         },
-        "sort-packages": true
+        "sort-packages": true,
+        "optimize-autoloader": true
     },
     "prefer-stable": true,
     "require-dev": {

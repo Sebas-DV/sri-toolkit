@@ -27,7 +27,7 @@ El documento debe:
 Ejemplo valido:
 
 ```xml
-<factura id="comprobante" version="1.1.0">
+<factura id="comprobante" version="2.1.0">
   <infoTributaria />
 </factura>
 ```
