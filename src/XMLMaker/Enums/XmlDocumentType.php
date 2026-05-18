@@ -40,9 +40,9 @@ enum XmlDocumentType: string
     {
         return match ($this)
         {
-            self::Invoice,
-            self::CreditNote,
-            self::DebitNote,
+            self::Invoice => '2.1.0',
+            self::CreditNote => '1.1.0',
+            self::DebitNote => '1.0.0',
             self::DeliveryGuide => '1.1.0',
             self::WithholdingReceipt => '2.0.0',
         };

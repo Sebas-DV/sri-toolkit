@@ -44,7 +44,7 @@ final class CompleteWorkflowTest extends TestCase
 
             $xml = $this->generateInvoiceXml($accessKey);
 
-            $this->assertStringContainsString('<factura id="comprobante" version="1.1.0">', $xml);
+            $this->assertStringContainsString('<factura id="comprobante" version="2.1.0">', $xml);
             $this->assertStringContainsString("<claveAcceso>{$accessKey}</claveAcceso>", $xml);
 
             $signedXml = (new Signer(

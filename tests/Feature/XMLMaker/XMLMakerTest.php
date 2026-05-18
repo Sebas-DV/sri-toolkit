@@ -28,7 +28,7 @@ final class XMLMakerTest extends TestCase
 
         $xml = $result->toString();
 
-        $this->assertStringContainsString('<factura id="comprobante" version="1.1.0">', $xml);
+        $this->assertStringContainsString('<factura id="comprobante" version="2.1.0">', $xml);
         $this->assertStringContainsString('<infoTributaria>', $xml);
         $this->assertStringContainsString('<infoFactura>', $xml);
         $this->assertStringContainsString('<detalles>', $xml);

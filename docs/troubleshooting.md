@@ -37,7 +37,7 @@ El nodo raiz no contiene `id="comprobante"` ni `Id="comprobante"`.
 Ejemplo:
 
 ```xml
-<factura id="comprobante" version="1.1.0">
+<factura id="comprobante" version="2.1.0">
 ```
 
 Si generas XML con `XMLMaker`, este atributo se agrega automaticamente.
@@ -47,10 +47,6 @@ Si generas XML con `XMLMaker`, este atributo se agrega automaticamente.
 El signer valida que la raiz no tenga declaraciones `xmlns`.
 
 Mueve namespaces a los nodos internos o genera el XML con `XMLMaker`.
-
-## `Unsupported document type`
-
-Intentaste generar XML para un tipo diferente de factura. Actualmente solo `XmlDocumentType::Invoice` esta implementado.
 
 ## `Invalid response from WebService SRI`
 

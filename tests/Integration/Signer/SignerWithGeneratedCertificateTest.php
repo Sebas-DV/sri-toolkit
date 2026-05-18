@@ -96,7 +96,7 @@ final class SignerWithGeneratedCertificateTest extends TestCase
     {
         return <<<XML
 <?xml version="1.0" encoding="UTF-8"?>
-<factura id="comprobante" version="1.1.0">
+<factura id="comprobante" version="2.1.0">
     <infoTributaria>
         <ambiente>1</ambiente>
         <tipoEmision>1</tipoEmision>
