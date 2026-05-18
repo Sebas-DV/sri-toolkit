@@ -1,6 +1,64 @@
-.idea
-.phpunit.cache
-vendor
-node_modules
+# IDE
+.idea/
+.vscode/
+
+# Dependencies
+vendor/
+node_modules/
+
+# Composer
+composer.phar
+
+# PHPUnit
+.phpunit.cache/
+.phpunit.result.cache
+
+# PHP CS Fixer
 .php-cs-fixer.cache
-var
+
+# PHPStan / cache
+var/
+.phpstan.cache/
+
+# Rector cache
+.rector/
+
+# Coverage / reports
+coverage/
+build/
+reports/
+clover.xml
+junit.xml
+
+# VitePress / docs build
+docs/.vitepress/dist/
+docs/.vitepress/cache/
+
+# Logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Certificates / private keys
+*.p12
+*.pfx
+*.pem
+*.key
+*.crt
+*.csr
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.temp
+*.swp
+*.swo
