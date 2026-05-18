@@ -6,16 +6,32 @@ namespace MTZ\Toolkit\Sender\Clients;
 
 use MTZ\Toolkit\Sender\Config\SenderConfig;
 use MTZ\Toolkit\Sender\Contracts\SoapClientFactoryInterface;
+use MTZ\Toolkit\Sender\Data\Message;
 use MTZ\Toolkit\Sender\Data\ReceptionResult;
 use MTZ\Toolkit\Sender\Exceptions\ConnectionException;
 use MTZ\Toolkit\Sender\Services\ResponseParser;
 use MTZ\Toolkit\Sender\Support\NativeSoapClientFactory;
 use SoapFault;
 
+/**
+ * Sends signed XML documents to the SRI reception web service for validation.
+ *
+ * This client submits the signed XML to the SRI reception endpoint, parses the SOAP
+ * response, and returns a reception result indicating whether the document was received
+ * or returned with errors.
+ */
 final class ReceptionClient
 {
+    /**
+     * @var object|null The raw SOAP response from the last reception request.
+     */
     private ?object $lastResponse = null;
 
+    /**
+     * @param SenderConfig $config The sender configuration for WSDL URLs.
+     * @param ResponseParser $responseParser Service that parses SOAP responses from the SRI.
+     * @param SoapClientFactoryInterface $soapClientFactory Factory for creating SOAP clients.
+     */
     public function __construct(
         private readonly SenderConfig $config,
         private readonly ResponseParser $responseParser = new ResponseParser(),
@@ -23,6 +39,12 @@ final class ReceptionClient
     ) {
     }
 
+    /**
+     * Submits a signed XML document to the SRI reception web service for validation.
+     *
+     * @param string $signedXml The signed XML document to validate.
+     * @return ReceptionResult The result of the reception attempt.
+     */
     public function validate(string $signedXml): ReceptionResult
     {
         try
@@ -73,11 +95,22 @@ final class ReceptionClient
         }
     }
 
+    /**
+     * Returns the raw SOAP response from the last reception request.
+     *
+     * @return object|null The raw response object, or null if no request has been made.
+     */
     public function lastResponse(): ?object
     {
         return $this->lastResponse;
     }
 
+    /**
+     * Converts an array of Message objects to a single human-readable string.
+     *
+     * @param array<int, Message> $messages The messages to convert.
+     * @return string A concatenated string of all messages separated by newlines.
+     */
     private function messagesToString(array $messages): string
     {
         if ($messages === [])

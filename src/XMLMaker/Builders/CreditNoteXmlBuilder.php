@@ -10,10 +10,17 @@ use MTZ\Toolkit\XMLMaker\Data\XmlGenerationData;
 use MTZ\Toolkit\XMLMaker\Exceptions\InvalidXmlDataException;
 use MTZ\Toolkit\XMLMaker\Support\ArrayReader;
 
+/**
+ * Builds SRI Credit Note (Nota de Crédito) XML documents.
+ */
 final class CreditNoteXmlBuilder extends AbstractXmlDocumentBuilder
 {
     /**
-     * @throws DOMException
+     * Appends credit-note-specific information to the root element.
+     *
+     * @param DOMElement $root The root element of the XML document.
+     * @param XmlGenerationData $data The generation data including credit note payload.
+     * @throws DOMException When a required DOM element cannot be created.
      */
     protected function appendDocumentInformation(DOMElement $root, XmlGenerationData $data): void
     {
@@ -47,6 +54,14 @@ final class CreditNoteXmlBuilder extends AbstractXmlDocumentBuilder
         $this->appendDetails($root, $data);
     }
 
+    /**
+     * Appends the credit note detail lines (detalles) to the root element.
+     *
+     * @param DOMElement $root The root element to append details to.
+     * @param XmlGenerationData $data The generation data containing detail lines.
+     * @throws InvalidXmlDataException When details are empty.
+     * @throws DOMException When a required DOM element cannot be created.
+     */
     private function appendDetails(DOMElement $root, XmlGenerationData $data): void
     {
         $reader = new ArrayReader($data->data);

@@ -13,13 +13,25 @@ use MTZ\Toolkit\XMLMaker\Config\XmlMakerConfig;
 use MTZ\Toolkit\XMLMaker\Contracts\XmlDocumentBuilderInterface;
 use MTZ\Toolkit\XMLMaker\Enums\XmlDocumentType;
 
+/**
+ * Factory that resolves the correct XML builder for a given SRI document type.
+ */
 final readonly class XmlDocumentBuilderFactory
 {
+    /**
+     * @param XmlMakerConfig $config The shared XML generation configuration.
+     */
     public function __construct(
         private XmlMakerConfig $config = new XmlMakerConfig(),
     ) {
     }
 
+    /**
+     * Creates an XmlDocumentBuilderInterface instance for the specified document type.
+     *
+     * @param XmlDocumentType $documentType The SRI document type to build.
+     * @return XmlDocumentBuilderInterface The builder capable of producing the requested document.
+     */
     public function make(XmlDocumentType $documentType): XmlDocumentBuilderInterface
     {
         return match ($documentType)

@@ -10,8 +10,22 @@ use MTZ\Toolkit\Sender\Enums\AuthorizationStatus;
 use MTZ\Toolkit\Sender\Enums\ReceptionStatus;
 use Traversable;
 
+/**
+ * Parses SOAP responses from the SRI web service into domain objects.
+ *
+ * Provides methods to extract reception status, authorization status, messages,
+ * and authorized document details from raw SOAP response objects. Handles
+ * normalization of various SOAP response structures.
+ */
 final class ResponseParser
 {
+    /**
+     * Parses the SOAP response from the SRI web service and extracts relevant information such as reception status,
+     * authorization status, messages, and authorized document details.
+     *
+     * @param object $response
+     * @return ReceptionStatus|null
+     */
     public function receptionStatus(object $response): ?ReceptionStatus
     {
         $status = $response->RespuestaRecepcionComprobante->estado ?? null;
@@ -21,6 +35,13 @@ final class ResponseParser
             : null;
     }
 
+    /**
+     * Parses the SOAP response from the SRI web service and extracts relevant information such as authorization status,
+     * messages and authorized document details.
+     *
+     * @param object $response
+     * @return AuthorizationStatus|null
+     */
     public function authorizationStatus(object $response): ?AuthorizationStatus
     {
         $authorization = $this->authorizationNode($response);
@@ -38,6 +59,9 @@ final class ResponseParser
     }
 
     /**
+     * Parses the SOAP response from the SRI web service and extracts relevant information such as messages.
+     *
+     * @param object $response
      * @return array<int, Message>
      */
     public function receptionMessage(object $response): array
@@ -65,6 +89,9 @@ final class ResponseParser
     }
 
     /**
+     * Parses the SOAP response from the SRI web service and extracts relevant information such as messages.
+     *
+     * @param object $response
      * @return array<int, Message>
      */
     public function authorizationMessages(object $response): array
@@ -106,6 +133,12 @@ final class ResponseParser
         return $messages;
     }
 
+    /**
+     * Parses the SOAP response from the SRI web service and extracts relevant information such as authorized document details.
+     *
+     * @param object $response
+     * @return AuthorizedDocument|null
+     */
     public function authorizedDocument(object $response): ?AuthorizedDocument
     {
         $authorization = $this->authorizationNode($response);
@@ -126,16 +159,37 @@ final class ResponseParser
         );
     }
 
+    /**
+     * Parses the SOAP response from the SRI web service and extracts relevant information such as reception status,
+     * authorization status, messages, and authorized document details.
+     *
+     * @param object $response
+     * @return bool
+     */
     public function isReceptionSuccessful(object $response): bool
     {
         return $this->receptionStatus($response) === ReceptionStatus::Received;
     }
 
+
+    /**
+     * Parses the SOAP response from the SRI web service and extracts relevant information such as authorization status,
+     * messages and authorized document details.
+     *
+     * @param object $response
+     * @return bool
+     */
     public function isAuthorizationSuccessful(object $response): bool
     {
         return $this->authorizationStatus($response) === AuthorizationStatus::Authorized;
     }
 
+    /**
+     * Helper method to extract the authorization node from the SOAP response, handling cases where it may be an array or a single object.
+     *
+     * @param object $response
+     * @return object|null
+     */
     private function authorizationNode(object $response): ?object
     {
         $authorization = $response->RespuestaAutorizacionComprobante->autorizaciones->autorizacion ?? null;
@@ -150,21 +204,34 @@ final class ResponseParser
         return is_object($authorization) ? $authorization : null;
     }
 
+    /**
+     * Helper method to convert a SOAP object into a Message object.
+     *
+     * @param object $message
+     * @return Message
+     */
     private function messageFromSoapObject(object $message): Message
     {
         return new Message(
-            type: (string) ($message->tipo ?? 'ERROR'),
-            code: (string) ($message->identificador ?? '0'),
-            message: (string) ($message->mensaje ?? 'No message, an error occurred.'),
-            additionalInformation: (string) ($message->informacionAdicional ?? ''),
+            type: $this->toString($message->tipo ?? 'ERROR'),
+            code: $this->toString($message->identificador ?? '0'),
+            message: $this->toString($message->mensaje ?? 'No message, an error occurred.'),
+            additionalInformation: $this->toString($message->informacionAdicional ?? ''),
         );
     }
 
     /**
+     * Helper method to normalize different iterable structures (arrays, Traversable objects, or single objects) into a consistent array format.
+     *
      * @return array<int, mixed>
      */
     private function normalizeIterable(mixed $value): array
     {
+        if (is_object($value) && isset($value->mensaje))
+        {
+            $value = $value->mensaje;
+        }
+
         if (is_array($value))
         {
             return array_values($value);
@@ -176,5 +243,42 @@ final class ResponseParser
         }
 
         return [$value];
+    }
+
+    /**
+     * Helper method to safely convert various types of values into strings, providing a default value when conversion is not possible.
+     *
+     * @param mixed $value
+     * @param string $default
+     * @return string
+     */
+    private function toString(mixed $value, string $default = ''): string
+    {
+        if ($value === null)
+        {
+            return $default;
+        }
+
+        if (is_scalar($value))
+        {
+            return (string) $value;
+        }
+
+        if (is_object($value) && method_exists($value, '__toString'))
+        {
+            return (string) $value;
+        }
+
+        if (is_object($value) && isset($value->mensaje) && is_scalar($value->mensaje))
+        {
+            return (string) $value->mensaje;
+        }
+
+        if (is_object($value) && isset($value->identificador) && is_scalar($value->identificador))
+        {
+            return (string) $value->identificador;
+        }
+
+        return $default;
     }
 }

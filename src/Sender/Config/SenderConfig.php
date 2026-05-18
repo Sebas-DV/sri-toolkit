@@ -6,14 +6,31 @@ namespace MTZ\Toolkit\Sender\Config;
 
 use MTZ\Toolkit\Sender\Enums\Environment;
 
+/**
+ * Configuration container for the SRI sender module.
+ *
+ * Holds environment settings, WSDL URLs for both testing and production,
+ * and tunables for retry attempts, delays, and SOAP client options.
+ */
 final readonly class SenderConfig
 {
+    /** @var string WSDL URL for the production reception endpoint. */
     private const PRODUCTION_RECEPTION_URL = 'https://cel.sri.gob.ec/comprobantes-electronicos-ws/RecepcionComprobantesOffline?wsdl';
+    /** @var string WSDL URL for the testing reception endpoint. */
     private const TEST_RECEPTION_URL = 'https://celcer.sri.gob.ec/comprobantes-electronicos-ws/RecepcionComprobantesOffline?wsdl';
 
+    /** @var string WSDL URL for the production authorization endpoint. */
     private const PRODUCTION_AUTHORIZATION_URL = 'https://cel.sri.gob.ec/comprobantes-electronicos-ws/AutorizacionComprobantesOffline?wsdl';
+    /** @var string WSDL URL for the testing authorization endpoint. */
     private const TEST_AUTHORIZATION_URL = 'https://celcer.sri.gob.ec/comprobantes-electronicos-ws/AutorizacionComprobantesOffline?wsdl';
 
+    /**
+     * @param Environment $environment The target SRI environment (testing or production).
+     * @param int $maxAttempts Maximum number of authorization retry attempts.
+     * @param int $retryDelay Seconds to wait between authorization retries.
+     * @param int $sendDelay Seconds to wait between reception and authorization steps.
+     * @param array<string, mixed> $soapOptions Additional SOAP client options merged with defaults.
+     */
     public function __construct(
         public Environment $environment = Environment::Testing,
         public int $maxAttempts = 5,
@@ -23,6 +40,11 @@ final readonly class SenderConfig
     ) {
     }
 
+    /**
+     * Returns the WSDL URL for the reception web service based on the current environment.
+     *
+     * @return string The reception WSDL URL.
+     */
     public function receptionWsdl(): string
     {
         return $this->environment === Environment::Testing
@@ -30,6 +52,11 @@ final readonly class SenderConfig
             : self::PRODUCTION_RECEPTION_URL;
     }
 
+    /**
+     * Returns the WSDL URL for the authorization web service based on the current environment.
+     *
+     * @return string The authorization WSDL URL.
+     */
     public function authorizationWsdl(): string
     {
         return $this->environment === Environment::Testing
@@ -37,6 +64,11 @@ final readonly class SenderConfig
             : self::PRODUCTION_AUTHORIZATION_URL;
     }
 
+    /**
+     * Merges default SOAP options with user-provided options.
+     *
+     * @return array<string, mixed> The normalized SOAP client options.
+     */
     public function normalizedSoapOptions(): array
     {
         return array_merge([

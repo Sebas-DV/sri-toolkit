@@ -10,10 +10,17 @@ use MTZ\Toolkit\XMLMaker\Data\XmlGenerationData;
 use MTZ\Toolkit\XMLMaker\Exceptions\InvalidXmlDataException;
 use MTZ\Toolkit\XMLMaker\Support\ArrayReader;
 
+/**
+ * Builds SRI Delivery Guide (Guía de Remisión) XML documents.
+ */
 final class DeliveryGuideXmlBuilder extends AbstractXmlDocumentBuilder
 {
     /**
-     * @throws DOMException
+     * Appends delivery-guide-specific information to the root element.
+     *
+     * @param DOMElement $root The root element of the XML document.
+     * @param XmlGenerationData $data The generation data including delivery guide payload.
+     * @throws DOMException When a required DOM element cannot be created.
      */
     protected function appendDocumentInformation(DOMElement $root, XmlGenerationData $data): void
     {
@@ -46,7 +53,12 @@ final class DeliveryGuideXmlBuilder extends AbstractXmlDocumentBuilder
     }
 
     /**
-     * @throws DOMException
+     * Appends the recipients (destinatarios) section to the root element.
+     *
+     * @param DOMElement $root The root element to append recipients to.
+     * @param XmlGenerationData $data The generation data containing recipient entries.
+     * @throws InvalidXmlDataException When recipients are empty.
+     * @throws DOMException When a required DOM element cannot be created.
      */
     private function appendRecipients(DOMElement $root, XmlGenerationData $data): void
     {
@@ -84,7 +96,12 @@ final class DeliveryGuideXmlBuilder extends AbstractXmlDocumentBuilder
     }
 
     /**
-     * @throws DOMException
+     * Appends detail lines (detalles) to a recipient element.
+     *
+     * @param DOMElement $recipientElement The recipient element to append details to.
+     * @param array $details Array of detail entries, each with main_code, auxiliary_code, description, and quantity.
+     * @throws InvalidXmlDataException When details are empty.
+     * @throws DOMException When a required DOM element cannot be created.
      */
     private function appendRecipientDetails(DOMElement $recipientElement, array $details): void
     {

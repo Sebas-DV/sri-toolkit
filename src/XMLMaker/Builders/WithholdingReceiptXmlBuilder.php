@@ -10,10 +10,17 @@ use MTZ\Toolkit\XMLMaker\Data\XmlGenerationData;
 use MTZ\Toolkit\XMLMaker\Exceptions\InvalidXmlDataException;
 use MTZ\Toolkit\XMLMaker\Support\ArrayReader;
 
+/**
+ * Builds SRI Withholding Receipt (Comprobante de Retención) XML documents.
+ */
 final class WithholdingReceiptXmlBuilder extends AbstractXmlDocumentBuilder
 {
     /**
-     * @throws DOMException
+     * Appends withholding-receipt-specific information to the root element.
+     *
+     * @param DOMElement $root The root element of the XML document.
+     * @param XmlGenerationData $data The generation data including withholding receipt payload.
+     * @throws DOMException When a required DOM element cannot be created.
      */
     protected function appendDocumentInformation(DOMElement $root, XmlGenerationData $data): void
     {
@@ -44,7 +51,12 @@ final class WithholdingReceiptXmlBuilder extends AbstractXmlDocumentBuilder
     }
 
     /**
-     * @throws DOMException
+     * Appends supporting documents (docsSustento) section to the root element.
+     *
+     * @param DOMElement $root The root element to append supporting documents to.
+     * @param XmlGenerationData $data The generation data containing supporting documents.
+     * @throws InvalidXmlDataException When supporting documents are empty.
+     * @throws DOMException When a required DOM element cannot be created.
      */
     private function appendSupportingDocuments(DOMElement $root, XmlGenerationData $data): void
     {
@@ -99,7 +111,12 @@ final class WithholdingReceiptXmlBuilder extends AbstractXmlDocumentBuilder
     }
 
     /**
-     * @throws DOMException
+     * Appends supporting document taxes (impuestosDocSustento) to a supporting document element.
+     *
+     * @param DOMElement $supportingDocumentElement The supporting document element to append taxes to.
+     * @param array $taxes Array of tax entries with code, percentage_code, taxable_base, rate, and value.
+     * @throws InvalidXmlDataException When taxes are empty.
+     * @throws DOMException When a required DOM element cannot be created.
      */
     private function appendSupportingDocumentTaxes(DOMElement $supportingDocumentElement, array $taxes): void
     {
@@ -125,7 +142,12 @@ final class WithholdingReceiptXmlBuilder extends AbstractXmlDocumentBuilder
     }
 
     /**
-     * @throws DOMException
+     * Appends reimbursements (reembolsos) to a supporting document element.
+     *
+     * @param DOMElement $supportingDocumentElement The supporting document element to append reimbursements to.
+     * @param array $reimbursements Array of reimbursement entries.
+     * @throws InvalidXmlDataException When reimbursement taxes are empty.
+     * @throws DOMException When a required DOM element cannot be created.
      */
     private function appendReimbursements(DOMElement $supportingDocumentElement, array $reimbursements): void
     {
@@ -158,7 +180,12 @@ final class WithholdingReceiptXmlBuilder extends AbstractXmlDocumentBuilder
     }
 
     /**
-     * @throws DOMException
+     * Appends reimbursement tax details (detalleImpuestos) to a reimbursement element.
+     *
+     * @param DOMElement $reimbursementElement The reimbursement element to append taxes to.
+     * @param array $taxes Array of tax entries with code, percentage_code, rate, taxable_base, and value.
+     * @throws InvalidXmlDataException When taxes are empty.
+     * @throws DOMException When a required DOM element cannot be created.
      */
     private function appendReimbursementTaxes(DOMElement $reimbursementElement, array $taxes): void
     {
@@ -184,7 +211,12 @@ final class WithholdingReceiptXmlBuilder extends AbstractXmlDocumentBuilder
     }
 
     /**
-     * @throws DOMException
+     * Appends withholdings (retenciones) to a supporting document element.
+     *
+     * @param DOMElement $supportingDocumentElement The supporting document element to append withholdings to.
+     * @param array $withholdings Array of withholding entries with code, withholding_code, taxable_base, percentage, and value.
+     * @throws InvalidXmlDataException When withholdings are empty.
+     * @throws DOMException When a required DOM element cannot be created.
      */
     private function appendWithholdings(DOMElement $supportingDocumentElement, array $withholdings): void
     {
@@ -212,7 +244,11 @@ final class WithholdingReceiptXmlBuilder extends AbstractXmlDocumentBuilder
     }
 
     /**
-     * @throws DOMException
+     * Appends dividend information (dividendos) to a withholding element.
+     *
+     * @param DOMElement $withholdingElement The withholding element to append dividends to.
+     * @param array $dividends Array with payment_date, corporate_income_tax, and fiscal_year_profit fields.
+     * @throws DOMException When a required DOM element cannot be created.
      */
     private function appendDividends(DOMElement $withholdingElement, array $dividends): void
     {
@@ -230,7 +266,11 @@ final class WithholdingReceiptXmlBuilder extends AbstractXmlDocumentBuilder
     }
 
     /**
-     * @throws DOMException
+     * Appends banana box purchase information (compraCajBanano) to a withholding element.
+     *
+     * @param DOMElement $withholdingElement The withholding element to append banana purchase data to.
+     * @param array $bananaPurchase Array with box_count and box_price fields.
+     * @throws DOMException When a required DOM element cannot be created.
      */
     private function appendBananaPurchase(DOMElement $withholdingElement, array $bananaPurchase): void
     {
