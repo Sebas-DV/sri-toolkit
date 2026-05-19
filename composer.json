@@ -52,11 +52,12 @@
     },
     "require": {
         "php": ">=8.2",
-        "ext-soap": "*",
-        "ramsey/uuid": "^4.9",
-        "ext-openssl": "*",
         "ext-dom": "*",
-        "ext-libxml": "*"
+        "ext-libxml": "*",
+        "ext-openssl": "*",
+        "ext-soap": "*",
+        "aws/aws-sdk-php": "^3.381",
+        "ramsey/uuid": "^4.9"
     },
     "scripts": {
         "test": "phpunit",
