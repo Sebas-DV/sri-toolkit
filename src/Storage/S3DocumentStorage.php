@@ -21,7 +21,7 @@ final readonly class S3DocumentStorage implements TemporaryUrlDocumentStorageInt
     ) {
     }
 
-    public function put(string $path, string $contents): void
+    public function put(string $path, string $content): void
     {
         $path = PathNormalizer::normalize($path);
 
@@ -30,7 +30,7 @@ final readonly class S3DocumentStorage implements TemporaryUrlDocumentStorageInt
             $this->client->putObject([
                 'Bucket' => $this->bucket,
                 'Key' => $this->key($path),
-                'Body' => $contents,
+                'Body' => $content,
             ]);
         } catch (AwsException $e)
         {

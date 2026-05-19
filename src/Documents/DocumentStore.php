@@ -2,10 +2,11 @@
 
 declare(strict_types=1);
 
-namespace MTZ\Toolkit\Documents\Enums;
+namespace MTZ\Toolkit\Documents;
 
 use DateTimeImmutable;
 use JsonException;
+use MTZ\Toolkit\Documents\Enums\DocumentArtifact;
 use MTZ\Toolkit\Storage\Contracts\DocumentStorageInterface;
 use MTZ\Toolkit\Storage\Support\PathNormalizer;
 
