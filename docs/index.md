@@ -16,6 +16,7 @@ SRI Toolkit cubre las piezas principales de un flujo de facturacion electronica:
 | --- | --- |
 | Clave de acceso | Implementado |
 | XML de factura | Implementado |
+| XML de liquidacion de compra | Implementado |
 | XML de nota de credito | Implementado |
 | XML de nota de debito | Implementado |
 | XML de guia de remision | Implementado |
@@ -65,7 +66,8 @@ Sigue con [Primeros pasos](/getting-started) para generar el XML, firmarlo y env
 ## Modulos
 
 - [AccessKeyGenerator](/modules/access-key-generator): genera claves de acceso SRI.
-- [XMLMaker](/modules/xml-maker): genera XML de factura, notas de credito/debito, guia de remision y comprobante de retencion.
+- [XMLMaker](/modules/xml-maker): genera XML de factura, liquidacion de compra, notas de credito/debito, guia de remision y comprobante de retencion.
+- [Catalogos](/modules/catalogs): consulta y sobreescribe codigos frecuentes.
 - [Signer](/modules/signer): firma XML con XAdES-BES.
 - [Sender](/modules/sender): consume los Web Services del SRI.
 
