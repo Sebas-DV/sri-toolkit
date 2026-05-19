@@ -9,6 +9,7 @@ Para ejemplos completos de cada comprobante soportado, revisa [Generar XML por t
 | Documento | Estado |
 | --- | --- |
 | Factura (`XmlDocumentType::Invoice`) | Implementado |
+| Liquidacion de compra (`XmlDocumentType::PurchaseSettlement`) | Implementado |
 | Nota de credito (`XmlDocumentType::CreditNote`) | Implementado |
 | Nota de debito (`XmlDocumentType::DebitNote`) | Implementado |
 | Guia de remision (`XmlDocumentType::DeliveryGuide`) | Implementado |

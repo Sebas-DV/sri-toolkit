@@ -15,7 +15,7 @@ Full documentation is available at [sri-toolkit.matizstudiocreative.com](https:/
 
 - Electronic signing with PKCS#12 certificate files (`.p12` / `.pfx`) using the SRI-compatible XAdES-BES flow.
 - Certificate metadata extraction for issuer, serial number and RSA public key material required by the XML signature.
-- XML generation for the main SRI electronic documents: invoices, credit notes, debit notes, delivery guides and withholding receipts.
+- XML generation for the main SRI electronic documents: invoices, purchase settlements, credit notes, debit notes, delivery guides and withholding receipts.
 - XML structures aligned with the official SRI document formats and ready for signing.
 - SOAP client for SRI reception and authorization web services.
 - Automatic 49-digit SRI access key generation with the modulo 11 verification digit.
@@ -43,17 +43,104 @@ composer require matiz-studio-creative/sri-toolkit
 
 ## Supported Documents
 
-Access key generation exposes SRI document codes for invoices, purchase settlements, credit notes, debit notes, remission guides and retention vouchers.
+Access key generation exposes the six SRI electronic document codes from the official offline technical sheet:
+
+| Code | Document | Access key |
+| --- | --- | --- |
+| `01` | Invoice | `DocumentType::Invoice` |
+| `03` | Purchase settlement | `DocumentType::PurchaseSettlement` |
+| `04` | Credit note | `DocumentType::CreditNote` |
+| `05` | Debit note | `DocumentType::DebitNote` |
+| `06` | Remission guide | `DocumentType::RemissionGuide` |
+| `07` | Withholding receipt | `DocumentType::RetentionVoucher` |
 
 XML generation currently supports:
 
-| Document | Enum |
+| Code | Document | Enum | XML version |
+| --- | --- | --- | --- |
+| `01` | Invoice | `XmlDocumentType::Invoice` | `2.1.0` |
+| `03` | Purchase settlement | `XmlDocumentType::PurchaseSettlement` | `1.1.0` |
+| `04` | Credit note | `XmlDocumentType::CreditNote` | `1.1.0` |
+| `05` | Debit note | `XmlDocumentType::DebitNote` | `1.0.0` |
+| `06` | Delivery guide | `XmlDocumentType::DeliveryGuide` | `1.1.0` |
+| `07` | Withholding receipt | `XmlDocumentType::WithholdingReceipt` | `2.0.0` |
+
+## Catalogs
+
+Common document codes are available through a runtime-overridable catalog registry based on the official offline technical sheet v2.26 and the ICE annex.
+
+```php
+use MTZ\Toolkit\Catalogs\Catalogs;
+
+$catalogRegistry = Catalogs::registry();
+
+$catalogRegistry->get('vat-rates', '4');        // VAT 15%
+$catalogRegistry->list('payment-methods');      // [{ code: '01', ... }, ...
+$catalogRegistry->getMeta('vat-rates');         // source, updatedAt, notes
+$catalogRegistry->listCatalogs();            // catalog names
+
+$catalogRegistry->override('vat-rates', [
+    '4' => ['code' => '4', 'description' => 'VAT 16%', 'rate' => 16],
+]);
+
+$catalogRegistry->reset('vat-rates');
+```
+
+PHP reserves `list` as a declared method name, so `CatalogRegistry` also exposes `entries('payment-methods')` for static-analysis-friendly code. The magic `$catalogRegistry->list(...)` call is supported for compatibility with the TypeScript API shape.
+
+### Common Document Codes
+
+Identification types (`customer.identification_type`, `subject.identification_type`, carriers):
+
+| Code | Type |
 | --- | --- |
-| Invoice | `XmlDocumentType::Invoice` |
-| Credit note | `XmlDocumentType::CreditNote` |
-| Debit note | `XmlDocumentType::DebitNote` |
-| Delivery guide | `XmlDocumentType::DeliveryGuide` |
-| Withholding receipt | `XmlDocumentType::WithholdingReceipt` |
+| `04` | Taxpayer ID |
+| `05` | National ID |
+| `06` | Passport |
+| `07` | Final consumer |
+| `08` | Foreign ID |
+
+VAT (`percentage_code` when tax `code` is `2`):
+
+| Code | Rate | Notes |
+| --- | --- | --- |
+| `0` | 0% | VAT 0% |
+| `2` | 12% | Historical |
+| `3` | 14% | Historical |
+| `4` | 15% | Common current rate |
+| `5` | 5% | Added by official sheet v2.26 |
+| `6` | 0% | Not subject to tax |
+| `7` | 0% | VAT exempt |
+| `8` | variable | Differentiated VAT |
+| `10` | 13% | Added by official sheet v2.26 |
+
+Payment methods:
+
+| Code | Description |
+| --- | --- |
+| `01` | No financial system used |
+| `15` | Debt compensation |
+| `16` | Debit card |
+| `17` | Electronic money |
+| `18` | Prepaid card |
+| `19` | Credit card |
+| `20` | Other financial system method |
+| `21` | Title endorsement |
+
+VAT withholding (`code: '2'`, `withholding_code`):
+
+| Code | Rate |
+| --- | --- |
+| `9` | 10% |
+| `10` | 20% |
+| `1` | 30% |
+| `11` | 50% |
+| `2` | 70% |
+| `3` | 100% |
+| `7` | 0%, zero withholding |
+| `8` | 0%, withholding does not apply |
+
+Full catalog: use `$catalogRegistry->list('vat-withholding')`.
 
 ## Quick Start
 

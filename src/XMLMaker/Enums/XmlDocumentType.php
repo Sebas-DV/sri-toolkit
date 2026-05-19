@@ -4,27 +4,26 @@ declare(strict_types=1);
 
 namespace MTZ\Toolkit\XMLMaker\Enums;
 
-/**
- * Enumeration of supported SRI electronic document types.
- */
 enum XmlDocumentType: string
 {
     case Invoice = 'invoice';
+    case PurchaseSettlement = 'purchase-settlement';
     case CreditNote = 'credit-note';
     case DebitNote = 'debit-note';
     case DeliveryGuide = 'delivery-guide';
     case WithholdingReceipt = 'withholding-receipt';
 
     /**
-     * Returns the two-digit SRI document code for this document type.
+     * Returns the two-digit document code for this document type.
      *
-     * @return string The SRI code (e.g. '01' for invoices).
+     * @return string The document code (e.g. '01' for invoices).
      */
     public function sriCode(): string
     {
         return match ($this)
         {
             self::Invoice => '01',
+            self::PurchaseSettlement => '03',
             self::CreditNote => '04',
             self::DebitNote => '05',
             self::DeliveryGuide => '06',
@@ -42,6 +41,7 @@ enum XmlDocumentType: string
         return match ($this)
         {
             self::Invoice => 'factura',
+            self::PurchaseSettlement => 'liquidacionCompra',
             self::CreditNote => 'notaCredito',
             self::DebitNote => 'notaDebito',
             self::DeliveryGuide => 'guiaRemision',
@@ -50,7 +50,7 @@ enum XmlDocumentType: string
     }
 
     /**
-     * Returns the SRI specification version for this document type.
+     * Returns the specification version for this document type.
      *
      * @return string The version string (e.g. '2.1.0' for invoices).
      */
@@ -59,6 +59,7 @@ enum XmlDocumentType: string
         return match ($this)
         {
             self::Invoice => '2.1.0',
+            self::PurchaseSettlement => '1.1.0',
             self::CreditNote => '1.1.0',
             self::DebitNote => '1.0.0',
             self::DeliveryGuide => '1.1.0',

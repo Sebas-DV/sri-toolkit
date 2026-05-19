@@ -30,6 +30,7 @@ export default defineConfig({
         items: [
           { text: 'AccessKeyGenerator', link: '/modules/access-key-generator' },
           { text: 'XMLMaker', link: '/modules/xml-maker' },
+          { text: 'Catalogos', link: '/modules/catalogs' },
           { text: 'Signer', link: '/modules/signer' },
           { text: 'Sender', link: '/modules/sender' }
         ]

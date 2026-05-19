@@ -4,7 +4,7 @@ Esta guia documenta como generar cada comprobante electronico soportado por `XML
 
 El flujo siempre tiene tres entradas:
 
-- `documentType`: el valor de `XmlDocumentType` que define raiz, codigo SRI y version XML.
+- `documentType`: el valor de `XmlDocumentType` que define raiz, codigo y version XML.
 - `accessKey`: clave de acceso de 49 digitos generada para el mismo tipo documental.
 - `data`: payload PHP con los campos del comprobante.
 
@@ -44,9 +44,10 @@ file_put_contents(__DIR__ . "/storage/sri/{$accessKey}.xml", $xml);
 
 ## Tipos soportados
 
-| Comprobante | Enum | Codigo SRI | Raiz | Version |
+| Comprobante | Enum | Codigo | Raiz | Version |
 | --- | --- | --- | --- | --- |
 | Factura | `XmlDocumentType::Invoice` | `01` | `factura` | `2.1.0` |
+| Liquidacion de compra | `XmlDocumentType::PurchaseSettlement` | `03` | `liquidacionCompra` | `1.1.0` |
 | Nota de credito | `XmlDocumentType::CreditNote` | `04` | `notaCredito` | `1.1.0` |
 | Nota de debito | `XmlDocumentType::DebitNote` | `05` | `notaDebito` | `1.0.0` |
 | Guia de remision | `XmlDocumentType::DeliveryGuide` | `06` | `guiaRemision` | `1.1.0` |
@@ -59,6 +60,7 @@ La clave de acceso y el XML deben usar el mismo codigo de comprobante. Si genera
 | XML generado | Tipo para la clave de acceso |
 | --- | --- |
 | `XmlDocumentType::Invoice` | `DocumentType::Invoice` |
+| `XmlDocumentType::PurchaseSettlement` | `DocumentType::PurchaseSettlement` |
 | `XmlDocumentType::CreditNote` | `DocumentType::CreditNote` |
 | `XmlDocumentType::DebitNote` | `DocumentType::DebitNote` |
 | `XmlDocumentType::DeliveryGuide` | `DocumentType::RemissionGuide` |
@@ -200,6 +202,77 @@ $xml = buildSriXml(XmlDocumentType::Invoice, $accessKey, $invoicePayload);
 ```
 
 Campos obligatorios: `date`, `sequential`, `company`, `establishment`, `emission_point`, `customer`, `establishment_address`, `total_without_taxes`, `total_discount`, `tax_totals`, `total_amount`, `details` y `details.*.taxes`.
+
+## Liquidacion de compra
+
+Genera una liquidacion de compra con `XmlDocumentType::PurchaseSettlement`. El proveedor se declara en `provider`.
+
+```php
+$purchaseSettlementPayload = [
+    'date' => '13/05/2026',
+    'sequential' => '000000030',
+    'company' => [
+        'ruc' => '1790012345001',
+        'legal_name' => 'MTZ TEST S.A.',
+        'trade_name' => 'MTZ TEST',
+        'head_office_address' => 'Quito',
+        'special_taxpayer_number' => '123',
+    ],
+    'establishment' => ['code' => '001'],
+    'emission_point' => ['code' => '001'],
+    'provider' => [
+        'identification_type' => '05',
+        'identification_number' => '0102030405',
+        'name' => 'PROVIDER TEST',
+        'address' => 'Cuenca',
+    ],
+    'establishment_address' => 'Quito',
+    'requires_accounting' => 'NO',
+    'total_without_taxes' => '10.00',
+    'total_discount' => '0.00',
+    'tax_totals' => [
+        [
+            'code' => '2',
+            'percentage_code' => '4',
+            'taxable_base' => '10.00',
+            'value' => '1.50',
+        ],
+    ],
+    'total_amount' => '11.50',
+    'currency' => 'DOLAR',
+    'payments' => [
+        ['method' => '01', 'total' => '11.50'],
+    ],
+    'details' => [
+        [
+            'main_code' => 'P001',
+            'auxiliary_code' => 'A001',
+            'description' => 'Purchased service',
+            'unit' => 'UND',
+            'quantity' => '1.00',
+            'unit_price' => '10.00',
+            'discount' => '0.00',
+            'total_without_tax' => '10.00',
+            'taxes' => [
+                [
+                    'code' => '2',
+                    'percentage_code' => '4',
+                    'rate' => '15.00',
+                    'taxable_base' => '10.00',
+                    'value' => '1.50',
+                ],
+            ],
+        ],
+    ],
+    'additional_info' => [
+        'Email' => 'provider@example.com',
+    ],
+];
+
+$xml = buildSriXml(XmlDocumentType::PurchaseSettlement, $accessKey, $purchaseSettlementPayload);
+```
+
+Campos obligatorios: `date`, `sequential`, `company`, `establishment`, `emission_point`, `provider`, `establishment_address`, `total_without_taxes`, `total_discount`, `tax_totals`, `total_amount`, `details` y `details.*.taxes`.
 
 ## Nota de credito
 

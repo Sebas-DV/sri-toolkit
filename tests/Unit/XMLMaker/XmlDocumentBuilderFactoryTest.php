@@ -8,6 +8,7 @@ use MTZ\Toolkit\XMLMaker\Builders\CreditNoteXmlBuilder;
 use MTZ\Toolkit\XMLMaker\Builders\DebitNoteXmlBuilder;
 use MTZ\Toolkit\XMLMaker\Builders\DeliveryGuideXmlBuilder;
 use MTZ\Toolkit\XMLMaker\Builders\InvoiceXmlBuilder;
+use MTZ\Toolkit\XMLMaker\Builders\PurchaseSettlementXmlBuilder;
 use MTZ\Toolkit\XMLMaker\Builders\WithholdingReceiptXmlBuilder;
 use MTZ\Toolkit\XMLMaker\Enums\XmlDocumentType;
 use MTZ\Toolkit\XMLMaker\Factories\XmlDocumentBuilderFactory;
@@ -29,6 +30,7 @@ final class XmlDocumentBuilderFactoryTest extends TestCase
     {
         $factory = new XmlDocumentBuilderFactory();
 
+        $this->assertInstanceOf(PurchaseSettlementXmlBuilder::class, $factory->make(XmlDocumentType::PurchaseSettlement));
         $this->assertInstanceOf(CreditNoteXmlBuilder::class, $factory->make(XmlDocumentType::CreditNote));
         $this->assertInstanceOf(DebitNoteXmlBuilder::class, $factory->make(XmlDocumentType::DebitNote));
         $this->assertInstanceOf(DeliveryGuideXmlBuilder::class, $factory->make(XmlDocumentType::DeliveryGuide));
