@@ -1,0 +1,60 @@
+{% extends 'layouts/ride.html.twig' %}
+
+{% block content %}
+    {% set carrier = data.carrier|default({}) %}
+    {% set shipping = data.shipping|default({}) %}
+
+    <div class="box">
+        <table class="plain">
+            <tr>
+                <td style="width: 55%;">
+                    <div><span class="bold">Razón Social Transportista:</span> {{ carrier.name|default('') }}</div>
+                    <div><span class="bold">RUC / CI Transportista:</span> {{ carrier.identification_number|default('') }}</div>
+                    <div><span class="bold">Placa:</span> {{ carrier.plate|default('') }}</div>
+                </td>
+                <td style="width: 45%;">
+                    <div><span class="bold">Punto de Partida:</span> {{ shipping.start_address|default('') }}</div>
+                    <div><span class="bold">Fecha Inicio Transporte:</span> {{ shipping.start_date|default('') }}</div>
+                    <div><span class="bold">Fecha Fin Transporte:</span> {{ shipping.end_date|default('') }}</div>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    {% for recipient in data.recipients|default([]) %}
+        <div class="box">
+            <table class="plain">
+                <tr>
+                    <td style="width: 55%;">
+                        <div><span class="bold">Destinatario:</span> {{ recipient.name|default('') }}</div>
+                        <div><span class="bold">Identificación:</span> {{ recipient.identification_number|default('') }}</div>
+                        <div><span class="bold">Dirección Destino:</span> {{ recipient.destination_address|default('') }}</div>
+                    </td>
+                    <td style="width: 45%;">
+                        <div><span class="bold">Motivo Traslado:</span> {{ recipient.reason|default('') }}</div>
+                        <div><span class="bold">Documento Sustento:</span> {{ recipient.supporting_document_number|default('') }}</div>
+                        <div><span class="bold">Ruta:</span> {{ recipient.route|default('') }}</div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <table class="data-table">
+            <tr><th>Cod. Principal</th><th>Cod. Auxiliar</th><th>Cantidad</th><th>Descripción</th><th>Detalle Adicional</th></tr>
+            {% for detail in recipient.details|default([]) %}
+                <tr>
+                    <td>{{ detail.main_code|default('') }}</td>
+                    <td>{{ detail.auxiliary_code|default('') }}</td>
+                    <td>{{ detail.quantity|default('') }}</td>
+                    <td style="text-align: left;">{{ detail.description|default('') }}</td>
+                    <td style="text-align: left;">
+                        {% if detail.additional_info|default({}) is mapping %}
+                            {% for name, value in detail.additional_info %}{{ name }}: {{ value }}{% if not loop.last %}<br>{% endif %}{% endfor %}
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+        <div class="spacer"></div>
+    {% endfor %}
+{% endblock %}

@@ -1,0 +1,123 @@
+{% extends 'layouts/ride.html.twig' %}
+
+{% block content %}
+    {% set customer = data.customer|default(data.provider|default({})) %}
+
+    <div class="box">
+        <table class="plain">
+            <tr>
+                <td style="width: 65%;">
+                    <div><span class="bold">Razón Social / Nombres y Apellidos:</span> {{ customer.name|default('') }}</div>
+                    <div><span class="bold">Fecha Emisión:</span> {{ data.date|default('') }}</div>
+                    <div><span class="bold">Dirección:</span> {{ customer.address|default('') }}</div>
+                </td>
+                <td style="width: 35%;">
+                    <div><span class="bold">Identificación:</span> {{ customer.identification_number|default('') }}</div>
+                    <div style="margin-top: 12px;"><span class="bold">Guía Remisión:</span> {{ data.delivery_guide|default('') }}</div>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <table class="data-table">
+        <thead>
+        <tr>
+            <th>Cod. Principal</th>
+            <th>Cod. Auxiliar</th>
+            <th>Cant.</th>
+            <th>Descripción</th>
+            <th>Detalle Adicional</th>
+            <th>Detalle Adicional</th>
+            <th>Detalle Adicional</th>
+            <th>Precio Unitario</th>
+            <th>Subsidio</th>
+            <th>Precio Sin Subsidio</th>
+            <th>Descuento</th>
+            <th>Precio Total</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for detail in data.details|default([]) %}
+            {% set additionalValues = [] %}
+            {% if detail.additional_details|default([]) is not empty %}
+                {% for additionalDetail in detail.additional_details|default([])|slice(0, 3) %}
+                    {% set additionalValues = additionalValues|merge([additionalDetail.value|default('')]) %}
+                {% endfor %}
+            {% elseif detail.additional_info|default({}) is mapping %}
+                {% for value in detail.additional_info|default({})|slice(0, 3) %}
+                    {% set additionalValues = additionalValues|merge([value]) %}
+                {% endfor %}
+            {% endif %}
+            <tr>
+                <td>{{ detail.main_code|default('') }}</td>
+                <td>{{ detail.auxiliary_code|default('') }}</td>
+                <td>{{ detail.quantity|default('') }}</td>
+                <td style="text-align: left;">{{ detail.description|default('') }}</td>
+                <td>{{ detail.additional_1|default(additionalValues[0]|default('')) }}</td>
+                <td>{{ detail.additional_2|default(additionalValues[1]|default('')) }}</td>
+                <td>{{ detail.additional_3|default(additionalValues[2]|default('')) }}</td>
+                <td class="right">{{ detail.unit_price|default('0.00') }}</td>
+                <td class="right">{{ detail.subsidy|default('0.00') }}</td>
+                <td class="right">{{ detail.price_without_subsidy|default('0.00') }}</td>
+                <td class="right">{{ detail.discount|default('0.00') }}</td>
+                <td class="right">{{ detail.total_price|default(detail.total_without_tax|default('0.00')) }}</td>
+            </tr>
+        {% else %}
+            <tr><td colspan="12">No hay detalles registrados</td></tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="spacer"></div>
+    <table style="border: none;">
+        <tr>
+            <td style="width: 58%; border: none; padding: 0;">
+                <div class="box">
+                    <div class="bold" style="margin-bottom: 6px;">Información Adicional</div>
+                    <table class="plain">
+                        {% if data.additional_info|default({}) is mapping %}
+                            {% for name, value in data.additional_info|default({}) %}
+                                <tr><td style="width: 28%;" class="bold">{{ name }}:</td><td>{{ value }}</td></tr>
+                            {% endfor %}
+                        {% else %}
+                            {% for info in data.additional_info|default([]) %}
+                                <tr><td style="width: 28%;" class="bold">{{ info.name|default('') }}:</td><td>{{ info.value|default('') }}</td></tr>
+                            {% endfor %}
+                        {% endif %}
+                    </table>
+                </div>
+
+                <table class="data-table" style="width: 85%;">
+                    <tr><th>Forma de Pago</th><th>Valor</th></tr>
+                    {% for payment in data.payments|default([]) %}
+                        <tr>
+                            <td style="text-align: left;">{{ payment.name|default(payment.method_label|default(payment.method|default(''))) }}</td>
+                            <td class="right">{{ payment.total|default('') }}</td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td style="text-align: left;">SIN UTILIZACIÓN DEL SISTEMA FINANCIERO</td>
+                            <td class="right">{{ data.total_amount|default('0.00') }}</td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            </td>
+            <td style="width: 2%; border: none;"></td>
+            <td style="width: 40%; border: none; padding: 0;">
+                <table class="totals">
+                    <tr><td>SUBTOTAL 15%</td><td>{{ data.subtotal_15|default(data.subtotal_12|default('0.00')) }}</td></tr>
+                    <tr><td>SUBTOTAL IVA 0%</td><td>{{ data.subtotal_0|default('0.00') }}</td></tr>
+                    <tr><td>SUBTOTAL NO OBJETO IVA</td><td>{{ data.subtotal_not_subject_to_vat|default(data.subtotal_no_iva|default('0.00')) }}</td></tr>
+                    <tr><td>SUBTOTAL EXENTO IVA</td><td>{{ data.subtotal_exempt_vat|default(data.subtotal_exento_iva|default('0.00')) }}</td></tr>
+                    <tr><td>SUBTOTAL SIN IMPUESTOS</td><td>{{ data.total_without_taxes|default('0.00') }}</td></tr>
+                    <tr><td>DESCUENTO</td><td>{{ data.total_discount|default('0.00') }}</td></tr>
+                    <tr><td>ICE</td><td>{{ data.ice|default('0.00') }}</td></tr>
+                    <tr><td>IVA 15%</td><td>{{ data.iva_15|default(data.vat|default('0.00')) }}</td></tr>
+                    <tr><td>IRBPNR</td><td>{{ data.irbpnr|default('0.00') }}</td></tr>
+                    <tr><td>PROPINA</td><td>{{ data.tip|default('0.00') }}</td></tr>
+                    <tr><td class="bold">VALOR TOTAL</td><td class="bold">{{ data.total_amount|default('0.00') }}</td></tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+{% endblock %}

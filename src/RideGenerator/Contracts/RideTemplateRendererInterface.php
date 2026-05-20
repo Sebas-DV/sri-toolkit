@@ -6,7 +6,7 @@ namespace MTZ\Toolkit\RideGenerator\Contracts;
 
 use MTZ\Toolkit\RideGenerator\Data\RideData;
 
-interface RideTemplateInterface
+interface RideTemplateRendererInterface
 {
     public function render(RideData $data): string;
 }

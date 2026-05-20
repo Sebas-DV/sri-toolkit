@@ -1,0 +1,47 @@
+{% extends 'layouts/ride.html.twig' %}
+
+{% block content %}
+    {% set subject = data.subject|default({}) %}
+
+    <div class="box">
+        <table class="plain">
+            <tr>
+                <td style="width: 60%;">
+                    <div><span class="bold">Sujeto Retenido:</span> {{ subject.name|default('') }}</div>
+                    <div><span class="bold">Identificación:</span> {{ subject.identification_number|default('') }}</div>
+                </td>
+                <td style="width: 40%;">
+                    <div><span class="bold">Fecha Emisión:</span> {{ data.date|default('') }}</div>
+                    <div><span class="bold">Periodo Fiscal:</span> {{ data.fiscal_period|default('') }}</div>
+                    <div><span class="bold">Parte Relacionada:</span> {{ subject.related_party|default('NO') }}</div>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    {% for document in data.supporting_documents|default([]) %}
+        <div class="box">
+            <table class="plain">
+                <tr>
+                    <td style="width: 50%;"><span class="bold">Documento:</span> {{ document.document_number|default('') }}</td>
+                    <td style="width: 25%;"><span class="bold">Fecha:</span> {{ document.emission_date|default('') }}</td>
+                    <td style="width: 25%;"><span class="bold">Total:</span> {{ document.total_amount|default('0.00') }}</td>
+                </tr>
+            </table>
+        </div>
+
+        <table class="data-table">
+            <tr><th>Impuesto</th><th>Código</th><th>Base</th><th>Porcentaje</th><th>Valor Retenido</th></tr>
+            {% for withholding in document.withholdings|default([]) %}
+                <tr>
+                    <td>{{ withholding.code|default('') }}</td>
+                    <td>{{ withholding.withholding_code|default('') }}</td>
+                    <td class="right">{{ withholding.tax_base|default(document.total_without_taxes|default('0.00')) }}</td>
+                    <td class="right">{{ withholding.percentage|default('') }}</td>
+                    <td class="right">{{ withholding.value|default('0.00') }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+        <div class="spacer"></div>
+    {% endfor %}
+{% endblock %}

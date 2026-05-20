@@ -1,0 +1,92 @@
+{% set tradeName = company.trade_name|default('') %}
+{% set legalName = company.legal_name|default('') %}
+{% set headOfficeAddress = company.head_office_address|default('') %}
+{% set establishmentAddress = data.establishment_address|default(company.establishment_address|default('')) %}
+{% set specialTaxpayer = data.special_taxpayer_number|default(company.special_taxpayer_number|default(company.special_taxpayer|default(''))) %}
+{% set accountingRequired = data.requires_accounting|default(company.requires_accounting|default(company.obligated_accounting|default('NO'))) %}
+
+<table style="width: 100%; border: none; border-collapse: separate; border-spacing: 0; margin-bottom: 4mm;">
+    <tr>
+        <td style="width: 48%; border: none; padding: 0; vertical-align: top;">
+            <div style="height: 32mm; text-align: center; margin: 0 0 5mm 0;">
+                {% if company.logo_path|default('') %}
+                    <img src="{{ company.logo_path }}" alt="Logo" style="width: 88mm; height: 32mm;">
+                {% elseif company.logo_base64|default('') %}
+                    <img src="{{ company.logo_base64 }}" alt="Logo" style="width: 88mm; height: 32mm;">
+                {% else %}
+                    <div style="width: 88mm; height: 32mm; border: 0.35mm dashed #b00000; color: #b00000; font-size: 16pt; font-weight: bold; padding-top: 11mm; text-align: center; margin: 0 auto;">
+                        SIN LOGOTIPO
+                    </div>
+                {% endif %}
+            </div>
+
+            <div style="border: 0.35mm solid #98989f; border-radius: 2mm; padding: 4mm; height: 64mm; line-height: 1.35;">
+                {% if tradeName and tradeName != legalName %}
+                    <div style="font-size: 10.5pt; font-weight: bold; text-transform: uppercase; margin-bottom: 2mm;">{{ tradeName }}</div>
+                {% endif %}
+
+                <div style="font-size: 9pt; margin-bottom: 3mm; text-transform: uppercase;">{{ legalName }}</div>
+
+                <table class="plain" style="width: 100%;">
+                    <tr>
+                        <td style="width: 40%; padding: 1.15mm 0; font-weight: bold;">DIRECCIÓN MATRIZ:</td>
+                        <td style="padding: 1.15mm 0; text-transform: uppercase;">{{ headOfficeAddress }}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 1.15mm 0; font-weight: bold;">DIRECCIÓN SUCURSAL:</td>
+                        <td style="padding: 1.15mm 0; text-transform: uppercase;">{{ establishmentAddress }}</td>
+                    </tr>
+                    {% if specialTaxpayer %}
+                        <tr>
+                            <td style="padding: 1.15mm 0; font-weight: bold; text-transform: uppercase;">CONTRIBUYENTE ESPECIAL NRO:</td>
+                            <td style="padding: 1.15mm 0;">{{ specialTaxpayer }}</td>
+                        </tr>
+                    {% endif %}
+                    <tr>
+                        <td style="padding: 1.15mm 0; font-weight: bold;">OBLIGADO A LLEVAR CONTABILIDAD:</td>
+                        <td style="padding: 1.15mm 0;">{{ accountingRequired }}</td>
+                    </tr>
+                </table>
+            </div>
+        </td>
+
+        <td style="width: 4%; border: none; padding: 0;"></td>
+
+        <td style="width: 48%; border: none; padding: 0; vertical-align: top;">
+            <div style="border: 0.35mm solid #98989f; border-radius: 2mm; padding: 5mm; height: 101mm; line-height: 1.35;">
+                <div style="font-size: 11pt; margin-bottom: 2.4mm;">
+                    <span style="font-weight: bold;">R.U.C.:</span> {{ company.ruc|default('') }}
+                </div>
+
+                <div style="font-size: 12pt; font-weight: bold; margin-bottom: 2.4mm;">{{ documentTitle }}</div>
+
+                <div style="font-size: 10pt; margin-bottom: 3.6mm;">
+                    <span style="font-weight: bold;">No.</span> {{ documentNumber }}
+                </div>
+
+                <div style="font-weight: bold; margin-bottom: 1.4mm;">NÚMERO DE AUTORIZACIÓN</div>
+                <div style="font-size: 8pt; line-height: 1.3; word-break: break-all; margin-bottom: 3mm;">
+                    {{ authorizationNumber|default(accessKey) }}
+                </div>
+
+                <table class="plain" style="width: 100%; margin-bottom: 3mm;">
+                    <tr>
+                        <td style="width: 46%; padding: 0; font-weight: bold;">FECHA Y HORA DE AUTORIZACIÓN</td>
+                        <td style="padding: 0;">{{ authorizationDate|default('') }}</td>
+                    </tr>
+                </table>
+
+                <div style="margin-bottom: 1.8mm;"><span style="font-weight: bold;">AMBIENTE:</span> {{ data.environment_label|default('PRUEBAS') }}</div>
+                <div style="margin-bottom: 3mm;"><span style="font-weight: bold;">EMISIÓN:</span> {{ data.emission_label|default('NORMAL') }}</div>
+
+                <div style="font-weight: bold; margin-bottom: 1.5mm;">CLAVE DE ACCESO</div>
+                <div style="text-align: center; margin-bottom: 1.3mm;">
+                    <img src="{{ accessKeyBarcode }}" alt="Código de barras" style="width: 100%; height: 11mm;">
+                </div>
+                <div style="font-size: 8pt; line-height: 1.25; text-align: center; word-break: break-all;">
+                    {{ accessKey }}
+                </div>
+            </div>
+        </td>
+    </tr>
+</table>

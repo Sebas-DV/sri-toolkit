@@ -9,12 +9,13 @@ final readonly class RidePdfConfig
     public function __construct(
         public string $format = 'A4',
         public string $orientation = 'P',
-        public float $marginLeft = 8,
-        public float $marginRight = 8,
-        public float $marginTop = 8,
-        public float $marginBottom = 8,
+        public float $marginLeft = 12,
+        public float $marginRight = 12,
+        public float $marginTop = 12,
+        public float $marginBottom = 12,
         public string $defaultFont = 'dejavusans',
         public string $tempDir = '',
+        public ?string $templatesPath = null,
     ) {
     }
 }

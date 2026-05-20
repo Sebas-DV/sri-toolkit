@@ -57,8 +57,10 @@
         "ext-openssl": "*",
         "ext-soap": "*",
         "aws/aws-sdk-php": "^3.381",
-        "mpdf/mpdf": "^8.3",
-        "ramsey/uuid": "^4.9"
+        "dompdf/dompdf": "^3.1",
+        "picqer/php-barcode-generator": "^3.2",
+        "ramsey/uuid": "^4.9",
+        "twig/twig": "^3.26"
     },
     "scripts": {
         "test": "phpunit",
@@ -70,6 +72,7 @@
         "cs:test": "php-cs-fixer check --diff --verbose",
         "stan": "phpstan analyse --memory-limit=1G",
         "stan:baseline": "phpstan analyse --generate-baseline",
+        "ride:preview": "php -S 127.0.0.1:8088 examples/ride-preview.php",
         "analyze": [
             "@cs:test",
             "@rector:test",
