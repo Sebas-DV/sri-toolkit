@@ -1,0 +1,55 @@
+{% extends 'layouts/ride.html.twig' %}
+
+{% block content %}
+    {% set customer = data.customer|default({}) %}
+    {% set referenced = data.referenced_document|default({}) %}
+
+    <div class="box">
+        <table class="plain">
+            <tr>
+                <td style="width: 62%;">
+                    <div><span class="bold">Razón Social / Nombres y Apellidos:</span> {{ customer.name|default('') }}</div>
+                    <div><span class="bold">Fecha Emisión:</span> {{ data.date|default('') }}</div>
+                    <div><span class="bold">Dirección:</span> {{ customer.address|default('') }}</div>
+                </td>
+                <td style="width: 38%;">
+                    <div><span class="bold">Identificación:</span> {{ customer.identification_number|default('') }}</div>
+                    <div><span class="bold">Comprobante que se modifica:</span> {{ referenced.number|default('') }}</div>
+                    <div><span class="bold">Fecha emisión comprobante:</span> {{ referenced.emission_date|default('') }}</div>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <table class="data-table">
+        <tr><th>Razón de Modificación</th><th>Valor</th></tr>
+        {% for reason in data.reasons|default([]) %}
+            <tr>
+                <td style="text-align: left;">{{ reason.reason|default('') }}</td>
+                <td class="right">{{ reason.amount|default('0.00') }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+
+    <div class="spacer"></div>
+    <table style="border: none;">
+        <tr>
+            <td style="width: 58%; border: none; padding: 0;">
+                <table class="data-table" style="width: 85%;">
+                    <tr><th>Forma de Pago</th><th>Valor</th></tr>
+                    {% for payment in data.payments|default([]) %}
+                        <tr><td style="text-align: left;">{{ payment.method_label|default(payment.method|default('')) }}</td><td class="right">{{ payment.total|default('') }}</td></tr>
+                    {% endfor %}
+                </table>
+            </td>
+            <td style="width: 2%; border: none;"></td>
+            <td style="width: 40%; border: none; padding: 0;">
+                <table class="totals">
+                    <tr><td>SUBTOTAL SIN IMPUESTOS</td><td>{{ data.total_without_taxes|default('0.00') }}</td></tr>
+                    <tr><td>IVA</td><td>{{ data.vat|default('0.00') }}</td></tr>
+                    <tr><td class="bold">VALOR TOTAL</td><td class="bold">{{ data.total_amount|default('0.00') }}</td></tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+{% endblock %}

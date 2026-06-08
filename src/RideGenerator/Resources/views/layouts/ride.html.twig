@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: Helvetica, Arial, dejavusans, sans-serif;
+            font-size: 10.5px;
+            color: #000;
+            line-height: 1.35;
+            background: #fff;
+            padding: 4mm;
+        }
+        .page {
+            width: 100%;
+            padding: 0;
+        }
+        table { width: 100%; border-collapse: collapse; }
+        td, th { vertical-align: top; }
+        .box {
+            border: 1px solid #000;
+            border-radius: 7px;
+            padding: 7px;
+            margin-bottom: 8px;
+        }
+        .plain td, .plain th { border: none; padding: 2px; text-align: left; }
+        .title { font-size: 15px; font-weight: bold; margin: 5px 0; }
+        .subtitle { font-size: 12px; font-weight: bold; margin-bottom: 4px; }
+        .bold { font-weight: bold; }
+        .center { text-align: center; }
+        .right { text-align: right; }
+        .small { font-size: 8px; }
+        .muted { color: #333; }
+        .spacer { height: 7px; }
+        .logo-slot {
+            height: 112px;
+            text-align: center;
+            margin-bottom: 8px;
+        }
+        .logo-img { max-width: 100%; max-height: 104px; }
+        .no-logo {
+            color: #b00000;
+            border: 1px dashed #b00000;
+            font-size: 18px;
+            font-weight: bold;
+            padding: 28px 8px;
+            text-align: center;
+        }
+        .access-key {
+            font-size: 9px;
+            word-break: break-all;
+            margin: 5px 0 7px;
+            letter-spacing: .3px;
+        }
+        .barcode { text-align: center; margin-top: 4px; }
+        .data-table th,
+        .data-table td {
+            border: 1px solid #98989f;
+            padding: 4px;
+            font-size: 9px;
+        }
+        .data-table th {
+            background: #f1f1f1;
+            font-weight: bold;
+            text-align: center;
+        }
+        .data-table td { text-align: center; }
+        .totals td {
+            border: 1px solid #98989f;
+            padding: 3px 6px;
+        }
+        .totals td:first-child { text-align: left; }
+        .totals td:last-child { text-align: right; }
+    </style>
+</head>
+<body>
+<div class="page">
+    {% include 'partials/header.html.twig' %}
+    {% block content %}{% endblock %}
+</div>
+</body>
+</html>

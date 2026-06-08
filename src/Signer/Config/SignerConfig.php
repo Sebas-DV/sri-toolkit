@@ -27,6 +27,12 @@ final readonly class SignerConfig
         public string $documentReferenceId = 'comprobante',
         public string $signatureNamespace = 'http://www.w3.org/2000/09/xmldsig#',
         public string $xadesNamespace = 'http://uri.etsi.org/01903/v1.3.2#',
+
+        /**
+         * The third CertificateRef / KeyInfo reference can cause validation issues if the
+         * certificate is not included in the XML or if the reference is not properly formed.
+         */
+        public bool $includeCertificateReference = false,
     ) {
     }
 }
