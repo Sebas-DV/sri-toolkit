@@ -282,7 +282,11 @@ final class XadesBesXmlSigner
 
         $signedInfo->appendChild($this->createDocumentReference($document));
         $signedInfo->appendChild($this->createSignedPropertiesReference($document));
-        $signedInfo->appendChild($this->createCertificateReference($document));
+
+        if ($this->config->includeCertificateReference)
+        {
+            $signedInfo->appendChild($this->createCertificateReference($document));
+        }
 
         return $signedInfo;
     }
