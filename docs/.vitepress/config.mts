@@ -30,9 +30,14 @@ export default defineConfig({
         items: [
           { text: 'AccessKeyGenerator', link: '/modules/access-key-generator' },
           { text: 'XMLMaker', link: '/modules/xml-maker' },
+          { text: 'Validacion', link: '/modules/validation' },
           { text: 'Catalogos', link: '/modules/catalogs' },
           { text: 'Signer', link: '/modules/signer' },
-          { text: 'Sender', link: '/modules/sender' }
+          { text: 'Certificates', link: '/modules/certificates' },
+          { text: 'Sender', link: '/modules/sender' },
+          { text: 'RideGenerator', link: '/modules/ride-generator' },
+          { text: 'Storage', link: '/modules/storage' },
+          { text: 'Pipeline', link: '/modules/pipeline' }
         ]
       },
       {
@@ -41,8 +46,18 @@ export default defineConfig({
           { text: 'Workflow completo', link: '/guides/complete-workflow' },
           { text: 'Generar XML por tipo', link: '/guides/xml-by-document-type' },
           { text: 'Ejemplo de factura', link: '/guides/invoice-example' },
+          { text: 'Validar antes de enviar', link: '/guides/validate-before-sending' },
+          { text: 'RIDE y almacenamiento', link: '/guides/ride-and-storage' },
+          { text: 'Consulta y lote', link: '/guides/status-and-batch' },
+          { text: 'Pipeline end-to-end', link: '/guides/end-to-end-pipeline' },
           { text: 'Testing', link: '/guides/testing' },
           { text: 'Troubleshooting', link: '/troubleshooting' }
+        ]
+      },
+      {
+        text: 'Referencia',
+        items: [
+          { text: 'Codigos de error', link: '/reference/error-codes' }
         ]
       }
     ],

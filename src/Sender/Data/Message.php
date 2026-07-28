@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace MTZ\Toolkit\Sender\Data;
 
+use MTZ\Toolkit\Sender\Enums\SriMessageCode;
+
 /**
  * Represents a single message returned by the SRI web service.
  *
@@ -34,6 +36,16 @@ final readonly class Message
     public function toString(): string
     {
         return trim("$this->type $this->code: $this->message $this->additionalInformation");
+    }
+
+    /**
+     * Returns the typed SRI message code, when recognized.
+     *
+     * @return SriMessageCode|null
+     */
+    public function sriCode(): ?SriMessageCode
+    {
+        return SriMessageCode::tryFrom($this->code);
     }
 
     /**

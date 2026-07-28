@@ -1,6 +1,6 @@
 # Catalogos
 
-`CatalogRegistry` centraliza codigos frecuentes para payloads XML sin dejar valores sueltos quemados en la aplicacion. Los valores por defecto vienen de la ficha tecnica oficial offline v2.26 y del anexo ICE.
+`CatalogRegistry` centraliza codigos frecuentes para payloads XML sin dejar valores sueltos quemados en la aplicacion. Los valores por defecto vienen de la ficha tecnica oficial offline v2.34 y del anexo ICE.
 
 ## Uso
 
@@ -19,6 +19,13 @@ PHP reserva `list` como nombre de metodo declarado. Por eso el metodo formal es 
 
 ```php
 $paymentMethods = $catalogRegistry->entries('payment-methods');
+```
+
+Lista todos los catalogos y sus metadatos (fuente y fecha):
+
+```php
+$catalogRegistry->listCatalogs();       // nombres de catalogo
+$catalogRegistry->getMeta('ice-rates'); // source, updatedAt, notes
 ```
 
 ## Catalogos Disponibles

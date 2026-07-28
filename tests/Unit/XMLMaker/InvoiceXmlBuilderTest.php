@@ -7,6 +7,7 @@ namespace MTZ\Toolkit\Tests\Unit\XMLMaker;
 use DOMDocument;
 use DOMException;
 use DOMXPath;
+use MTZ\Toolkit\Tests\Support\XMLMaker\SampleXmlPayloads;
 use MTZ\Toolkit\XMLMaker\Builders\InvoiceXmlBuilder;
 use MTZ\Toolkit\XMLMaker\Data\XmlGenerationData;
 use MTZ\Toolkit\XMLMaker\Enums\XmlDocumentType;
@@ -78,95 +79,6 @@ final class InvoiceXmlBuilderTest extends TestCase
 
     private function invoiceData(): XmlGenerationData
     {
-        return XmlGenerationData::make(
-            documentType: XmlDocumentType::Invoice,
-            environment: XmlEnvironment::Testing,
-            accessKey: '1305202601179001234500110010010000000251234567817',
-            data: [
-                'date' => '13/05/2026',
-                'sequential' => '000000025',
-                'company' => [
-                    'ruc' => '1790012345001',
-                    'legal_name' => 'MTZ TEST S.A.',
-                    'trade_name' => 'MTZ TEST',
-                    'head_office_address' => 'Quito',
-                    'special_taxpayer_number' => '123',
-                ],
-                'establishment' => [
-                    'code' => '001',
-                ],
-                'emission_point' => [
-                    'code' => '001',
-                ],
-                'customer' => [
-                    'identification_type' => '05',
-                    'identification_number' => '1710034065',
-                    'name' => 'CONSUMIDOR FINAL',
-                    'address' => 'Quito',
-                ],
-                'establishment_address' => 'Quito',
-                'requires_accounting' => 'NO',
-                'delivery_guide' => '001-001-000000001',
-                'total_without_taxes' => '10.00',
-                'total_subsidy' => '0.00',
-                'total_discount' => '0.00',
-                'reimbursement' => [
-                    'document_code' => '41',
-                    'total' => '0.00',
-                    'taxable_base_total' => '0.00',
-                    'tax_total' => '0.00',
-                ],
-                'tax_totals' => [
-                    [
-                        'code' => '2',
-                        'percentage_code' => '4',
-                        'additional_discount' => '0.00',
-                        'taxable_base' => '10.00',
-                        'rate' => '15.00',
-                        'value' => '1.50',
-                        'refund_value' => '0.00',
-                    ],
-                ],
-                'tip' => '0.00',
-                'total_amount' => '11.50',
-                'currency' => 'DOLAR',
-                'total_iva_amount' => '0.00',
-                'total_renta_amount' => '0.00',
-                'payments' => [
-                    [
-                        'method' => '01',
-                        'total' => '11.50',
-                    ],
-                ],
-                'details' => [
-                    [
-                        'main_code' => 'P001',
-                        'description' => 'Producto de prueba',
-                        'unit' => 'UND',
-                        'quantity' => '1.00',
-                        'unit_price' => '10.00',
-                        'unit_price_without_subsidy' => '12.00',
-                        'discount' => '0.00',
-                        'total_without_tax' => '10.00',
-                        'additional_info' => [
-                            'Color' => 'Azul',
-                        ],
-                        'taxes' => [
-                            [
-                                'code' => '2',
-                                'percentage_code' => '4',
-                                'rate' => '15.00',
-                                'taxable_base' => '10.00',
-                                'value' => '1.50',
-                                'refund_value' => '0.00',
-                            ],
-                        ],
-                    ],
-                ],
-                'additional_info' => [
-                    'Email' => 'cliente@example.com',
-                ],
-            ],
-        );
+        return SampleXmlPayloads::invoice();
     }
 }

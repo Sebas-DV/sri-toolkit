@@ -24,9 +24,9 @@ final readonly class DompdfRideRenderer
         {
             $tempDir = $this->config->tempDir !== '' ? $this->config->tempDir : sys_get_temp_dir();
 
-            if (! is_dir($tempDir))
+            if (! is_dir($tempDir) && ! mkdir($tempDir, 0775, true) && ! is_dir($tempDir))
             {
-                mkdir($tempDir, 0775, true);
+                throw new RideGeneratorException('Could not create the temporary PDF directory.');
             }
 
             $options = new Options();
@@ -34,22 +34,28 @@ final readonly class DompdfRideRenderer
             $options->setDefaultPaperSize($this->config->format);
             $options->setDefaultPaperOrientation($this->orientation());
             $options->setTempDir($tempDir);
-            $options->setIsRemoteEnabled(true);
+            $options->setIsRemoteEnabled(false);
             $options->setIsHtml5ParserEnabled(true);
-            $options->setChroot(dirname(__DIR__, 3));
+            $options->setChroot([
+                dirname(__DIR__, 3),
+                $tempDir,
+            ]);
 
             $dompdf = new Dompdf($options);
             $dompdf->setPaper($this->config->format, $this->orientation());
-            $dompdf->loadHtml($this->withPageMargins($html));
+            $dompdf->loadHtml($this->withPageMargins($html), 'UTF-8');
             $dompdf->render();
 
             return new GeneratedRidePdf(
-                content: $dompdf->output(),
+                content: $dompdf->output(['compress' => 1]),
                 filename: $fileName,
             );
-        } catch (Throwable $e)
+        } catch (Throwable $exception)
         {
-            throw new RideGeneratorException('Could not generate RIDE PDF: ' . $e->getMessage(), previous: $e);
+            throw new RideGeneratorException(
+                'Could not generate RIDE PDF: ' . $exception->getMessage(),
+                previous: $exception,
+            );
         }
     }
 

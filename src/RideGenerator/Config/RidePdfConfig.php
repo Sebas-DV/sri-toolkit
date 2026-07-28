@@ -13,7 +13,7 @@ final readonly class RidePdfConfig
         public float $marginRight = 12,
         public float $marginTop = 12,
         public float $marginBottom = 12,
-        public string $defaultFont = 'dejavusans',
+        public string $defaultFont = 'Helvetica',
         public string $tempDir = '',
         public ?string $templatesPath = null,
     ) {

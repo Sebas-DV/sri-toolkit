@@ -57,10 +57,11 @@
         "ext-openssl": "*",
         "ext-soap": "*",
         "aws/aws-sdk-php": "^3.381",
+        "brick/money": "^0.14.0",
         "dompdf/dompdf": "^3.1",
         "picqer/php-barcode-generator": "^3.2",
         "ramsey/uuid": "^4.9",
-        "twig/twig": "^3.26"
+        "twig/twig": "^3.0"
     },
     "scripts": {
         "test": "phpunit",
@@ -92,7 +93,8 @@
             "php-http/discovery": true
         },
         "sort-packages": true,
-        "optimize-autoloader": true
+        "optimize-autoloader": true,
+        "preferred-install": "dist"
     },
     "prefer-stable": true,
     "require-dev": {

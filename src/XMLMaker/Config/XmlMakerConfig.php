@@ -16,12 +16,15 @@ final readonly class XmlMakerConfig
      * @param string $encoding The XML document encoding (default 'UTF-8').
      * @param bool $formatOutput Whether to pretty-print the XML output (default false).
      * @param string $documentId The root element id attribute value (default 'comprobante').
+     * @param bool $calculateTotals Whether to derive document totals from the detail lines,
+     *        keeping the XML internally consistent (prevents SRI error 52). Default true.
      */
     public function __construct(
         public string $xmlVersion = '1.0',
         public string $encoding = 'UTF-8',
         public bool $formatOutput = false,
         public string $documentId = 'comprobante',
+        public bool $calculateTotals = true,
     ) {
     }
 }

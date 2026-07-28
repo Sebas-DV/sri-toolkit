@@ -7,6 +7,7 @@ namespace MTZ\Toolkit\Tests\Unit\XMLMaker;
 use DOMDocument;
 use DOMException;
 use DOMXPath;
+use MTZ\Toolkit\Tests\Support\XMLMaker\SampleXmlPayloads;
 use MTZ\Toolkit\XMLMaker\Builders\PurchaseSettlementXmlBuilder;
 use MTZ\Toolkit\XMLMaker\Data\XmlGenerationData;
 use MTZ\Toolkit\XMLMaker\Enums\XmlDocumentType;
@@ -72,79 +73,6 @@ final class PurchaseSettlementXmlBuilderTest extends TestCase
 
     private function purchaseSettlementData(): XmlGenerationData
     {
-        return XmlGenerationData::make(
-            documentType: XmlDocumentType::PurchaseSettlement,
-            environment: XmlEnvironment::Testing,
-            accessKey: '1305202603179001234500110010010000000301234567811',
-            data: [
-                'date' => '13/05/2026',
-                'sequential' => '000000030',
-                'company' => [
-                    'ruc' => '1790012345001',
-                    'legal_name' => 'MTZ TEST S.A.',
-                    'trade_name' => 'MTZ TEST',
-                    'head_office_address' => 'Quito',
-                    'special_taxpayer_number' => '123',
-                ],
-                'establishment' => [
-                    'code' => '001',
-                ],
-                'emission_point' => [
-                    'code' => '001',
-                ],
-                'provider' => [
-                    'identification_type' => '05',
-                    'identification_number' => '0102030405',
-                    'name' => 'PROVIDER TEST',
-                    'address' => 'Cuenca',
-                ],
-                'establishment_address' => 'Quito',
-                'requires_accounting' => 'NO',
-                'total_without_taxes' => '10.00',
-                'total_discount' => '0.00',
-                'tax_totals' => [
-                    [
-                        'code' => '2',
-                        'percentage_code' => '4',
-                        'taxable_base' => '10.00',
-                        'value' => '1.50',
-                    ],
-                ],
-                'total_amount' => '11.50',
-                'currency' => 'DOLAR',
-                'payments' => [
-                    [
-                        'method' => '01',
-                        'total' => '11.50',
-                    ],
-                ],
-                'details' => [
-                    [
-                        'main_code' => 'P001',
-                        'description' => 'Purchased service',
-                        'unit' => 'UND',
-                        'quantity' => '1.00',
-                        'unit_price' => '10.00',
-                        'discount' => '0.00',
-                        'total_without_tax' => '10.00',
-                        'additional_info' => [
-                            'Batch' => 'A1',
-                        ],
-                        'taxes' => [
-                            [
-                                'code' => '2',
-                                'percentage_code' => '4',
-                                'rate' => '15.00',
-                                'taxable_base' => '10.00',
-                                'value' => '1.50',
-                            ],
-                        ],
-                    ],
-                ],
-                'additional_info' => [
-                    'Email' => 'provider@example.com',
-                ],
-            ],
-        );
+        return SampleXmlPayloads::purchaseSettlement();
     }
 }

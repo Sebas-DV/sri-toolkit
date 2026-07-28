@@ -2,27 +2,36 @@
 
 Toolkit PHP para trabajar con comprobantes electronicos del SRI Ecuador.
 
-SRI Toolkit cubre las piezas principales de un flujo de facturacion electronica:
+SRI Toolkit cubre el flujo completo de facturacion electronica:
 
 - Generar la clave de acceso de 49 digitos.
-- Construir XML de comprobantes SRI.
+- Construir XML de los seis comprobantes, con calculo automatico de totales.
+- Validar el XML offline contra el XSD oficial antes de enviar.
 - Firmar XML con certificados PKCS#12 mediante XAdES-BES.
-- Enviar comprobantes firmados a los servicios SOAP de recepcion y autorizacion del SRI.
-- Leer respuestas de recepcion y autorizacion como objetos tipados.
+- Enviar comprobantes firmados a recepcion y autorizacion (individual o por lote).
+- Consultar el estado de un comprobante y leer respuestas como objetos tipados.
+- Generar el RIDE en PDF y guardar todos los artefactos en disco local o S3.
+- Orquestar todo el flujo con un pipeline de una sola llamada.
 
 ## Estado del paquete
 
 | Area | Estado |
 | --- | --- |
-| Clave de acceso | Implementado |
-| XML de factura | Implementado |
-| XML de liquidacion de compra | Implementado |
-| XML de nota de credito | Implementado |
-| XML de nota de debito | Implementado |
-| XML de guia de remision | Implementado |
-| XML de comprobante de retencion | Implementado |
+| Clave de acceso (modulo 11) | Implementado |
+| XML de los seis comprobantes | Implementado |
+| Variantes de factura (exportacion, reembolso, rubros de terceros, sustitutiva) | Implementado |
+| Calculo automatico de totales | Implementado |
+| Validacion XSD offline | Implementado |
+| Validacion de identificacion (cedula / RUC) | Implementado |
 | Firma XAdES-BES | Implementado |
-| Envio SOAP SRI | Implementado |
+| Envio SOAP: recepcion y autorizacion | Implementado |
+| Consulta de estado | Implementado |
+| Envio por lote | Implementado |
+| Codigos de mensaje tipados | Implementado |
+| RIDE en PDF (seis tipos) | Implementado |
+| Almacenamiento local y S3 | Implementado |
+| Gestion de certificados cifrados | Implementado |
+| Pipeline end-to-end | Implementado |
 
 ## Requisitos
 
@@ -66,10 +75,17 @@ Sigue con [Primeros pasos](/getting-started) para generar el XML, firmarlo y env
 ## Modulos
 
 - [AccessKeyGenerator](/modules/access-key-generator): genera claves de acceso SRI.
-- [XMLMaker](/modules/xml-maker): genera XML de factura, liquidacion de compra, notas de credito/debito, guia de remision y comprobante de retencion.
+- [XMLMaker](/modules/xml-maker): genera XML de los seis comprobantes, con calculo de totales y variantes.
+- [Validacion](/modules/validation): XSD offline, identificacion (cedula/RUC) y totales.
 - [Catalogos](/modules/catalogs): consulta y sobreescribe codigos frecuentes.
 - [Signer](/modules/signer): firma XML con XAdES-BES.
-- [Sender](/modules/sender): consume los Web Services del SRI.
+- [Certificates](/modules/certificates): guarda certificados con la contrasena cifrada.
+- [Sender](/modules/sender): recepcion, autorizacion, consulta y lote.
+- [RideGenerator](/modules/ride-generator): genera el RIDE en PDF.
+- [Storage](/modules/storage): guarda artefactos en disco local o S3.
+- [Pipeline](/modules/pipeline): orquesta todo el flujo en una sola llamada.
+
+Referencia: [Codigos de error](/reference/error-codes).
 
 ## Desarrollo
 
