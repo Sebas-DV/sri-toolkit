@@ -4,9 +4,12 @@ declare(strict_types=1);
 
 namespace MTZ\Toolkit\Sender\Services;
 
+use MTZ\Toolkit\Sender\Data\AuthorizationResult;
 use MTZ\Toolkit\Sender\Data\AuthorizedDocument;
+use MTZ\Toolkit\Sender\Data\ConsultationResult;
 use MTZ\Toolkit\Sender\Data\Message;
 use MTZ\Toolkit\Sender\Enums\AuthorizationStatus;
+use MTZ\Toolkit\Sender\Enums\ConsultationStatus;
 use MTZ\Toolkit\Sender\Enums\ReceptionStatus;
 use Traversable;
 
@@ -182,6 +185,217 @@ final class ResponseParser
     public function isAuthorizationSuccessful(object $response): bool
     {
         return $this->authorizationStatus($response) === AuthorizationStatus::Authorized;
+    }
+
+    /**
+     * Parses a batch (lote) authorization SOAP response into per-voucher results.
+     *
+     * @param object $response The raw SOAP response from autorizacionComprobanteLote.
+     * @return list<AuthorizationResult>
+     */
+    public function batchAuthorizations(object $response): array
+    {
+        $lote = $response->RespuestaAutorizacionLote ?? null;
+
+        if (! is_object($lote))
+        {
+            return [];
+        }
+
+        $nodes = $lote->autorizaciones->autorizacion ?? null;
+
+        if (is_object($nodes))
+        {
+            $nodes = [$nodes];
+        }
+
+        if (! is_array($nodes))
+        {
+            return [];
+        }
+
+        $results = [];
+
+        foreach ($nodes as $node)
+        {
+            if (! is_object($node))
+            {
+                continue;
+            }
+
+            $status = $this->statusFromNode($node);
+            $messages = $this->messagesFromNode($node->mensajes ?? null);
+
+            if ($status === AuthorizationStatus::Authorized)
+            {
+                $results[] = AuthorizationResult::success(
+                    status: $status,
+                    authorizedDocument: $this->documentFromNode($node),
+                    messages: $messages,
+                    attempts: 1,
+                );
+
+                continue;
+            }
+
+            $results[] = AuthorizationResult::failure(
+                status: $status,
+                error: $this->messagesToString($messages) ?: 'The voucher was not authorized.',
+                messages: $messages,
+                attempts: 1,
+            );
+        }
+
+        return $results;
+    }
+
+    /**
+     * Reads the authorization status from an autorizacion node.
+     *
+     * @param object $node
+     * @return AuthorizationStatus|null
+     */
+    private function statusFromNode(object $node): ?AuthorizationStatus
+    {
+        $status = $node->estado ?? null;
+
+        return is_string($status) ? AuthorizationStatus::tryFrom(trim($status)) : null;
+    }
+
+    /**
+     * Builds an AuthorizedDocument from an autorizacion node.
+     *
+     * @param object $node
+     * @return AuthorizedDocument
+     */
+    private function documentFromNode(object $node): AuthorizedDocument
+    {
+        return new AuthorizedDocument(
+            accessKey: $this->stringOrNull($node->numeroAutorizacion ?? null),
+            xml: $this->stringOrNull($node->comprobante ?? null),
+            authorizationDate: $this->stringOrNull($node->fechaAutorizacion ?? null),
+        );
+    }
+
+    /**
+     * Parses the consultation SOAP response into a ConsultationResult.
+     *
+     * @param object $response The raw SOAP response from ConsultaComprobante.
+     * @return ConsultationResult
+     */
+    public function consultationResult(object $response): ConsultationResult
+    {
+        $node = $response->EstadoAutorizacionComprobante ?? null;
+
+        if (! is_object($node))
+        {
+            return ConsultationResult::failure('Invalid response from WebService SRI');
+        }
+
+        $status = $this->consultationStatus($node);
+        $messages = $this->messagesFromNode($node->mensajes ?? null);
+        $accessKey = $this->stringOrNull($node->claveAcceso ?? null);
+
+        if ($status === null || $status === ConsultationStatus::Rejected)
+        {
+            return ConsultationResult::failure(
+                error: $messages === []
+                    ? 'The SRI consultation service rejected the request.'
+                    : $this->messagesToString($messages),
+                status: $status,
+                accessKey: $accessKey,
+                messages: $messages,
+            );
+        }
+
+        return ConsultationResult::success(
+            status: $status,
+            accessKey: $accessKey,
+            documentType: $this->stringOrNull($node->tipoComprobante ?? null),
+            issuerRuc: $this->stringOrNull($node->rucEmisor ?? null),
+            authorizationDate: $this->stringOrNull($node->fechaAutorizacion ?? null),
+            messages: $messages,
+        );
+    }
+
+    /**
+     * Reads the consultation status from the estadoAutorizacion or estadoConsulta tag.
+     *
+     * @param object $node
+     * @return ConsultationStatus|null
+     */
+    private function consultationStatus(object $node): ?ConsultationStatus
+    {
+        $status = $node->estadoAutorizacion ?? $node->estadoConsulta ?? null;
+
+        return is_string($status)
+            ? ConsultationStatus::tryFrom(trim($status))
+            : null;
+    }
+
+    /**
+     * Parses a mensajes node into a list of messages.
+     *
+     * @param mixed $mensajes
+     * @return list<Message>
+     */
+    private function messagesFromNode(mixed $mensajes): array
+    {
+        if ($mensajes === null)
+        {
+            return [];
+        }
+
+        $messages = [];
+
+        foreach ($this->normalizeIterable($mensajes) as $message)
+        {
+            if (is_array($message))
+            {
+                foreach ($message as $item)
+                {
+                    if (is_object($item))
+                    {
+                        $messages[] = $this->messageFromSoapObject($item);
+                    }
+                }
+
+                continue;
+            }
+
+            if (is_object($message))
+            {
+                $messages[] = $this->messageFromSoapObject($message);
+            }
+        }
+
+        return $messages;
+    }
+
+    /**
+     * Concatenates messages into a single human-readable string.
+     *
+     * @param array<int, Message> $messages
+     * @return string
+     */
+    private function messagesToString(array $messages): string
+    {
+        return implode(
+            "\n",
+            array_map(static fn (Message $message): string => $message->toString(), $messages),
+        );
+    }
+
+    private function stringOrNull(mixed $value): ?string
+    {
+        if (! is_string($value))
+        {
+            return null;
+        }
+
+        $value = trim($value);
+
+        return $value === '' ? null : $value;
     }
 
     /**

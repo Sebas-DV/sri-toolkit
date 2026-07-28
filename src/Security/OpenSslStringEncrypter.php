@@ -94,7 +94,7 @@ final readonly class OpenSslStringEncrypter implements StringEncrypterInterface
                 throw EncryptionException::decryptionFailed();
             }
 
-            $data = json_decode($json, true, JSON_THROW_ON_ERROR);
+            $data = json_decode($json, true, 512, JSON_THROW_ON_ERROR);
 
             if (! is_array($data))
             {

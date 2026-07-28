@@ -136,7 +136,7 @@ final class WithholdingReceiptXmlBuilder extends AbstractXmlDocumentBuilder
             $this->dom->append($taxElement, 'codImpuestoDocSustento', $reader->string('code'));
             $this->dom->append($taxElement, 'codigoPorcentaje', $reader->string('percentage_code'));
             $this->dom->append($taxElement, 'baseImponible', $reader->string('taxable_base'));
-            $this->dom->append($taxElement, 'tarifa', $reader->string('rate'));
+            $this->dom->append($taxElement, 'tarifa', $this->integerRate($reader->string('rate')));
             $this->dom->append($taxElement, 'valorImpuesto', $reader->string('value'));
         }
     }
@@ -204,7 +204,7 @@ final class WithholdingReceiptXmlBuilder extends AbstractXmlDocumentBuilder
 
             $this->dom->append($taxElement, 'codigo', $reader->string('code'));
             $this->dom->append($taxElement, 'codigoPorcentaje', $reader->string('percentage_code'));
-            $this->dom->append($taxElement, 'tarifa', $reader->string('rate'));
+            $this->dom->append($taxElement, 'tarifa', $this->integerRate($reader->string('rate')));
             $this->dom->append($taxElement, 'baseImponibleReembolso', $reader->string('taxable_base'));
             $this->dom->append($taxElement, 'impuestoReembolso', $reader->string('value'));
         }
@@ -284,5 +284,19 @@ final class WithholdingReceiptXmlBuilder extends AbstractXmlDocumentBuilder
 
         $this->dom->append($bananaPurchaseElement, 'numCajBan', $reader->string('box_count'));
         $this->dom->append($bananaPurchaseElement, 'precCajBan', $reader->string('box_price'));
+    }
+
+    /**
+     * Normalizes a tax rate to an integer string.
+     *
+     * The retención tarifa fields (impuestoDocSustento and reembolso detalleImpuesto)
+     * are integer rates (pattern [0-9]{1,4}), not decimals.
+     *
+     * @param string $rate The raw rate value (e.g. '15.00').
+     * @return string The integer rate (e.g. '15').
+     */
+    private function integerRate(string $rate): string
+    {
+        return (string) (int) round((float) $rate);
     }
 }

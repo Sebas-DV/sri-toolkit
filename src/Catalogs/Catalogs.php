@@ -8,8 +8,8 @@ use MTZ\Toolkit\Catalogs\Data\CatalogMetadata;
 
 final class Catalogs
 {
-    private const SOURCE = 'Official offline technical sheet v2.26';
-    private const UPDATED_AT = '2024-03-05';
+    private const SOURCE = 'Official offline technical sheet v2.34';
+    private const UPDATED_AT = '2026-07-28';
 
     private static ?CatalogRegistry $registry = null;
 
@@ -59,7 +59,7 @@ final class Catalogs
         ));
 
         $registry->registerDefault('support-codes', self::SUPPORT_CODES, new CatalogMetadata(
-            source: 'ATS catalog referenced by the official offline technical sheet v2.26',
+            source: 'ATS catalog referenced by the official offline technical sheet v2.34',
             updatedAt: self::UPDATED_AT,
             notes: 'Commonly used subset; extend it with override().',
         ));

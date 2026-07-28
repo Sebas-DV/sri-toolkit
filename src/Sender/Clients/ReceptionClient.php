@@ -20,22 +20,17 @@ use SoapFault;
  * response, and returns a reception result indicating whether the document was received
  * or returned with errors.
  */
-final class ReceptionClient
+final readonly class ReceptionClient
 {
-    /**
-     * @var object|null The raw SOAP response from the last reception request.
-     */
-    private ?object $lastResponse = null;
-
     /**
      * @param SenderConfig $config The sender configuration for WSDL URLs.
      * @param ResponseParser $responseParser Service that parses SOAP responses from the SRI.
      * @param SoapClientFactoryInterface $soapClientFactory Factory for creating SOAP clients.
      */
     public function __construct(
-        private readonly SenderConfig $config,
-        private readonly ResponseParser $responseParser = new ResponseParser(),
-        private readonly SoapClientFactoryInterface $soapClientFactory = new NativeSoapClientFactory(),
+        private SenderConfig $config,
+        private ResponseParser $responseParser = new ResponseParser(),
+        private SoapClientFactoryInterface $soapClientFactory = new NativeSoapClientFactory(),
     ) {
     }
 
@@ -54,8 +49,8 @@ final class ReceptionClient
                 $this->config->normalizedSoapOptions(),
             );
 
-            $response = $client->validarComprobante([
-                'xml' => $signedXml,
+            $response = $client->__soapCall('validarComprobante', [
+                ['xml' => $signedXml],
             ]);
 
             if (! is_object($response))
@@ -65,8 +60,6 @@ final class ReceptionClient
                     error: 'Invalid response from WebService SRI',
                 );
             }
-
-            $this->lastResponse = $response;
 
             $status = $this->responseParser->receptionStatus($response);
             $messages = $this->responseParser->receptionMessage($response);
@@ -93,16 +86,6 @@ final class ReceptionClient
                 error: ConnectionException::soap($exception->getMessage())->getMessage(),
             );
         }
-    }
-
-    /**
-     * Returns the raw SOAP response from the last reception request.
-     *
-     * @return object|null The raw response object, or null if no request has been made.
-     */
-    public function lastResponse(): ?object
-    {
-        return $this->lastResponse;
     }
 
     /**

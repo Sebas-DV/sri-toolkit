@@ -5,15 +5,21 @@ declare(strict_types=1);
 namespace MTZ\Toolkit\Sender;
 
 use MTZ\Toolkit\Sender\Clients\AuthorizationClient;
+use MTZ\Toolkit\Sender\Clients\BatchClient;
+use MTZ\Toolkit\Sender\Clients\ConsultationClient;
 use MTZ\Toolkit\Sender\Clients\ReceptionClient;
 use MTZ\Toolkit\Sender\Config\SenderConfig;
 use MTZ\Toolkit\Sender\Contracts\SleeperInterface;
 use MTZ\Toolkit\Sender\Contracts\SoapClientFactoryInterface;
 use MTZ\Toolkit\Sender\Data\AuthorizationResult;
+use MTZ\Toolkit\Sender\Data\BatchResult;
+use MTZ\Toolkit\Sender\Data\ConsultationResult;
 use MTZ\Toolkit\Sender\Data\ReceptionResult;
 use MTZ\Toolkit\Sender\Data\SendResult;
+use MTZ\Toolkit\Sender\Exceptions\BatchException;
 use MTZ\Toolkit\Sender\Exceptions\InvalidAccessKeyException;
 use MTZ\Toolkit\Sender\Services\ResponseParser;
+use MTZ\Toolkit\Sender\Support\LoteXmlBuilder;
 use MTZ\Toolkit\Sender\Support\NativeSleeper;
 use MTZ\Toolkit\Sender\Support\NativeSoapClientFactory;
 
@@ -35,6 +41,21 @@ final readonly class Sender
      * @var AuthorizationClient Client for the SRI authorization web service.
      */
     private AuthorizationClient $authorizationClient;
+
+    /**
+     * @var ConsultationClient Client for the SRI consultation web service.
+     */
+    private ConsultationClient $consultationClient;
+
+    /**
+     * @var BatchClient Client for authorizing batches (lotes).
+     */
+    private BatchClient $batchClient;
+
+    /**
+     * @var LoteXmlBuilder Builds the batch (lote) XML envelope.
+     */
+    private LoteXmlBuilder $loteXmlBuilder;
 
     /**
      * @param SenderConfig $config The sender configuration.
@@ -63,6 +84,20 @@ final readonly class Sender
             soapClientFactory: $soapClientFactory,
             sleeper: $this->sleeper,
         );
+
+        $this->consultationClient = new ConsultationClient(
+            config: $this->config,
+            responseParser: $responseParser,
+            soapClientFactory: $soapClientFactory,
+        );
+
+        $this->batchClient = new BatchClient(
+            config: $this->config,
+            responseParser: $responseParser,
+            soapClientFactory: $soapClientFactory,
+        );
+
+        $this->loteXmlBuilder = new LoteXmlBuilder();
     }
 
     /**
@@ -86,6 +121,63 @@ final readonly class Sender
     public function authorize(string $accessKey): AuthorizationResult
     {
         return $this->authorizationClient->authorize($accessKey);
+    }
+
+    /**
+     * Queries the current authorization state of a document by its access key.
+     *
+     * Reports AUTORIZADO / NO AUTORIZADO / PENDIENTE DE ANULAR / ANULADO,
+     * independent of the send pipeline (useful for reconciliation and detecting
+     * annulled documents).
+     *
+     * @param string $accessKey The 49-digit SRI access key.
+     * @return ConsultationResult The current state reported by the SRI.
+     * @throws InvalidAccessKeyException If the access key format is invalid.
+     */
+    public function queryStatus(string $accessKey): ConsultationResult
+    {
+        return $this->consultationClient->query($accessKey);
+    }
+
+    /**
+     * Sends a batch (lote) of signed documents: builds the lote XML, validates it
+     * with reception, waits the send delay, then authorizes it by the batch key.
+     *
+     * @param string $loteAccessKey The 49-digit batch access key.
+     * @param string $ruc The issuer RUC.
+     * @param list<string> $signedXmls The signed voucher XML documents (max 50, 500 kB total).
+     * @return BatchResult The aggregated reception and per-voucher authorization result.
+     * @throws BatchException If the batch is empty or exceeds the SRI limits.
+     * @throws InvalidAccessKeyException If the batch access key format is invalid.
+     */
+    public function sendBatch(string $loteAccessKey, string $ruc, array $signedXmls): BatchResult
+    {
+        $loteXml = $this->loteXmlBuilder->build($loteAccessKey, $ruc, $signedXmls);
+
+        $reception = $this->receptionClient->validate($loteXml);
+
+        if (! $reception->success)
+        {
+            return BatchResult::failure(
+                error: $reception->error ?? 'An error occurred while validating the batch, batch not received.',
+                receptionResult: $reception,
+            );
+        }
+
+        $this->sleeper->sleep($this->config->sendDelay);
+
+        $authorization = $this->batchClient->authorize($loteAccessKey);
+
+        if (! $authorization->success)
+        {
+            return BatchResult::failure(
+                error: $authorization->error ?? 'One or more vouchers in the batch were not authorized.',
+                receptionResult: $reception,
+                authorizationResult: $authorization,
+            );
+        }
+
+        return BatchResult::success($reception, $authorization);
     }
 
     /**

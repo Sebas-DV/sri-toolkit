@@ -9,9 +9,6 @@ use MTZ\Toolkit\RideGenerator\Data\GeneratedRidePdf;
 use MTZ\Toolkit\RideGenerator\Data\RideData;
 use MTZ\Toolkit\RideGenerator\Renders\DompdfRideRenderer;
 use MTZ\Toolkit\RideGenerator\Renders\TwigRideTemplateRenderer;
-use Twig\Error\LoaderError;
-use Twig\Error\RuntimeError;
-use Twig\Error\SyntaxError;
 
 final readonly class RideGenerator
 {
@@ -21,11 +18,6 @@ final readonly class RideGenerator
     ) {
     }
 
-    /**
-     * @throws RuntimeError
-     * @throws SyntaxError
-     * @throws LoaderError
-     */
     public function generate(RideData $data): GeneratedRidePdf
     {
         $html = $this->templateRenderer->render($data);
@@ -34,7 +26,6 @@ final readonly class RideGenerator
             html: $html,
             fileName: $this->filename($data),
         );
-
     }
 
     private function filename(RideData $data): string

@@ -97,6 +97,58 @@ if ($reception->success) {
 
 `authorize()` exige una clave de acceso numerica de 49 digitos. Si no cumple, lanza `InvalidAccessKeyException`.
 
+## Consulta de estado
+
+`queryStatus()` consulta el estado actual de un comprobante en el Web Service de consulta (`ConsultaComprobante`), independiente del flujo de envio. Util para conciliacion y para detectar comprobantes anulados.
+
+```php
+$consulta = $sender->queryStatus($accessKey);
+
+$consulta->status;         // ConsultationStatus
+$consulta->isAuthorized(); // true si esta AUTORIZADO
+$consulta->isAnnulled();   // true si esta ANULADO
+$consulta->documentType;   // tipoComprobante
+$consulta->issuerRuc;      // rucEmisor
+$consulta->authorizationDate;
+```
+
+Estados posibles: `AUTORIZADO`, `NO AUTORIZADO`, `PENDIENTE DE ANULAR`, `ANULADO`, y `RECHAZADA` cuando la clave esta fuera de rango o no existe.
+
+## Envio por lote
+
+`sendBatch()` arma el XML `<lote>`, lo envia a recepcion y luego autoriza el lote por su clave. Limite: 50 comprobantes o 500 kB por lote.
+
+```php
+$result = $sender->sendBatch($loteAccessKey, '1790012345001', [$signedXmlA, $signedXmlB]);
+
+$result->success;                              // recibido y todos autorizados
+$result->authorizationResult->authorizations; // resultado por comprobante (list<AuthorizationResult>)
+```
+
+La clave de lote se genera igual que la de un comprobante: usa el [AccessKeyGenerator](/modules/access-key-generator) con la serie y secuencial del lote. Si el lote esta vacio o excede los limites, lanza `BatchException`.
+
+## Codigos de mensaje tipados
+
+`SriMessageCode` convierte el identificador de cada mensaje SRI en un enum con clasificacion, para reaccionar por codigo en vez de texto.
+
+```php
+foreach ($result->authorizationResult?->messages ?? [] as $message) {
+    $code = $message->sriCode(); // ?SriMessageCode
+
+    if ($code?->isProcessing()) {
+        // codigo 70: esperar, no reenviar
+    }
+
+    if ($code?->isImpediment()) {
+        // RUC/establecimiento clausurado, inactivo: resolver antes de reenviar
+    }
+
+    if ($code?->isRetryable()) {
+        // corregir y reenviar con la misma clave
+    }
+}
+```
+
 ## Testing
 
 `Sender` acepta `SoapClientFactoryInterface` y `SleeperInterface`, lo que permite reemplazar red y esperas en tests.

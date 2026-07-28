@@ -1,121 +1,406 @@
 {% extends 'layouts/ride.html.twig' %}
 
+{% block document_styles %}
+        body {
+            font-family: Helvetica, Arial, sans-serif;
+            font-size: 10px;
+            color: #000;
+            line-height: 1.35;
+            margin: 0;
+            padding: 0;
+        }
+
+        .invoice-box {
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            padding: 8px;
+            background: #fff;
+        }
+
+        .invoice-header {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin-bottom: 10px;
+        }
+
+        .invoice-header-left,
+        .invoice-header-right {
+            width: 48%;
+            vertical-align: top;
+        }
+
+        .invoice-header-spacer {
+            width: 4%;
+        }
+
+        .invoice-logo-box {
+            border: none;
+            background: transparent;
+            padding: 0;
+            text-align: center;
+            height: 64px;
+            line-height: 64px;
+            margin-bottom: 2px;
+        }
+
+        .invoice-logo {
+            max-width: 270px;
+            max-height: 64px;
+            vertical-align: middle;
+        }
+
+        .invoice-no-logo {
+            color: #dc2626;
+            font-size: 28px;
+            font-weight: bold;
+            letter-spacing: 2px;
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+        .invoice-company-box {
+            height: 140px;
+        }
+
+        .invoice-document-box {
+            height: 206px;
+        }
+
+        .invoice-header-sub {
+            font-size: 9px;
+            font-weight: bold;
+            margin-bottom: 3px;
+            text-transform: uppercase;
+        }
+
+        .invoice-company-title {
+            font-size: 12px;
+            font-weight: bold;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+        }
+
+        .invoice-ruc-title {
+            font-size: 13px;
+            font-weight: bold;
+            margin-bottom: 2px;
+        }
+
+        .invoice-document-type {
+            font-size: 15px;
+            font-weight: bold;
+            margin-bottom: 4px;
+        }
+
+        .invoice-access-key {
+            font-family: Courier, monospace;
+            font-size: 8px;
+            word-break: break-all;
+        }
+
+        .invoice-line-gap {
+            margin-top: 3px;
+        }
+
+        .invoice-company-meta {
+            margin-top: 6px;
+        }
+
+        .invoice-company-meta table {
+            width: 100%;
+            margin-top: 2px;
+        }
+
+        .invoice-meta-value {
+            text-align: right;
+        }
+
+        .invoice-authorization-meta {
+            margin-top: 5px;
+        }
+
+        .invoice-barcode-box {
+            text-align: center;
+            padding-top: 14px;
+        }
+
+        .invoice-barcode-title {
+            font-size: 8px;
+            margin-bottom: 2px;
+        }
+
+        .invoice-barcode {
+            width: 100%;
+            height: 35px;
+            display: block;
+        }
+
+        .invoice-barcode-key {
+            margin-top: 2px;
+        }
+
+        .invoice-client-box {
+            margin-bottom: 10px;
+        }
+
+        .invoice-client-box table,
+        .invoice-bottom-layout {
+            width: 100%;
+        }
+
+        .invoice-client-left {
+            width: 60%;
+        }
+
+        .invoice-client-right {
+            width: 40%;
+        }
+
+        .invoice-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-size: 9px;
+            color: #000;
+            margin-bottom: 10px;
+        }
+
+        .invoice-table th {
+            background: #f8fafc;
+            color: #000;
+            font-weight: bold;
+            padding: 5px 4px;
+            border-bottom: 1px solid #cbd5e1;
+            border-right: 1px solid #cbd5e1;
+            text-transform: uppercase;
+        }
+
+        .invoice-table th:last-child {
+            border-right: none;
+        }
+
+        .invoice-table td {
+            padding: 4px;
+            border-bottom: 1px solid #cbd5e1;
+            border-right: 1px solid #cbd5e1;
+            color: #000;
+        }
+
+        .invoice-table td:last-child {
+            border-right: none;
+        }
+
+        .invoice-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .invoice-table th:first-child {
+            border-top-left-radius: 5px;
+        }
+
+        .invoice-table th:last-child {
+            border-top-right-radius: 5px;
+        }
+
+        .invoice-table tr:last-child td:first-child {
+            border-bottom-left-radius: 5px;
+        }
+
+        .invoice-table tr:last-child td:last-child {
+            border-bottom-right-radius: 5px;
+        }
+
+        .invoice-text-center {
+            text-align: center;
+        }
+
+        .invoice-text-right {
+            text-align: right;
+        }
+
+        .invoice-additional {
+            margin-bottom: 4px;
+        }
+
+        .invoice-additional-title {
+            margin-bottom: 4px;
+        }
+
+        .invoice-bottom-left {
+            width: 52%;
+            vertical-align: top;
+        }
+
+        .invoice-bottom-spacer {
+            width: 3%;
+        }
+
+        .invoice-bottom-right {
+            width: 45%;
+            vertical-align: top;
+        }
+
+        .invoice-payment-table,
+        .invoice-totals-table {
+            margin-bottom: 0;
+        }
+
+        .invoice-totals-table tr:last-child td {
+            font-size: 10px;
+            font-weight: bold;
+            background: #f8fafc;
+        }
+{% endblock %}
+
+{% block document_header %}
+    {% include 'partials/invoice-header.html.twig' %}
+{% endblock %}
+
 {% block content %}
     {% set customer = data.customer|default(data.provider|default({})) %}
+    {% set additionalInformation = data.additional_info|default({}) %}
 
-    <div class="box">
-        <table class="plain">
+    <div class="invoice-box invoice-client-box">
+        <table cellspacing="0" cellpadding="0">
             <tr>
-                <td style="width: 65%;">
-                    <div><span class="bold">Razón Social / Nombres y Apellidos:</span> {{ customer.name|default('') }}</div>
-                    <div><span class="bold">Fecha Emisión:</span> {{ data.date|default('') }}</div>
-                    <div><span class="bold">Dirección:</span> {{ customer.address|default('') }}</div>
+                <td class="invoice-client-left">
+                    <div><span class="bold">Razón Social / Nombres y Apellidos:</span> {{ customer.name|default('N/A') }}</div>
+                    <div class="invoice-line-gap"><span class="bold">Fecha Emisión:</span> {{ data.date|default('N/A') }}</div>
+                    <div class="invoice-line-gap"><span class="bold">Dirección:</span> {{ customer.address|default('N/A') }}</div>
                 </td>
-                <td style="width: 35%;">
-                    <div><span class="bold">Identificación:</span> {{ customer.identification_number|default('') }}</div>
-                    <div style="margin-top: 12px;"><span class="bold">Guía Remisión:</span> {{ data.delivery_guide|default('') }}</div>
+                <td class="invoice-client-right">
+                    <div><span class="bold">Identificación:</span> {{ customer.identification_number|default('N/A') }}</div>
+                    <div class="invoice-line-gap"><span class="bold">Guía Remisión:</span> {{ data.delivery_guide|default('N/A') }}</div>
+                    <div class="invoice-line-gap"><span class="bold">Placa / Matrícula:</span> {{ data.plate|default('N/A') }}</div>
                 </td>
             </tr>
         </table>
     </div>
 
-    <table class="data-table">
+    <table class="invoice-table">
         <thead>
         <tr>
-            <th>Cod. Principal</th>
-            <th>Cod. Auxiliar</th>
-            <th>Cant.</th>
+            <th>Cod. Princ</th>
+            <th>Cod. Aux</th>
+            <th class="invoice-text-center">Cant</th>
             <th>Descripción</th>
-            <th>Detalle Adicional</th>
-            <th>Detalle Adicional</th>
-            <th>Detalle Adicional</th>
-            <th>Precio Unitario</th>
-            <th>Subsidio</th>
-            <th>Precio Sin Subsidio</th>
-            <th>Descuento</th>
-            <th>Precio Total</th>
+            <th>Det. Adicional</th>
+            <th class="invoice-text-right">P. Unitario</th>
+            <th class="invoice-text-right">Subsidio</th>
+            <th class="invoice-text-right">P. Sin Sub</th>
+            <th class="invoice-text-right">Descuento</th>
+            <th class="invoice-text-right">P. Total</th>
         </tr>
         </thead>
         <tbody>
         {% for detail in data.details|default([]) %}
-            {% set additionalValues = [] %}
-            {% if detail.additional_details|default([]) is not empty %}
-                {% for additionalDetail in detail.additional_details|default([])|slice(0, 3) %}
-                    {% set additionalValues = additionalValues|merge([additionalDetail.value|default('')]) %}
-                {% endfor %}
-            {% elseif detail.additional_info|default({}) is mapping %}
-                {% for value in detail.additional_info|default({})|slice(0, 3) %}
-                    {% set additionalValues = additionalValues|merge([value]) %}
-                {% endfor %}
-            {% endif %}
+            {% set additionalInfo = detail.additional_info|default({}) %}
+            {% set additionalDetails = detail.additional_details|default([]) %}
             <tr>
                 <td>{{ detail.main_code|default('') }}</td>
-                <td>{{ detail.auxiliary_code|default('') }}</td>
-                <td>{{ detail.quantity|default('') }}</td>
-                <td style="text-align: left;">{{ detail.description|default('') }}</td>
-                <td>{{ detail.additional_1|default(additionalValues[0]|default('')) }}</td>
-                <td>{{ detail.additional_2|default(additionalValues[1]|default('')) }}</td>
-                <td>{{ detail.additional_3|default(additionalValues[2]|default('')) }}</td>
-                <td class="right">{{ detail.unit_price|default('0.00') }}</td>
-                <td class="right">{{ detail.subsidy|default('0.00') }}</td>
-                <td class="right">{{ detail.price_without_subsidy|default('0.00') }}</td>
-                <td class="right">{{ detail.discount|default('0.00') }}</td>
-                <td class="right">{{ detail.total_price|default(detail.total_without_tax|default('0.00')) }}</td>
+                <td>{{ detail.auxiliary_code|default('-') }}</td>
+                <td class="invoice-text-center">{{ detail.quantity|default('0.00') }}</td>
+                <td>{{ detail.description|default('') }}</td>
+                <td>
+                    {% if detail.additional_1|default('') %}
+                        {{ detail.additional_1 }}
+                    {% elseif additionalInfo is mapping %}
+                        {% for name, value in additionalInfo %}
+                            {{ name }}: {{ value }}{% if not loop.last %}<br>{% endif %}
+                        {% endfor %}
+                    {% elseif additionalDetails is iterable %}
+                        {% for additional in additionalDetails %}
+                            {{ additional.name|default('') }}{% if additional.name|default('') %}: {% endif %}{{ additional.value|default('') }}{% if not loop.last %}<br>{% endif %}
+                        {% endfor %}
+                    {% else %}
+                        -
+                    {% endif %}
+                </td>
+                <td class="invoice-text-right">{{ detail.unit_price|default('0.00') }}</td>
+                <td class="invoice-text-right">{{ detail.subsidy|default('0.00') }}</td>
+                <td class="invoice-text-right">{{ detail.unit_price_without_subsidy|default(detail.price_without_subsidy|default('0.00')) }}</td>
+                <td class="invoice-text-right">{{ detail.discount|default('0.00') }}</td>
+                <td class="invoice-text-right">{{ detail.total_price|default(detail.total_without_tax|default('0.00')) }}</td>
             </tr>
         {% else %}
-            <tr><td colspan="12">No hay detalles registrados</td></tr>
+            <tr>
+                <td colspan="10" class="invoice-text-center">Sin detalles</td>
+            </tr>
         {% endfor %}
         </tbody>
     </table>
 
-    <div class="spacer"></div>
-    <table style="border: none;">
+    <table class="invoice-bottom-layout" cellspacing="0" cellpadding="0">
         <tr>
-            <td style="width: 58%; border: none; padding: 0;">
-                <div class="box">
-                    <div class="bold" style="margin-bottom: 6px;">Información Adicional</div>
-                    <table class="plain">
-                        {% if data.additional_info|default({}) is mapping %}
-                            {% for name, value in data.additional_info|default({}) %}
-                                <tr><td style="width: 28%;" class="bold">{{ name }}:</td><td>{{ value }}</td></tr>
-                            {% endfor %}
+            <td class="invoice-bottom-left">
+                <div class="invoice-box invoice-additional">
+                    <div class="bold invoice-additional-title">Información Adicional</div>
+                    {% if additionalInformation is mapping %}
+                        {% for name, value in additionalInformation %}
+                            <div><span class="bold">{{ name }}:</span> {{ value }}</div>
                         {% else %}
-                            {% for info in data.additional_info|default([]) %}
-                                <tr><td style="width: 28%;" class="bold">{{ info.name|default('') }}:</td><td>{{ info.value|default('') }}</td></tr>
-                            {% endfor %}
-                        {% endif %}
-                    </table>
+                            <div>&nbsp;</div>
+                        {% endfor %}
+                    {% else %}
+                        {% for info in additionalInformation %}
+                            <div><span class="bold">{{ info.name|default('') }}:</span> {{ info.value|default('') }}</div>
+                        {% else %}
+                            <div>&nbsp;</div>
+                        {% endfor %}
+                    {% endif %}
                 </div>
 
-                <table class="data-table" style="width: 85%;">
-                    <tr><th>Forma de Pago</th><th>Valor</th></tr>
+                <table class="invoice-table invoice-payment-table">
+                    <thead>
+                    <tr>
+                        <th>Forma de Pago</th>
+                        <th class="invoice-text-right">Valor</th>
+                    </tr>
+                    </thead>
+                    <tbody>
                     {% for payment in data.payments|default([]) %}
+                        {% set method = payment.method|default('') %}
                         <tr>
-                            <td style="text-align: left;">{{ payment.name|default(payment.method_label|default(payment.method|default(''))) }}</td>
-                            <td class="right">{{ payment.total|default('') }}</td>
+                            <td>
+                                {{ payment.name|default(payment.method_label|default(method ~ (paymentMethods[method] is defined ? ' - ' ~ paymentMethods[method] : ''))) }}
+                            </td>
+                            <td class="invoice-text-right bold">{{ payment.total|default('0.00') }}</td>
                         </tr>
                     {% else %}
                         <tr>
-                            <td style="text-align: left;">SIN UTILIZACIÓN DEL SISTEMA FINANCIERO</td>
-                            <td class="right">{{ data.total_amount|default('0.00') }}</td>
+                            <td>01 - SIN UTILIZACIÓN DEL SISTEMA FINANCIERO</td>
+                            <td class="invoice-text-right bold">{{ data.total_amount|default('0.00') }}</td>
                         </tr>
                     {% endfor %}
+                    </tbody>
                 </table>
             </td>
-            <td style="width: 2%; border: none;"></td>
-            <td style="width: 40%; border: none; padding: 0;">
-                <table class="totals">
-                    <tr><td>SUBTOTAL 15%</td><td>{{ data.subtotal_15|default(data.subtotal_12|default('0.00')) }}</td></tr>
-                    <tr><td>SUBTOTAL IVA 0%</td><td>{{ data.subtotal_0|default('0.00') }}</td></tr>
-                    <tr><td>SUBTOTAL NO OBJETO IVA</td><td>{{ data.subtotal_not_subject_to_vat|default(data.subtotal_no_iva|default('0.00')) }}</td></tr>
-                    <tr><td>SUBTOTAL EXENTO IVA</td><td>{{ data.subtotal_exempt_vat|default(data.subtotal_exento_iva|default('0.00')) }}</td></tr>
-                    <tr><td>SUBTOTAL SIN IMPUESTOS</td><td>{{ data.total_without_taxes|default('0.00') }}</td></tr>
-                    <tr><td>DESCUENTO</td><td>{{ data.total_discount|default('0.00') }}</td></tr>
-                    <tr><td>ICE</td><td>{{ data.ice|default('0.00') }}</td></tr>
-                    <tr><td>IVA 15%</td><td>{{ data.iva_15|default(data.vat|default('0.00')) }}</td></tr>
-                    <tr><td>IRBPNR</td><td>{{ data.irbpnr|default('0.00') }}</td></tr>
-                    <tr><td>PROPINA</td><td>{{ data.tip|default('0.00') }}</td></tr>
-                    <tr><td class="bold">VALOR TOTAL</td><td class="bold">{{ data.total_amount|default('0.00') }}</td></tr>
+
+            <td class="invoice-bottom-spacer">&nbsp;</td>
+
+            <td class="invoice-bottom-right">
+                <table class="invoice-table invoice-totals-table">
+                    <tbody>
+                    <tr><td>SUBTOTAL TARIFA ESPECIAL</td><td class="invoice-text-right">{{ invoiceTotals.subtotal_special }}</td></tr>
+                    {% for subtotal in invoiceTotals.subtotal_rates %}
+                        <tr><td>SUBTOTAL {{ subtotal.rate }}%</td><td class="invoice-text-right">{{ subtotal.value }}</td></tr>
+                    {% endfor %}
+                    <tr><td>SUBTOTAL 0%</td><td class="invoice-text-right">{{ invoiceTotals.subtotal_zero }}</td></tr>
+                    <tr><td>SUBTOTAL NO OBJETO DE IVA</td><td class="invoice-text-right">{{ invoiceTotals.subtotal_not_subject }}</td></tr>
+                    <tr><td>SUBTOTAL EXENTO DE IVA</td><td class="invoice-text-right">{{ invoiceTotals.subtotal_exempt }}</td></tr>
+                    <tr><td>SUBTOTAL SIN IMPUESTOS</td><td class="invoice-text-right">{{ invoiceTotals.total_without_taxes }}</td></tr>
+                    <tr><td>TOTAL DESCUENTO</td><td class="invoice-text-right">{{ invoiceTotals.total_discount }}</td></tr>
+                    <tr><td>ICE</td><td class="invoice-text-right">{{ invoiceTotals.ice }}</td></tr>
+                    {% for vat in invoiceTotals.vat_rates %}
+                        <tr><td>IVA {{ vat.rate }}%</td><td class="invoice-text-right">{{ vat.value }}</td></tr>
+                    {% endfor %}
+                    <tr><td>TOTAL DEVOLUCIÓN IVA</td><td class="invoice-text-right">{{ invoiceTotals.vat_refund }}</td></tr>
+                    <tr><td>IRBPNR</td><td class="invoice-text-right">{{ invoiceTotals.irbpnr }}</td></tr>
+                    <tr><td>VALOR TOTAL</td><td class="invoice-text-right">$ {{ invoiceTotals.total }}</td></tr>
+                    </tbody>
                 </table>
             </td>
         </tr>

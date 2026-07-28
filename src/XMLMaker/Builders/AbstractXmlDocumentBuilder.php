@@ -193,13 +193,19 @@ abstract class AbstractXmlDocumentBuilder implements XmlDocumentBuilderInterface
     /**
      * Appends buyer (comprador) identification fields to a parent element.
      *
+     * The SRI invoice schema places guiaRemision between
+     * tipoIdentificacionComprador and razonSocialComprador, so callers that emit a
+     * delivery guide must inject it here to keep the element sequence valid.
+     *
      * @param DOMElement $parent The parent element to append buyer info to.
      * @param ArrayReader $buyer Reader wrapping the buyer data array.
+     * @param string|null $deliveryGuide Optional delivery guide number placed after the buyer identification type.
      * @throws DOMException When a required DOM element cannot be created.
      */
-    protected function appendBuyerInformation(DOMElement $parent, ArrayReader $buyer): void
+    protected function appendBuyerInformation(DOMElement $parent, ArrayReader $buyer, ?string $deliveryGuide = null): void
     {
         $this->dom->append($parent, 'tipoIdentificacionComprador', $buyer->string('identification_type'));
+        $this->dom->append($parent, 'guiaRemision', $deliveryGuide);
         $this->dom->append($parent, 'razonSocialComprador', $buyer->string('name'));
         $this->dom->append($parent, 'identificacionComprador', $buyer->string('identification_number'));
     }
@@ -331,7 +337,6 @@ abstract class AbstractXmlDocumentBuilder implements XmlDocumentBuilderInterface
             $this->dom->append($taxElement, 'tarifa', $reader->string('rate'));
             $this->dom->append($taxElement, 'baseImponible', $reader->string('taxable_base'));
             $this->dom->append($taxElement, 'valor', $reader->string('value'));
-            $this->dom->append($taxElement, 'valorDevolucionIva', $reader->nullableString('refund_value'));
         }
     }
 

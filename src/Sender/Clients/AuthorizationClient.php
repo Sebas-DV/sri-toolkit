@@ -9,6 +9,7 @@ use MTZ\Toolkit\Sender\Contracts\SleeperInterface;
 use MTZ\Toolkit\Sender\Contracts\SoapClientFactoryInterface;
 use MTZ\Toolkit\Sender\Data\AuthorizationResult;
 use MTZ\Toolkit\Sender\Data\Message;
+use MTZ\Toolkit\Sender\Enums\AuthorizationStatus;
 use MTZ\Toolkit\Sender\Exceptions\ConnectionException;
 use MTZ\Toolkit\Sender\Exceptions\InvalidAccessKeyException;
 use MTZ\Toolkit\Sender\Services\ResponseParser;
@@ -17,19 +18,12 @@ use MTZ\Toolkit\Sender\Support\NativeSoapClientFactory;
 use SoapFault;
 
 /**
- * Handles authorization of electronic documents with the SRI (Ecuadorian tax authority).
- *
  * This client sends the access key to the SRI authorization web service, parses
  * the SOAP response, and returns the authorization result. It supports retry logic
  * with configurable attempts and delays.
  */
-final class AuthorizationClient
+final readonly class AuthorizationClient
 {
-    /**
-     * @var object|null The raw SOAP response from the last authorization request.
-     */
-    private ?object $lastResponse = null;
-
     /**
      * @param SenderConfig $config The sender configuration for WSDL URLs and retry settings.
      * @param ResponseParser $responseParser Service that parses SOAP responses from the SRI.
@@ -37,10 +31,10 @@ final class AuthorizationClient
      * @param SleeperInterface $sleeper Provides sleep functionality for retry delays.
      */
     public function __construct(
-        private readonly SenderConfig $config,
-        private readonly ResponseParser $responseParser = new ResponseParser(),
-        private readonly SoapClientFactoryInterface $soapClientFactory = new NativeSoapClientFactory(),
-        private readonly SleeperInterface $sleeper = new NativeSleeper(),
+        private SenderConfig               $config,
+        private ResponseParser             $responseParser = new ResponseParser(),
+        private SoapClientFactoryInterface $soapClientFactory = new NativeSoapClientFactory(),
+        private SleeperInterface           $sleeper = new NativeSleeper(),
     ) {
     }
 
@@ -72,8 +66,8 @@ final class AuthorizationClient
 
                 try
                 {
-                    $response = $client->autorizacionComprobante([
-                        'claveAccesoComprobante' => $accessKey,
+                    $response = $client->__soapCall('autorizacionComprobante', [
+                        ['claveAccesoComprobante' => $accessKey],
                     ]);
 
                     if (! is_object($response))
@@ -84,8 +78,6 @@ final class AuthorizationClient
                             attempts: $attempts,
                         );
                     }
-
-                    $this->lastResponse = $response;
 
                     $status = $this->responseParser->authorizationStatus($response);
                     $messages = $this->responseParser->authorizationMessages($response);
@@ -101,7 +93,9 @@ final class AuthorizationClient
                         );
                     }
 
-                    if ($attempts < $this->config->maxAttempts)
+                    $isStillProcessing = $status === AuthorizationStatus::Processing;
+
+                    if ($isStillProcessing && $attempts < $this->config->maxAttempts)
                     {
                         $this->sleeper->sleep($this->config->retryDelay);
                         continue;
@@ -142,16 +136,6 @@ final class AuthorizationClient
                 attempts: $attempts,
             );
         }
-    }
-
-    /**
-     * Returns the raw SOAP response from the last authorization request.
-     *
-     * @return object|null The raw response object, or null if no request has been made.
-     */
-    public function lastResponse(): ?object
-    {
-        return $this->lastResponse;
     }
 
     /**

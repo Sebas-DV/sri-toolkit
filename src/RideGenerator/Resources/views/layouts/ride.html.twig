@@ -2,82 +2,144 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+    <!--
+        Dompdf implementa CSS 2.1. Para conservar un RIDE estable y predecible:
+        - Los layouts principales se construyen con tablas.
+        - Los anchos se expresan en porcentajes o milímetros.
+        - Las imágenes se proporcionan como rutas locales autorizadas o data URI.
+    -->
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
-            font-family: Helvetica, Arial, dejavusans, sans-serif;
-            font-size: 10.5px;
+            font-family: Helvetica, Arial, sans-serif;
+            font-size: 7.6pt;
             color: #000;
-            line-height: 1.35;
-            background: #fff;
-            padding: 4mm;
+            line-height: 1.3;
         }
-        .page {
-            width: 100%;
-            padding: 0;
-        }
-        table { width: 100%; border-collapse: collapse; }
+
+        table { border-collapse: collapse; }
         td, th { vertical-align: top; }
-        .box {
-            border: 1px solid #000;
-            border-radius: 7px;
-            padding: 7px;
-            margin-bottom: 8px;
-        }
-        .plain td, .plain th { border: none; padding: 2px; text-align: left; }
-        .title { font-size: 15px; font-weight: bold; margin: 5px 0; }
-        .subtitle { font-size: 12px; font-weight: bold; margin-bottom: 4px; }
+
         .bold { font-weight: bold; }
         .center { text-align: center; }
         .right { text-align: right; }
-        .small { font-size: 8px; }
-        .muted { color: #333; }
-        .spacer { height: 7px; }
-        .logo-slot {
-            height: 112px;
-            text-align: center;
-            margin-bottom: 8px;
-        }
-        .logo-img { max-width: 100%; max-height: 104px; }
-        .no-logo {
-            color: #b00000;
-            border: 1px dashed #b00000;
-            font-size: 18px;
+        .up { text-transform: uppercase; }
+        .nowrap { white-space: nowrap; }
+        .spacer, .gap { height: 2.5mm; font-size: 2pt; line-height: 2pt; }
+
+        /* Logo */
+        .logo { text-align: center; padding: 2mm 0 3mm 0; }
+        .logo img { width: 55mm; }
+        .nologo {
+            color: #FF0000;
             font-weight: bold;
-            padding: 28px 8px;
+            font-size: 18pt;
+            text-align: center;
+            padding: 6mm 0;
+        }
+
+        /* Caja con borde: tabla de una sola celda (td.fcell).
+           El borde va en el td, no en la tabla: mPDF no dibuja bordes
+           de tabla cuando está anidada dentro de otra tabla. */
+        .frame { width: 100%; }
+        .frame td.fcell { border: 0.4mm solid #000; padding: 3mm; }
+        .frame td.panel-head {
+            background: #e9e9e9;
+            font-weight: bold;
+            text-align: center;
+            padding: 1.2mm;
+            border: 0.4mm solid #000;
+            border-bottom: 0.3mm solid #8a8a8a;
+        }
+        .frame td.panel-body { border: 0.4mm solid #000; padding: 2mm; }
+
+        /* Caja de datos (otros comprobantes): div.box + table.plain */
+        .box { margin-bottom: 2.5mm; }
+        .plain { width: 100%; border: 0.4mm solid #000; }
+        .plain td { padding: 1.5mm 2mm; }
+
+        /* key/value plain tables */
+        .kv { width: 100%; }
+        .kv td { padding: 0.5mm 0; }
+        .kv td.k { font-weight: bold; }
+
+        /* Caja del comprobante (derecha) */
+        .doc .ruc { font-size: 9.5pt; }
+        .doc .doctitle { font-size: 11pt; font-weight: bold; margin: 1.6mm 0; }
+        .doc .label { font-weight: bold; }
+        .doc .auth { font-size: 6.6pt; line-height: 1.25; }
+        .doc .barcode { text-align: center; }
+        .doc .barcode img { width: 80mm; height: 12mm; }
+        .doc .clave { font-size: 6.8pt; text-align: center; }
+
+        /* Buyer box */
+        .buyer { width: 100%; border: 0.4mm solid #000; }
+        .buyer td { padding: 1mm 2mm; }
+        .buyer td.k { font-weight: bold; width: 20%; }
+        .buyer td.v { width: 30%; }
+
+        /* Items table */
+        .items { width: 100%; margin-top: 2.5mm; }
+        .items th {
+            background: #e9e9e9;
+            border: 0.25mm solid #7d7d7d;
+            padding: 1.2mm 1mm;
+            font-size: 6.6pt;
+            font-weight: bold;
             text-align: center;
         }
-        .access-key {
-            font-size: 9px;
-            word-break: break-all;
-            margin: 5px 0 7px;
-            letter-spacing: .3px;
+        .items td {
+            border: 0.25mm solid #9a9a9a;
+            padding: 1.1mm 1mm;
+            font-size: 6.8pt;
+            text-align: center;
         }
-        .barcode { text-align: center; margin-top: 4px; }
-        .data-table th,
-        .data-table td {
-            border: 1px solid #98989f;
-            padding: 4px;
-            font-size: 9px;
-        }
+        .items td.desc { text-align: left; }
+        .items td.num { text-align: right; }
+
+        /* Generic grid table (credit/debit notes, guides, withholdings) */
+        .data-table { width: 100%; }
         .data-table th {
-            background: #f1f1f1;
+            background: #e9e9e9;
+            border: 0.25mm solid #7d7d7d;
+            padding: 1.2mm 1mm;
+            font-size: 6.8pt;
             font-weight: bold;
             text-align: center;
         }
-        .data-table td { text-align: center; }
-        .totals td {
-            border: 1px solid #98989f;
-            padding: 3px 6px;
+        .data-table td {
+            border: 0.25mm solid #9a9a9a;
+            padding: 1.1mm 1mm;
+            font-size: 6.9pt;
+            text-align: center;
         }
-        .totals td:first-child { text-align: left; }
-        .totals td:last-child { text-align: right; }
+
+        .pay { width: 100%; margin-top: 2.5mm; }
+        .pay th {
+            background: #e9e9e9;
+            border: 0.3mm solid #8a8a8a;
+            padding: 1.2mm;
+            font-size: 6.8pt;
+            text-align: center;
+        }
+        .pay td { border: 0.3mm solid #9a9a9a; padding: 1.2mm; font-size: 6.8pt; }
+
+        .totals { width: 100%; }
+        .totals td {
+            border: 0.3mm solid #9a9a9a;
+            padding: 1.1mm 2mm;
+            font-size: 6.9pt;
+        }
+        .totals td.k { text-align: left; }
+        .totals td.v { text-align: right; width: 30%; }
+        .totals tr.grand td { font-weight: bold; background: #f0f0f0; }
+
+        {% block document_styles %}{% endblock %}
     </style>
 </head>
 <body>
-<div class="page">
+{% block document_header %}
     {% include 'partials/header.html.twig' %}
-    {% block content %}{% endblock %}
-</div>
+{% endblock %}
+{% block content %}{% endblock %}
 </body>
 </html>

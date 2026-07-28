@@ -47,18 +47,43 @@ final class DebitNoteXmlBuilder extends AbstractXmlDocumentBuilder
 
         $this->dom->append($debitNoteInformation, 'totalSinImpuestos', $reader->string('total_without_taxes'));
 
-        $this->appendTaxTotals(
-            parent: $debitNoteInformation,
-            taxTotals: $reader->array('tax_totals'),
-            containerName: 'impuestos',
-            itemName: 'impuesto',
-            includeRate: true,
-        );
+        $this->appendDebitNoteTaxes($debitNoteInformation, $reader->array('tax_totals'));
 
         $this->dom->append($debitNoteInformation, 'valorTotal', $reader->string('total_amount'));
 
         $this->appendPayments($debitNoteInformation, $reader->nullableArray('payments'));
         $this->appendReasons($root, $data);
+    }
+
+    /**
+     * Appends the debit note tax block (impuestos) to the info element.
+     *
+     * @param DOMElement $parent The info element to append taxes to.
+     * @param array $taxTotals Array of tax entries with code, percentage_code, rate, taxable_base, and value.
+     * @throws InvalidXmlDataException When tax_totals is empty.
+     * @throws DOMException When a required DOM element cannot be created.
+     */
+    private function appendDebitNoteTaxes(DOMElement $parent, array $taxTotals): void
+    {
+        if ($taxTotals === [])
+        {
+            throw InvalidXmlDataException::emptyItems('tax_totals');
+        }
+
+        $taxesElement = $this->dom->child($parent, 'impuestos');
+
+        foreach ($taxTotals as $taxTotal)
+        {
+            $reader = new ArrayReader($taxTotal);
+
+            $taxElement = $this->dom->child($taxesElement, 'impuesto');
+
+            $this->dom->append($taxElement, 'codigo', $reader->string('code'));
+            $this->dom->append($taxElement, 'codigoPorcentaje', $reader->string('percentage_code'));
+            $this->dom->append($taxElement, 'tarifa', $reader->string('rate'));
+            $this->dom->append($taxElement, 'baseImponible', $reader->string('taxable_base'));
+            $this->dom->append($taxElement, 'valor', $reader->string('value'));
+        }
     }
 
     /**

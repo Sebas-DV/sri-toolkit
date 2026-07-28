@@ -1,62 +1,455 @@
 {% extends 'layouts/ride.html.twig' %}
 
+{% block document_styles %}
+        body {
+            font-family: Helvetica, Arial, sans-serif;
+            font-size: 10px;
+            color: #000;
+            line-height: 1.35;
+            margin: 0;
+            padding: 0;
+        }
+
+        .credit-note-box {
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            padding: 8px;
+            background: #fff;
+        }
+
+        .credit-note-header {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin-bottom: 10px;
+        }
+
+        .credit-note-header-left,
+        .credit-note-header-right {
+            width: 48%;
+            vertical-align: top;
+        }
+
+        .credit-note-header-spacer {
+            width: 4%;
+        }
+
+        .credit-note-logo-box {
+            border: none;
+            background: transparent;
+            padding: 0;
+            text-align: center;
+            height: 66px;
+            line-height: 66px;
+            margin-bottom: 6px;
+        }
+
+        .credit-note-logo {
+            max-width: 270px;
+            max-height: 64px;
+            vertical-align: middle;
+        }
+
+        .credit-note-no-logo {
+            color: #dc2626;
+            font-size: 28px;
+            font-weight: bold;
+            letter-spacing: 2px;
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+        .credit-note-company-box {
+            height: 140px;
+        }
+
+        .credit-note-document-box {
+            height: 212px;
+        }
+
+        .credit-note-header-sub {
+            font-size: 9px;
+            font-weight: bold;
+            margin-bottom: 3px;
+            text-transform: uppercase;
+        }
+
+        .credit-note-company-title {
+            font-size: 12px;
+            font-weight: bold;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+        }
+
+        .credit-note-ruc-title {
+            font-size: 13px;
+            font-weight: bold;
+            margin-bottom: 2px;
+        }
+
+        .credit-note-document-type {
+            font-size: 15px;
+            font-weight: bold;
+            margin-bottom: 4px;
+            letter-spacing: 0.5px;
+        }
+
+        .credit-note-access-key {
+            font-family: Courier, monospace;
+            font-size: 8px;
+            word-break: break-all;
+        }
+
+        .credit-note-line-gap {
+            margin-top: 3px;
+        }
+
+        .credit-note-company-meta {
+            margin-top: 6px;
+        }
+
+        .credit-note-company-meta table {
+            width: 100%;
+            margin-top: 2px;
+        }
+
+        .credit-note-meta-value {
+            text-align: right;
+        }
+
+        .credit-note-authorization-meta {
+            margin-top: 5px;
+        }
+
+        .credit-note-barcode-box {
+            text-align: center;
+            padding-top: 14px;
+        }
+
+        .credit-note-barcode-title {
+            font-size: 8px;
+            margin-bottom: 2px;
+        }
+
+        .credit-note-barcode {
+            width: 100%;
+            height: 35px;
+            display: block;
+        }
+
+        .credit-note-barcode-key {
+            margin-top: 2px;
+        }
+
+        .credit-note-customer-box {
+            margin-bottom: 10px;
+        }
+
+        .credit-note-customer-box table,
+        .credit-note-bottom-layout {
+            width: 100%;
+        }
+
+        .credit-note-customer-left {
+            width: 65%;
+        }
+
+        .credit-note-customer-right {
+            width: 35%;
+        }
+
+        .credit-note-divider {
+            border: 0;
+            border-top: 1px solid #cbd5e1;
+            margin: 6px 0;
+        }
+
+        .credit-note-reference-label {
+            width: 32%;
+        }
+
+        .credit-note-reference-type {
+            width: 18%;
+            font-weight: bold;
+        }
+
+        .credit-note-reference-value {
+            width: 50%;
+        }
+
+        .credit-note-reference-row td {
+            padding-top: 3px;
+        }
+
+        .credit-note-reason {
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .credit-note-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-size: 9px;
+            color: #000;
+            margin-bottom: 10px;
+        }
+
+        .credit-note-table th {
+            background: #f8fafc;
+            color: #000;
+            font-weight: bold;
+            padding: 5px 4px;
+            border-bottom: 1px solid #cbd5e1;
+            border-right: 1px solid #cbd5e1;
+            text-transform: uppercase;
+        }
+
+        .credit-note-table th:last-child {
+            border-right: none;
+        }
+
+        .credit-note-table td {
+            padding: 4px;
+            border-bottom: 1px solid #cbd5e1;
+            border-right: 1px solid #cbd5e1;
+            color: #000;
+        }
+
+        .credit-note-table td:last-child {
+            border-right: none;
+        }
+
+        .credit-note-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .credit-note-table th:first-child {
+            border-top-left-radius: 5px;
+        }
+
+        .credit-note-table th:last-child {
+            border-top-right-radius: 5px;
+        }
+
+        .credit-note-table tr:last-child td:first-child {
+            border-bottom-left-radius: 5px;
+        }
+
+        .credit-note-table tr:last-child td:last-child {
+            border-bottom-right-radius: 5px;
+        }
+
+        .credit-note-text-center {
+            text-align: center;
+        }
+
+        .credit-note-text-right {
+            text-align: right;
+        }
+
+        .credit-note-bottom-left {
+            width: 52%;
+            vertical-align: top;
+        }
+
+        .credit-note-bottom-spacer {
+            width: 3%;
+        }
+
+        .credit-note-bottom-right {
+            width: 45%;
+            vertical-align: top;
+        }
+
+        .credit-note-additional {
+            min-height: 160px;
+        }
+
+        .credit-note-additional-title {
+            font-size: 11px;
+            margin-bottom: 8px;
+        }
+
+        .credit-note-additional-label {
+            width: 25%;
+            vertical-align: top;
+        }
+
+        .credit-note-additional-value {
+            width: 75%;
+            vertical-align: top;
+        }
+
+        .credit-note-additional-row td {
+            padding-top: 4px;
+        }
+
+        .credit-note-totals {
+            margin-bottom: 0;
+        }
+
+        .credit-note-totals tr:last-child td {
+            font-size: 10px;
+            font-weight: bold;
+            background: #f8fafc;
+        }
+{% endblock %}
+
+{% block document_header %}
+    {% include 'partials/credit-note-header.html.twig' %}
+{% endblock %}
+
 {% block content %}
     {% set customer = data.customer|default({}) %}
     {% set referenced = data.referenced_document|default({}) %}
+    {% set additionalInformation = data.additional_info|default({}) %}
 
-    <div class="box">
-        <table class="plain">
+    <div class="credit-note-box credit-note-customer-box">
+        <table cellspacing="0" cellpadding="0">
             <tr>
-                <td style="width: 62%;">
-                    <div><span class="bold">Razón Social / Nombres y Apellidos:</span> {{ customer.name|default('') }}</div>
-                    <div><span class="bold">Fecha Emisión:</span> {{ data.date|default('') }}</div>
-                    <div><span class="bold">Dirección:</span> {{ customer.address|default('') }}</div>
+                <td class="credit-note-customer-left">
+                    <div><span class="bold">Razón Social / Nombres y Apellidos:</span> {{ customer.name|default('N/A') }}</div>
+                    <div class="credit-note-line-gap"><span class="bold">Fecha Emisión:</span> {{ data.date|default('N/A') }}</div>
                 </td>
-                <td style="width: 38%;">
-                    <div><span class="bold">Identificación:</span> {{ customer.identification_number|default('') }}</div>
-                    <div><span class="bold">Comprobante que se modifica:</span> {{ referenced.number|default('') }}</div>
-                    <div><span class="bold">Fecha emisión comprobante:</span> {{ referenced.emission_date|default('') }}</div>
+                <td class="credit-note-customer-right">
+                    <div><span class="bold">Identificación:</span> {{ customer.identification_number|default('N/A') }}</div>
                 </td>
+            </tr>
+        </table>
+
+        <div class="credit-note-divider"></div>
+
+        <table cellspacing="0" cellpadding="0">
+            <tr>
+                <td class="credit-note-reference-label"><span class="bold">Comprobante que se modifica:</span></td>
+                <td class="credit-note-reference-type">{{ referencedDocumentTitle }}</td>
+                <td class="credit-note-reference-value">{{ referenced.number|default('N/A') }}</td>
+            </tr>
+            <tr class="credit-note-reference-row">
+                <td colspan="2"><span class="bold">Fecha Emisión (Comprobante a modificar):</span></td>
+                <td>{{ referenced.emission_date|default('N/A') }}</td>
+            </tr>
+            <tr class="credit-note-reference-row">
+                <td colspan="2"><span class="bold">Razón de Modificación:</span></td>
+                <td class="credit-note-reason">{{ referenced.reason|default(data.reason|default('N/A')) }}</td>
             </tr>
         </table>
     </div>
 
-    <table class="data-table">
+    <table class="credit-note-table">
+        <thead>
         <tr>
-            <th>Cod. Principal</th>
-            <th>Cant.</th>
+            <th>Código</th>
+            <th>Código Auxiliar</th>
+            <th class="credit-note-text-center">Cantidad</th>
             <th>Descripción</th>
-            <th>Precio Unitario</th>
-            <th>Descuento</th>
-            <th>Precio Total</th>
+            <th>Detalle Adicional</th>
+            <th>Detalle Adicional</th>
+            <th>Detalle Adicional</th>
+            <th class="credit-note-text-right">Precio Unitario</th>
+            <th class="credit-note-text-right">Descuento</th>
+            <th class="credit-note-text-right">Precio Total</th>
         </tr>
+        </thead>
+        <tbody>
         {% for detail in data.details|default([]) %}
+            {% set additionalValues = [] %}
+            {% set additionalInfo = detail.additional_info|default({}) %}
+            {% set additionalDetails = detail.additional_details|default([]) %}
+
+            {% if additionalInfo is mapping %}
+                {% for name, value in additionalInfo %}
+                    {% if loop.index <= 3 %}
+                        {% set additionalValues = additionalValues|merge([name ~ ': ' ~ value]) %}
+                    {% endif %}
+                {% endfor %}
+            {% elseif additionalDetails is iterable %}
+                {% for additional in additionalDetails %}
+                    {% if loop.index <= 3 %}
+                        {% set label = additional.name|default('') %}
+                        {% set additionalValues = additionalValues|merge([
+                            (label ? label ~ ': ' : '') ~ additional.value|default('')
+                        ]) %}
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+
             <tr>
                 <td>{{ detail.main_code|default('') }}</td>
-                <td>{{ detail.quantity|default('') }}</td>
-                <td style="text-align: left;">{{ detail.description|default('') }}</td>
-                <td class="right">{{ detail.unit_price|default('0.00') }}</td>
-                <td class="right">{{ detail.discount|default('0.00') }}</td>
-                <td class="right">{{ detail.total_price|default(detail.total_without_tax|default('0.00')) }}</td>
+                <td>{{ detail.auxiliary_code|default('-') }}</td>
+                <td class="credit-note-text-center">{{ detail.quantity|default('0.00') }}</td>
+                <td>{{ detail.description|default('') }}</td>
+                <td>{{ detail.additional_1|default(additionalValues[0]|default('-')) }}</td>
+                <td>{{ detail.additional_2|default(additionalValues[1]|default('-')) }}</td>
+                <td>{{ detail.additional_3|default(additionalValues[2]|default('-')) }}</td>
+                <td class="credit-note-text-right">{{ detail.unit_price|default('0.00') }}</td>
+                <td class="credit-note-text-right">{{ detail.discount|default('0.00') }}</td>
+                <td class="credit-note-text-right">{{ detail.total_price|default(detail.total_without_tax|default('0.00')) }}</td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="10" class="credit-note-text-center">Sin detalles</td>
             </tr>
         {% endfor %}
+        </tbody>
     </table>
 
-    <div class="spacer"></div>
-    <table style="border: none;">
+    <table class="credit-note-bottom-layout" cellspacing="0" cellpadding="0">
         <tr>
-            <td style="width: 58%; border: none; padding: 0;">
-                <div class="box">
-                    <div class="bold">Razón de modificación</div>
-                    <div>{{ referenced.reason|default(data.reason|default('')) }}</div>
+            <td class="credit-note-bottom-left">
+                <div class="credit-note-box credit-note-additional">
+                    <div class="bold credit-note-additional-title">Información Adicional</div>
+                    <table cellspacing="0" cellpadding="0">
+                        {% if customer.address|default('') %}
+                            <tr>
+                                <td class="credit-note-additional-label"><span class="bold">Dirección:</span></td>
+                                <td class="credit-note-additional-value">{{ customer.address }}</td>
+                            </tr>
+                        {% endif %}
+
+                        {% if additionalInformation is mapping %}
+                            {% for name, value in additionalInformation %}
+                                <tr class="credit-note-additional-row">
+                                    <td class="credit-note-additional-label"><span class="bold">{{ name }}:</span></td>
+                                    <td class="credit-note-additional-value">{{ value }}</td>
+                                </tr>
+                            {% endfor %}
+                        {% else %}
+                            {% for info in additionalInformation %}
+                                <tr class="credit-note-additional-row">
+                                    <td class="credit-note-additional-label"><span class="bold">{{ info.name|default('') }}:</span></td>
+                                    <td class="credit-note-additional-value">{{ info.value|default('') }}</td>
+                                </tr>
+                            {% endfor %}
+                        {% endif %}
+                    </table>
                 </div>
             </td>
-            <td style="width: 2%; border: none;"></td>
-            <td style="width: 40%; border: none; padding: 0;">
-                <table class="totals">
-                    <tr><td>SUBTOTAL SIN IMPUESTOS</td><td>{{ data.total_without_taxes|default('0.00') }}</td></tr>
-                    <tr><td>IVA</td><td>{{ data.vat|default('0.00') }}</td></tr>
-                    <tr><td class="bold">VALOR MODIFICADO</td><td class="bold">{{ data.modified_document_total|default(data.total_amount|default('0.00')) }}</td></tr>
+
+            <td class="credit-note-bottom-spacer">&nbsp;</td>
+
+            <td class="credit-note-bottom-right">
+                <table class="credit-note-table credit-note-totals">
+                    <tbody>
+                    <tr><td>SUBTOTAL TARIFA ESPECIAL</td><td class="credit-note-text-right">{{ creditNoteTotals.subtotal_special }}</td></tr>
+                    {% for subtotal in creditNoteTotals.subtotal_rates %}
+                        <tr><td>SUBTOTAL {{ subtotal.rate }}%</td><td class="credit-note-text-right">{{ subtotal.value }}</td></tr>
+                    {% endfor %}
+                    <tr><td>SUBTOTAL 0%</td><td class="credit-note-text-right">{{ creditNoteTotals.subtotal_zero }}</td></tr>
+                    <tr><td>SUBTOTAL NO OBJETO DE IVA</td><td class="credit-note-text-right">{{ creditNoteTotals.subtotal_not_subject }}</td></tr>
+                    <tr><td>SUBTOTAL EXENTO DE IVA</td><td class="credit-note-text-right">{{ creditNoteTotals.subtotal_exempt }}</td></tr>
+                    <tr><td>SUBTOTAL SIN IMPUESTOS</td><td class="credit-note-text-right">{{ creditNoteTotals.total_without_taxes }}</td></tr>
+                    <tr><td>ICE</td><td class="credit-note-text-right">{{ creditNoteTotals.ice }}</td></tr>
+                    <tr><td>IVA TARIFA ESPECIAL</td><td class="credit-note-text-right">{{ creditNoteTotals.vat_special }}</td></tr>
+                    {% for vat in creditNoteTotals.vat_rates %}
+                        <tr><td>IVA {{ vat.rate }}%</td><td class="credit-note-text-right">{{ vat.value }}</td></tr>
+                    {% endfor %}
+                    <tr><td>IRBPNR</td><td class="credit-note-text-right">{{ creditNoteTotals.irbpnr }}</td></tr>
+                    <tr><td>VALOR TOTAL</td><td class="credit-note-text-right">$ {{ creditNoteTotals.total }}</td></tr>
+                    </tbody>
                 </table>
             </td>
         </tr>

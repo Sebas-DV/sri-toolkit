@@ -13,10 +13,14 @@ final class FakeSoapClient extends SoapClient
 {
     public array $receivedXmls = [];
     public array $authorizedAccessKeys = [];
+    public array $consultedAccessKeys = [];
+    public array $authorizedLoteAccessKeys = [];
 
     public function __construct(
         private array $receptionResponses = [],
         private array $authorizationResponses = [],
+        private array $consultationResponses = [],
+        private array $batchAuthorizationResponses = [],
     ) {
     }
 
@@ -57,6 +61,40 @@ final class FakeSoapClient extends SoapClient
     /**
      * @throws Throwable
      */
+    public function consultarEstadoAutorizacionComprobante(array $parameters): object
+    {
+        $this->consultedAccessKeys[] = $parameters['claveAcceso'] ?? null;
+
+        $response = array_shift($this->consultationResponses);
+
+        if ($response instanceof Throwable)
+        {
+            throw $response;
+        }
+
+        return $response ?? new stdClass();
+    }
+
+    /**
+     * @throws Throwable
+     */
+    public function autorizacionComprobanteLote(array $parameters): object
+    {
+        $this->authorizedLoteAccessKeys[] = $parameters['claveAccesoLote'] ?? null;
+
+        $response = array_shift($this->batchAuthorizationResponses);
+
+        if ($response instanceof Throwable)
+        {
+            throw $response;
+        }
+
+        return $response ?? new stdClass();
+    }
+
+    /**
+     * @throws Throwable
+     */
     public function __call(string $name, array $args): mixed
     {
         return $this->dispatchSoapCall($name, $args);
@@ -81,6 +119,8 @@ final class FakeSoapClient extends SoapClient
         {
             'validarComprobante' => $this->validarComprobante($parameters),
             'autorizacionComprobante' => $this->autorizarComprobante($parameters),
+            'autorizacionComprobanteLote' => $this->autorizacionComprobanteLote($parameters),
+            'consultarEstadoAutorizacionComprobante' => $this->consultarEstadoAutorizacionComprobante($parameters),
             default => throw new Exception("Method {$name} not found"),
         };
     }

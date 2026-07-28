@@ -1,1 +1,410 @@
-{% extends 'invoice.html.twig' %}
+{% extends 'layouts/ride.html.twig' %}
+
+{% block document_styles %}
+        body {
+            font-family: Helvetica, Arial, sans-serif;
+            font-size: 10px;
+            color: #000;
+            line-height: 1.35;
+            margin: 0;
+            padding: 0;
+        }
+
+        .purchase-settlement-box {
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            padding: 8px;
+            background: #fff;
+        }
+
+        .purchase-settlement-header {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin-bottom: 10px;
+        }
+
+        .purchase-settlement-header-left,
+        .purchase-settlement-header-right {
+            width: 48%;
+            vertical-align: top;
+        }
+
+        .purchase-settlement-header-spacer {
+            width: 4%;
+        }
+
+        .purchase-settlement-logo-box {
+            border: none;
+            background: transparent;
+            padding: 0;
+            text-align: center;
+            height: 66px;
+            line-height: 66px;
+            margin-bottom: 6px;
+        }
+
+        .purchase-settlement-logo {
+            max-width: 270px;
+            max-height: 64px;
+            vertical-align: middle;
+        }
+
+        .purchase-settlement-no-logo {
+            color: #dc2626;
+            font-size: 28px;
+            font-weight: bold;
+            letter-spacing: 2px;
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+        .purchase-settlement-company-box {
+            height: 140px;
+        }
+
+        .purchase-settlement-document-box {
+            height: 212px;
+        }
+
+        .purchase-settlement-header-sub {
+            font-size: 9px;
+            font-weight: bold;
+            margin-bottom: 3px;
+            text-transform: uppercase;
+        }
+
+        .purchase-settlement-company-title {
+            font-size: 12px;
+            font-weight: bold;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+        }
+
+        .purchase-settlement-ruc-title {
+            font-size: 13px;
+            font-weight: bold;
+            margin-bottom: 2px;
+        }
+
+        .purchase-settlement-document-type {
+            font-size: 12px;
+            font-weight: bold;
+            line-height: 1.2;
+            letter-spacing: 0.3px;
+            margin-bottom: 4px;
+        }
+
+        .purchase-settlement-access-key {
+            font-family: Courier, monospace;
+            font-size: 8px;
+            word-break: break-all;
+        }
+
+        .purchase-settlement-line-gap {
+            margin-top: 3px;
+        }
+
+        .purchase-settlement-company-meta {
+            margin-top: 6px;
+        }
+
+        .purchase-settlement-company-meta table {
+            width: 100%;
+            margin-top: 2px;
+        }
+
+        .purchase-settlement-company-meta tr + tr td {
+            padding-top: 2px;
+        }
+
+        .purchase-settlement-meta-value {
+            text-align: right;
+        }
+
+        .purchase-settlement-authorization-meta {
+            margin-top: 5px;
+        }
+
+        .purchase-settlement-barcode-box {
+            text-align: center;
+            padding-top: 8px;
+        }
+
+        .purchase-settlement-barcode-title {
+            font-size: 8px;
+            margin-bottom: 2px;
+        }
+
+        .purchase-settlement-barcode {
+            width: 100%;
+            height: 35px;
+            display: block;
+        }
+
+        .purchase-settlement-barcode-key {
+            margin-top: 2px;
+        }
+
+        .purchase-settlement-provider-box {
+            margin-bottom: 10px;
+        }
+
+        .purchase-settlement-provider-box table,
+        .purchase-settlement-bottom-layout {
+            width: 100%;
+        }
+
+        .purchase-settlement-provider-left {
+            width: 55%;
+        }
+
+        .purchase-settlement-provider-right {
+            width: 45%;
+        }
+
+        .purchase-settlement-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-size: 9px;
+            color: #000;
+            margin-bottom: 10px;
+        }
+
+        .purchase-settlement-table th {
+            background: #f8fafc;
+            color: #000;
+            font-weight: bold;
+            padding: 5px 4px;
+            border-bottom: 1px solid #cbd5e1;
+            border-right: 1px solid #cbd5e1;
+            text-transform: uppercase;
+        }
+
+        .purchase-settlement-table th:last-child {
+            border-right: none;
+        }
+
+        .purchase-settlement-table td {
+            padding: 4px;
+            border-bottom: 1px solid #cbd5e1;
+            border-right: 1px solid #cbd5e1;
+            color: #000;
+        }
+
+        .purchase-settlement-table td:last-child {
+            border-right: none;
+        }
+
+        .purchase-settlement-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .purchase-settlement-table th:first-child {
+            border-top-left-radius: 5px;
+        }
+
+        .purchase-settlement-table th:last-child {
+            border-top-right-radius: 5px;
+        }
+
+        .purchase-settlement-table tr:last-child td:first-child {
+            border-bottom-left-radius: 5px;
+        }
+
+        .purchase-settlement-table tr:last-child td:last-child {
+            border-bottom-right-radius: 5px;
+        }
+
+        .purchase-settlement-text-center {
+            text-align: center;
+        }
+
+        .purchase-settlement-text-right {
+            text-align: right;
+        }
+
+        .purchase-settlement-additional {
+            margin-bottom: 10px;
+        }
+
+        .purchase-settlement-additional-title {
+            margin-bottom: 4px;
+        }
+
+        .purchase-settlement-bottom-left {
+            width: 52%;
+            vertical-align: top;
+        }
+
+        .purchase-settlement-bottom-spacer {
+            width: 3%;
+        }
+
+        .purchase-settlement-bottom-right {
+            width: 45%;
+            vertical-align: top;
+        }
+
+        .purchase-settlement-payment-table,
+        .purchase-settlement-totals-table {
+            margin-bottom: 0;
+        }
+
+        .purchase-settlement-totals-table tr:last-child td {
+            font-size: 10px;
+            font-weight: bold;
+            background: #f8fafc;
+        }
+{% endblock %}
+
+{% block document_header %}
+    {% include 'partials/purchase-settlement-header.html.twig' %}
+{% endblock %}
+
+{% block content %}
+    {% set provider = data.provider|default({}) %}
+    {% set additionalInformation = data.additional_info|default({}) %}
+
+    <div class="purchase-settlement-box purchase-settlement-provider-box">
+        <table cellspacing="0" cellpadding="0">
+            <tr>
+                <td class="purchase-settlement-provider-left">
+                    <div><span class="bold">Razón Social / Nombres y Apellidos:</span> {{ provider.name|default('N/A') }}</div>
+                    <div class="purchase-settlement-line-gap"><span class="bold">Identificación:</span> {{ provider.identification_number|default('N/A') }}</div>
+                    <div class="purchase-settlement-line-gap"><span class="bold">Fecha Emisión:</span> {{ data.date|default('N/A') }}</div>
+                    <div class="purchase-settlement-line-gap"><span class="bold">Dirección:</span> {{ provider.address|default('N/A') }}</div>
+                </td>
+                <td class="purchase-settlement-provider-right">
+                    <div><span class="bold">Placa / Matrícula:</span> {{ data.plate|default('N/A') }}</div>
+                    <div class="purchase-settlement-line-gap"><span class="bold">Guía Remisión:</span> {{ data.delivery_guide|default('N/A') }}</div>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <table class="purchase-settlement-table">
+        <thead>
+        <tr>
+            <th>Cod. Princ</th>
+            <th>Cod. Aux</th>
+            <th class="purchase-settlement-text-center">Cant</th>
+            <th>Descripción</th>
+            <th>Det. Adicional</th>
+            <th class="purchase-settlement-text-right">P. Unitario</th>
+            <th class="purchase-settlement-text-right">Subsidio</th>
+            <th class="purchase-settlement-text-right">P. Sin Sub</th>
+            <th class="purchase-settlement-text-right">Descuento</th>
+            <th class="purchase-settlement-text-right">P. Total</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for detail in data.details|default([]) %}
+            {% set additionalInfo = detail.additional_info|default({}) %}
+            {% set additionalDetails = detail.additional_details|default([]) %}
+            <tr>
+                <td>{{ detail.main_code|default('') }}</td>
+                <td>{{ detail.auxiliary_code|default('-') }}</td>
+                <td class="purchase-settlement-text-center">{{ detail.quantity|default('0.00') }}</td>
+                <td>{{ detail.description|default('') }}</td>
+                <td>
+                    {% if detail.additional_1|default('') %}
+                        {{ detail.additional_1 }}
+                    {% elseif additionalInfo is mapping and additionalInfo %}
+                        {% for name, value in additionalInfo %}
+                            {{ name }}: {{ value }}{% if not loop.last %}<br>{% endif %}
+                        {% endfor %}
+                    {% elseif additionalDetails is iterable and additionalDetails %}
+                        {% for additional in additionalDetails %}
+                            {{ additional.name|default('') }}{% if additional.name|default('') %}: {% endif %}{{ additional.value|default('') }}{% if not loop.last %}<br>{% endif %}
+                        {% endfor %}
+                    {% else %}
+                        -
+                    {% endif %}
+                </td>
+                <td class="purchase-settlement-text-right">{{ detail.unit_price|default('0.00') }}</td>
+                <td class="purchase-settlement-text-right">{{ detail.subsidy|default('0.00') }}</td>
+                <td class="purchase-settlement-text-right">{{ detail.unit_price_without_subsidy|default(detail.price_without_subsidy|default('0.00')) }}</td>
+                <td class="purchase-settlement-text-right">{{ detail.discount|default('0.00') }}</td>
+                <td class="purchase-settlement-text-right">{{ detail.total_price|default(detail.total_without_tax|default('0.00')) }}</td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="10" class="purchase-settlement-text-center">Sin detalles</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <table class="purchase-settlement-bottom-layout" cellspacing="0" cellpadding="0">
+        <tr>
+            <td class="purchase-settlement-bottom-left">
+                <div class="purchase-settlement-box purchase-settlement-additional">
+                    <div class="bold purchase-settlement-additional-title">Información Adicional</div>
+                    {% if additionalInformation is mapping %}
+                        {% for name, value in additionalInformation %}
+                            <div><span class="bold">{{ name }}:</span> {{ value }}</div>
+                        {% else %}
+                            <div>&nbsp;</div>
+                        {% endfor %}
+                    {% else %}
+                        {% for info in additionalInformation %}
+                            <div><span class="bold">{{ info.name|default('') }}:</span> {{ info.value|default('') }}</div>
+                        {% else %}
+                            <div>&nbsp;</div>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+
+                <table class="purchase-settlement-table purchase-settlement-payment-table">
+                    <thead>
+                    <tr>
+                        <th>Forma de Pago</th>
+                        <th class="purchase-settlement-text-right">Valor</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for payment in data.payments|default([]) %}
+                        {% set method = payment.method|default('') %}
+                        <tr>
+                            <td>
+                                {{ payment.name|default(payment.method_label|default(method ~ (paymentMethods[method] is defined ? ' - ' ~ paymentMethods[method] : ''))) }}
+                            </td>
+                            <td class="purchase-settlement-text-right bold">{{ payment.total|default('0.00') }}</td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td>01 - SIN UTILIZACIÓN DEL SISTEMA FINANCIERO</td>
+                            <td class="purchase-settlement-text-right bold">{{ data.total_amount|default('0.00') }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </td>
+
+            <td class="purchase-settlement-bottom-spacer">&nbsp;</td>
+
+            <td class="purchase-settlement-bottom-right">
+                <table class="purchase-settlement-table purchase-settlement-totals-table">
+                    <tbody>
+                    <tr><td>SUBTOTAL TARIFA ESPECIAL</td><td class="purchase-settlement-text-right">{{ purchaseSettlementTotals.subtotal_special }}</td></tr>
+                    {% for subtotal in purchaseSettlementTotals.subtotal_rates %}
+                        <tr><td>SUBTOTAL {{ subtotal.rate }}%</td><td class="purchase-settlement-text-right">{{ subtotal.value }}</td></tr>
+                    {% endfor %}
+                    <tr><td>SUBTOTAL 0%</td><td class="purchase-settlement-text-right">{{ purchaseSettlementTotals.subtotal_zero }}</td></tr>
+                    <tr><td>SUBTOTAL NO OBJETO DE IVA</td><td class="purchase-settlement-text-right">{{ purchaseSettlementTotals.subtotal_not_subject }}</td></tr>
+                    <tr><td>SUBTOTAL EXENTO DE IVA</td><td class="purchase-settlement-text-right">{{ purchaseSettlementTotals.subtotal_exempt }}</td></tr>
+                    <tr><td>SUBTOTAL SIN IMPUESTOS</td><td class="purchase-settlement-text-right">{{ purchaseSettlementTotals.total_without_taxes }}</td></tr>
+                    {% for vat in purchaseSettlementTotals.vat_rates %}
+                        <tr><td>IVA {{ vat.rate }}%</td><td class="purchase-settlement-text-right">{{ vat.value }}</td></tr>
+                    {% endfor %}
+                    <tr><td>VALOR TOTAL</td><td class="purchase-settlement-text-right">$ {{ purchaseSettlementTotals.total }}</td></tr>
+                    </tbody>
+                </table>
+            </td>
+        </tr>
+    </table>
+{% endblock %}

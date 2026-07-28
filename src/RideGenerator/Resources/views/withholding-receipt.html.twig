@@ -1,47 +1,365 @@
 {% extends 'layouts/ride.html.twig' %}
 
+{% block document_styles %}
+        body {
+            font-family: Helvetica, Arial, sans-serif;
+            font-size: 10px;
+            color: #000;
+            line-height: 1.35;
+            margin: 0;
+            padding: 0;
+        }
+
+        .withholding-receipt-box {
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            padding: 8px;
+            background: #fff;
+        }
+
+        .withholding-receipt-header {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin-bottom: 10px;
+        }
+
+        .withholding-receipt-header-left,
+        .withholding-receipt-header-right {
+            width: 48%;
+            vertical-align: top;
+        }
+
+        .withholding-receipt-header-spacer {
+            width: 4%;
+        }
+
+        .withholding-receipt-logo-box {
+            border: none;
+            background: transparent;
+            padding: 0;
+            text-align: center;
+            height: 66px;
+            line-height: 66px;
+            margin-bottom: 6px;
+        }
+
+        .withholding-receipt-logo {
+            max-width: 270px;
+            max-height: 64px;
+            vertical-align: middle;
+        }
+
+        .withholding-receipt-no-logo {
+            color: #dc2626;
+            font-size: 28px;
+            font-weight: bold;
+            letter-spacing: 2px;
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+        .withholding-receipt-company-box {
+            height: 140px;
+        }
+
+        .withholding-receipt-document-box {
+            height: 212px;
+        }
+
+        .withholding-receipt-header-sub {
+            font-size: 9px;
+            font-weight: bold;
+            margin-bottom: 3px;
+            text-transform: uppercase;
+        }
+
+        .withholding-receipt-company-title {
+            font-size: 12px;
+            font-weight: bold;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+        }
+
+        .withholding-receipt-ruc-title {
+            font-size: 13px;
+            font-weight: bold;
+            margin-bottom: 2px;
+        }
+
+        .withholding-receipt-document-type {
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 4px;
+            letter-spacing: 0.25px;
+        }
+
+        .withholding-receipt-access-key {
+            font-family: Courier, monospace;
+            font-size: 8px;
+            word-break: break-all;
+        }
+
+        .withholding-receipt-line-gap {
+            margin-top: 3px;
+        }
+
+        .withholding-receipt-company-meta {
+            margin-top: 8px;
+        }
+
+        .withholding-receipt-company-meta table {
+            width: 100%;
+        }
+
+        .withholding-receipt-company-meta tr + tr td {
+            padding-top: 3px;
+        }
+
+        .withholding-receipt-meta-value {
+            text-align: right;
+        }
+
+        .withholding-receipt-authorization-meta {
+            margin-top: 5px;
+        }
+
+        .withholding-receipt-barcode-box {
+            text-align: center;
+            padding-top: 14px;
+        }
+
+        .withholding-receipt-barcode-title {
+            font-size: 8px;
+            margin-bottom: 2px;
+        }
+
+        .withholding-receipt-barcode {
+            width: 100%;
+            height: 35px;
+            display: block;
+        }
+
+        .withholding-receipt-barcode-key {
+            margin-top: 2px;
+        }
+
+        .withholding-receipt-subject-box {
+            margin-bottom: 10px;
+        }
+
+        .withholding-receipt-subject-box table,
+        .withholding-receipt-bottom-layout,
+        .withholding-receipt-additional table {
+            width: 100%;
+        }
+
+        .withholding-receipt-subject-main {
+            width: 65%;
+        }
+
+        .withholding-receipt-subject-side {
+            width: 35%;
+        }
+
+        .withholding-receipt-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-size: 9px;
+            color: #000;
+            margin-bottom: 10px;
+        }
+
+        .withholding-receipt-table th {
+            background: #f8fafc;
+            color: #000;
+            font-weight: bold;
+            padding: 5px 4px;
+            border-bottom: 1px solid #cbd5e1;
+            border-right: 1px solid #cbd5e1;
+            text-align: center;
+        }
+
+        .withholding-receipt-table th:last-child {
+            border-right: none;
+        }
+
+        .withholding-receipt-table td {
+            padding: 5px 4px;
+            border-bottom: 1px solid #cbd5e1;
+            border-right: 1px solid #cbd5e1;
+            color: #000;
+            vertical-align: middle;
+        }
+
+        .withholding-receipt-table td:last-child {
+            border-right: none;
+        }
+
+        .withholding-receipt-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .withholding-receipt-table th:first-child {
+            border-top-left-radius: 5px;
+        }
+
+        .withholding-receipt-table th:last-child {
+            border-top-right-radius: 5px;
+        }
+
+        .withholding-receipt-table tr:last-child td:first-child {
+            border-bottom-left-radius: 5px;
+        }
+
+        .withholding-receipt-table tr:last-child td:last-child {
+            border-bottom-right-radius: 5px;
+        }
+
+        .withholding-receipt-text-center {
+            text-align: center;
+        }
+
+        .withholding-receipt-text-right {
+            text-align: right;
+        }
+
+        .withholding-receipt-bottom-left {
+            width: 60%;
+            vertical-align: top;
+        }
+
+        .withholding-receipt-bottom-spacer {
+            width: 3%;
+        }
+
+        .withholding-receipt-bottom-right {
+            width: 37%;
+            vertical-align: top;
+        }
+
+        .withholding-receipt-additional {
+            min-height: 120px;
+        }
+
+        .withholding-receipt-additional-title {
+            font-size: 9px;
+            margin-bottom: 4px;
+            text-align: center;
+        }
+
+        .withholding-receipt-additional-content {
+            border-top: 1px solid #cbd5e1;
+            padding-top: 4px;
+        }
+
+        .withholding-receipt-additional-label {
+            width: 20%;
+        }
+
+        .withholding-receipt-additional-value {
+            width: 80%;
+        }
+
+        .withholding-receipt-additional-row td {
+            padding-top: 2px;
+        }
+{% endblock %}
+
+{% block document_header %}
+    {% include 'partials/withholding-receipt-header.html.twig' %}
+{% endblock %}
+
 {% block content %}
     {% set subject = data.subject|default({}) %}
+    {% set additionalInformation = data.additional_info|default({}) %}
 
-    <div class="box">
-        <table class="plain">
+    <div class="withholding-receipt-box withholding-receipt-subject-box">
+        <table cellspacing="0" cellpadding="0">
             <tr>
-                <td style="width: 60%;">
-                    <div><span class="bold">Sujeto Retenido:</span> {{ subject.name|default('') }}</div>
-                    <div><span class="bold">Identificación:</span> {{ subject.identification_number|default('') }}</div>
+                <td class="withholding-receipt-subject-main">
+                    <div><span class="bold">Razón Social / Nombres y Apellidos:</span> {{ subject.name|default('N/A') }}</div>
+                    <div class="withholding-receipt-line-gap"><span class="bold">Fecha Emisión:</span> {{ data.date|default('N/A') }}</div>
                 </td>
-                <td style="width: 40%;">
-                    <div><span class="bold">Fecha Emisión:</span> {{ data.date|default('') }}</div>
-                    <div><span class="bold">Periodo Fiscal:</span> {{ data.fiscal_period|default('') }}</div>
-                    <div><span class="bold">Parte Relacionada:</span> {{ subject.related_party|default('NO') }}</div>
+                <td class="withholding-receipt-subject-side">
+                    <div><span class="bold">Identificación:</span> {{ subject.identification_number|default('N/A') }}</div>
                 </td>
             </tr>
         </table>
     </div>
 
-    {% for document in data.supporting_documents|default([]) %}
-        <div class="box">
-            <table class="plain">
-                <tr>
-                    <td style="width: 50%;"><span class="bold">Documento:</span> {{ document.document_number|default('') }}</td>
-                    <td style="width: 25%;"><span class="bold">Fecha:</span> {{ document.emission_date|default('') }}</td>
-                    <td style="width: 25%;"><span class="bold">Total:</span> {{ document.total_amount|default('0.00') }}</td>
-                </tr>
-            </table>
-        </div>
+    <table class="withholding-receipt-table">
+        <thead>
+        <tr>
+            <th width="12%">Comprobante</th>
+            <th width="15%">Número</th>
+            <th width="11%">Fecha Emisión</th>
+            <th width="10%">Ejercicio Fiscal</th>
+            <th width="18%">Base Imponible para la Retención</th>
+            <th width="10%">Impuesto</th>
+            <th width="12%">Porcentaje Retención</th>
+            <th width="12%">Valor Retenido</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for row in withholdingRows %}
+            <tr>
+                <td class="withholding-receipt-text-center">{{ row.document_title }}</td>
+                <td class="withholding-receipt-text-center">{{ row.document_number }}</td>
+                <td class="withholding-receipt-text-center">{{ row.emission_date }}</td>
+                <td class="withholding-receipt-text-center">{{ row.fiscal_period }}</td>
+                <td class="withholding-receipt-text-right">{{ row.taxable_base }}</td>
+                <td class="withholding-receipt-text-center">{{ row.tax_label }}</td>
+                <td class="withholding-receipt-text-right">{{ row.percentage }}</td>
+                <td class="withholding-receipt-text-right">{{ row.value }}</td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="8" class="withholding-receipt-text-center">Sin retenciones registradas</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
 
-        <table class="data-table">
-            <tr><th>Impuesto</th><th>Código</th><th>Base</th><th>Porcentaje</th><th>Valor Retenido</th></tr>
-            {% for withholding in document.withholdings|default([]) %}
-                <tr>
-                    <td>{{ withholding.code|default('') }}</td>
-                    <td>{{ withholding.withholding_code|default('') }}</td>
-                    <td class="right">{{ withholding.tax_base|default(document.total_without_taxes|default('0.00')) }}</td>
-                    <td class="right">{{ withholding.percentage|default('') }}</td>
-                    <td class="right">{{ withholding.value|default('0.00') }}</td>
-                </tr>
-            {% endfor %}
-        </table>
-        <div class="spacer"></div>
-    {% endfor %}
+    <table class="withholding-receipt-bottom-layout" cellspacing="0" cellpadding="0">
+        <tr>
+            <td class="withholding-receipt-bottom-left">
+                <div class="withholding-receipt-box withholding-receipt-additional">
+                    <div class="bold withholding-receipt-additional-title">Información Adicional</div>
+                    <div class="withholding-receipt-additional-content">
+                        <table cellspacing="0" cellpadding="0">
+                            {% if subject.address|default('') %}
+                                <tr>
+                                    <td class="withholding-receipt-additional-label"><span class="bold">Dirección:</span></td>
+                                    <td class="withholding-receipt-additional-value">{{ subject.address }}</td>
+                                </tr>
+                            {% endif %}
+
+                            {% if additionalInformation is mapping %}
+                                {% for name, value in additionalInformation %}
+                                    <tr class="withholding-receipt-additional-row">
+                                        <td class="withholding-receipt-additional-label"><span class="bold">{{ name }}:</span></td>
+                                        <td class="withholding-receipt-additional-value">{{ value }}</td>
+                                    </tr>
+                                {% endfor %}
+                            {% else %}
+                                {% for info in additionalInformation %}
+                                    <tr class="withholding-receipt-additional-row">
+                                        <td class="withholding-receipt-additional-label"><span class="bold">{{ info.name|default('') }}:</span></td>
+                                        <td class="withholding-receipt-additional-value">{{ info.value|default('') }}</td>
+                                    </tr>
+                                {% endfor %}
+                            {% endif %}
+                        </table>
+                    </div>
+                </div>
+            </td>
+
+            <td class="withholding-receipt-bottom-spacer">&nbsp;</td>
+            <td class="withholding-receipt-bottom-right">&nbsp;</td>
+        </tr>
+    </table>
 {% endblock %}

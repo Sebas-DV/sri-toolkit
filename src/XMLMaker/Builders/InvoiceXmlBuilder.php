@@ -27,37 +27,78 @@ final class InvoiceXmlBuilder extends AbstractXmlDocumentBuilder
         $reader = new ArrayReader($data->data);
         $company = new ArrayReader($reader->array('company'));
         $customer = new ArrayReader($reader->array('customer'));
+        $export = new ArrayReader($reader->nullableArray('export'));
 
-        $invoiceInformation = $this->dom->child($root, 'infoFactura');
+        $info = $this->dom->child($root, 'infoFactura');
 
-        $this->dom->append($invoiceInformation, 'fechaEmision', $reader->string('date'));
-        $this->dom->append($invoiceInformation, 'dirEstablecimiento', $reader->string('establishment_address'));
+        $this->dom->append($info, 'fechaEmision', $reader->string('date'));
+        $this->dom->append($info, 'dirEstablecimiento', $reader->string('establishment_address'));
         $this->dom->append(
-            $invoiceInformation,
+            $info,
             'contribuyenteEspecial',
             $reader->nullableString('special_taxpayer_number') ?? $company->nullableString('special_taxpayer_number'),
         );
-        $this->dom->append($invoiceInformation, 'obligadoContabilidad', $reader->nullableString('requires_accounting'));
+        $this->dom->append($info, 'obligadoContabilidad', $reader->nullableString('requires_accounting'));
 
-        $this->appendBuyerInformation($invoiceInformation, $customer);
-        $this->dom->append($invoiceInformation, 'guiaRemision', $reader->nullableString('delivery_guide'));
-        $this->dom->append($invoiceInformation, 'direccionComprador', $customer->nullableString('address'));
+        $this->appendExportHeader($info, $export);
 
-        $this->dom->append($invoiceInformation, 'totalSinImpuestos', $reader->string('total_without_taxes'));
-        $this->dom->append($invoiceInformation, 'totalSubsidio', $reader->nullableString('total_subsidy'));
-        $this->dom->append($invoiceInformation, 'totalDescuento', $reader->string('total_discount'));
-        $this->appendReimbursementTotals($invoiceInformation, $reader->nullableArray('reimbursement'));
+        $this->appendBuyerInformation($info, $customer, $reader->nullableString('delivery_guide'));
+        $this->dom->append($info, 'direccionComprador', $customer->nullableString('address'));
 
-        $this->appendTaxTotals($invoiceInformation, $reader->array('tax_totals'));
+        $this->dom->append($info, 'totalSinImpuestos', $reader->string('total_without_taxes'));
+        $this->dom->append($info, 'totalSubsidio', $reader->nullableString('total_subsidy'));
+        $this->dom->append($info, 'incoTermTotalSinImpuestos', $export->nullableString('incoterm_subtotal'));
+        $this->dom->append($info, 'totalDescuento', $reader->string('total_discount'));
+        $this->appendReimbursementTotals($info, $reader->nullableArray('reimbursement'));
 
-        $this->dom->append($invoiceInformation, 'propina', $reader->nullableString('tip'));
-        $this->dom->append($invoiceInformation, 'importeTotal', $reader->string('total_amount'));
-        $this->dom->append($invoiceInformation, 'moneda', $reader->nullableString('currency') ?? 'DOLAR');
+        $this->appendTaxTotals($info, $reader->array('tax_totals'));
 
-        $this->appendPayments($invoiceInformation, $reader->nullableArray('payments'));
-        $this->dom->append($invoiceInformation, 'valorRetIva', $reader->nullableString('total_iva_amount'));
-        $this->dom->append($invoiceInformation, 'valorRetRenta', $reader->nullableString('total_renta_amount'));
+        $this->dom->append($info, 'propina', $reader->nullableString('tip'));
+        $this->appendInternationalCosts($info, $export);
+        $this->dom->append($info, 'importeTotal', $reader->string('total_amount'));
+        $this->dom->append($info, 'moneda', $reader->nullableString('currency') ?? 'DOLAR');
+        $this->dom->append($info, 'placa', $reader->nullableString('plate'));
+
+        $this->appendPayments($info, $reader->nullableArray('payments'));
+        $this->dom->append($info, 'valorRetIva', $reader->nullableString('total_iva_amount'));
+        $this->dom->append($info, 'valorRetRenta', $reader->nullableString('total_renta_amount'));
+
         $this->appendDetails($root, $data);
+
+        $this->appendReimbursements($root, $reader->nullableArray('reimbursements'));
+        $this->appendSubstituteDeliveryGuide($root, $reader->nullableArray('substitute_delivery_guide'));
+        $this->appendThirdPartyItems($root, $reader->nullableArray('third_party_items'));
+        $this->appendFiscalMachine($root, $reader->nullableArray('fiscal_machine'));
+    }
+
+    /**
+     * Appends the export header fields (comercioExterior … paisAdquisicion) to infoFactura.
+     *
+     * @throws DOMException When a required DOM element cannot be created.
+     */
+    private function appendExportHeader(DOMElement $info, ArrayReader $export): void
+    {
+        $this->dom->append($info, 'comercioExterior', $export->nullableString('foreign_trade'));
+        $this->dom->append($info, 'incoTermFactura', $export->nullableString('incoterm'));
+        $this->dom->append($info, 'lugarIncoTerm', $export->nullableString('incoterm_place'));
+        $this->dom->append($info, 'paisOrigen', $export->nullableString('origin_country'));
+        $this->dom->append($info, 'puertoEmbarque', $export->nullableString('shipment_port'));
+        $this->dom->append($info, 'puertoDestino', $export->nullableString('destination_port'));
+        $this->dom->append($info, 'paisDestino', $export->nullableString('destination_country'));
+        $this->dom->append($info, 'paisAdquisicion', $export->nullableString('acquisition_country'));
+    }
+
+    /**
+     * Appends the international cost fields to infoFactura (export invoices).
+     *
+     * @throws DOMException When a required DOM element cannot be created.
+     */
+    private function appendInternationalCosts(DOMElement $info, ArrayReader $export): void
+    {
+        $this->dom->append($info, 'fleteInternacional', $export->nullableString('international_freight'));
+        $this->dom->append($info, 'seguroInternacional', $export->nullableString('international_insurance'));
+        $this->dom->append($info, 'gastosAduaneros', $export->nullableString('customs_expenses'));
+        $this->dom->append($info, 'gastosTransporteOtros', $export->nullableString('other_transport_expenses'));
     }
 
     /**
@@ -121,5 +162,161 @@ final class InvoiceXmlBuilder extends AbstractXmlDocumentBuilder
             $this->appendAdditionalDetailFields($detail, $detailsReader->nullableArray('additional_info'));
             $this->appendLineTaxes($detail, $detailsReader->array('taxes'));
         }
+    }
+
+    /**
+     * Appends the reimbursements block (reembolsos) for reimbursement invoices.
+     *
+     * @param array $reimbursements List of reimbursement detail entries.
+     * @throws DOMException When a required DOM element cannot be created.
+     */
+    private function appendReimbursements(DOMElement $root, array $reimbursements): void
+    {
+        if ($reimbursements === [])
+        {
+            return;
+        }
+
+        $container = $this->dom->child($root, 'reembolsos');
+
+        foreach ($reimbursements as $reimbursement)
+        {
+            $reader = new ArrayReader($reimbursement);
+
+            $detail = $this->dom->child($container, 'reembolsoDetalle');
+
+            $this->dom->append($detail, 'tipoIdentificacionProveedorReembolso', $reader->string('provider_identification_type'));
+            $this->dom->append($detail, 'identificacionProveedorReembolso', $reader->string('provider_identification_number'));
+            $this->dom->append($detail, 'codPaisPagoProveedorReembolso', $reader->nullableString('provider_payment_country'));
+            $this->dom->append($detail, 'tipoProveedorReembolso', $reader->string('provider_type'));
+            $this->dom->append($detail, 'codDocReembolso', $reader->string('document_code'));
+            $this->dom->append($detail, 'estabDocReembolso', $reader->string('establishment_code'));
+            $this->dom->append($detail, 'ptoEmiDocReembolso', $reader->string('emission_point_code'));
+            $this->dom->append($detail, 'secuencialDocReembolso', $reader->string('sequential'));
+            $this->dom->append($detail, 'fechaEmisionDocReembolso', $reader->string('emission_date'));
+            $this->dom->append($detail, 'numeroautorizacionDocReemb', $reader->string('authorization_number'));
+
+            $this->appendReimbursementTaxes($detail, $reader->array('taxes'));
+        }
+    }
+
+    /**
+     * Appends the reimbursement tax details (detalleImpuestos) to a reimbursement detail.
+     *
+     * @param array $taxes List of reimbursement tax entries.
+     * @throws InvalidXmlDataException When taxes are empty.
+     * @throws DOMException When a required DOM element cannot be created.
+     */
+    private function appendReimbursementTaxes(DOMElement $detail, array $taxes): void
+    {
+        if ($taxes === [])
+        {
+            throw InvalidXmlDataException::emptyItems('reimbursements.*.taxes');
+        }
+
+        $container = $this->dom->child($detail, 'detalleImpuestos');
+
+        foreach ($taxes as $tax)
+        {
+            $reader = new ArrayReader($tax);
+
+            $taxElement = $this->dom->child($container, 'detalleImpuesto');
+
+            $this->dom->append($taxElement, 'codigo', $reader->string('code'));
+            $this->dom->append($taxElement, 'codigoPorcentaje', $reader->string('percentage_code'));
+
+            $this->dom->append($taxElement, 'tarifa', (string) (int) round((float) $reader->string('rate')));
+            $this->dom->append($taxElement, 'baseImponibleReembolso', $reader->string('taxable_base'));
+            $this->dom->append($taxElement, 'impuestoReembolso', $reader->string('value'));
+        }
+    }
+
+    /**
+     * Appends the delivery-guide
+     *
+     * @param array $substitute The substitute delivery guide data.
+     * @throws DOMException When a required DOM element cannot be created.
+     */
+    private function appendSubstituteDeliveryGuide(DOMElement $root, array $substitute): void
+    {
+        if ($substitute === [])
+        {
+            return;
+        }
+
+        $reader = new ArrayReader($substitute);
+
+        $element = $this->dom->child($root, 'infoSustitutivaGuiaRemision');
+
+        $this->dom->append($element, 'dirPartida', $reader->string('start_address'));
+        $this->dom->append($element, 'dirDestinatario', $reader->string('destination_address'));
+        $this->dom->append($element, 'fechaIniTransporte', $reader->string('transport_start_date'));
+        $this->dom->append($element, 'fechaFinTransporte', $reader->string('transport_end_date'));
+        $this->dom->append($element, 'razonSocialTransportista', $reader->string('carrier_name'));
+        $this->dom->append($element, 'tipoIdentificacionTransportista', $reader->string('carrier_identification_type'));
+        $this->dom->append($element, 'rucTransportista', $reader->string('carrier_ruc'));
+        $this->dom->append($element, 'placa', $reader->string('plate'));
+
+        $destinations = $this->dom->child($element, 'destinos');
+
+        foreach ($reader->array('destinations') as $destination)
+        {
+            $destinationReader = new ArrayReader($destination);
+
+            $destinationElement = $this->dom->child($destinations, 'destino');
+
+            $this->dom->append($destinationElement, 'motivoTraslado', $destinationReader->string('reason'));
+            $this->dom->append($destinationElement, 'docAduaneroUnico', $destinationReader->nullableString('customs_document'));
+            $this->dom->append($destinationElement, 'codEstabDestino', $destinationReader->nullableString('destination_establishment'));
+            $this->dom->append($destinationElement, 'ruta', $destinationReader->nullableString('route'));
+        }
+    }
+
+    /**
+     * Appends the third-party charges block (otrosRubrosTerceros).
+     *
+     * @param array $items List of third-party charge entries.
+     * @throws DOMException When a required DOM element cannot be created.
+     */
+    private function appendThirdPartyItems(DOMElement $root, array $items): void
+    {
+        if ($items === [])
+        {
+            return;
+        }
+
+        $container = $this->dom->child($root, 'otrosRubrosTerceros');
+
+        foreach ($items as $item)
+        {
+            $reader = new ArrayReader($item);
+
+            $rubro = $this->dom->child($container, 'rubro');
+
+            $this->dom->append($rubro, 'concepto', $reader->string('concept'));
+            $this->dom->append($rubro, 'total', $reader->string('total'));
+        }
+    }
+
+    /**
+     * Appends the fiscal machine block (maquinaFiscal).
+     *
+     * @param array $machine The fiscal machine data.
+     * @throws DOMException When a required DOM element cannot be created.
+     */
+    private function appendFiscalMachine(DOMElement $root, array $machine): void
+    {
+        if ($machine === [])
+        {
+            return;
+        }
+
+        $reader = new ArrayReader($machine);
+
+        $element = $this->dom->child($root, 'maquinaFiscal');
+
+        $this->dom->append($element, 'marca', $reader->string('brand'));
+        $this->dom->append($element, 'modelo', $reader->string('model'));
+        $this->dom->append($element, 'serie', $reader->string('serial'));
     }
 }

@@ -150,6 +150,72 @@ $invoicePayload = [
 
 Si `currency` esta vacio, el builder usa `DOLAR`.
 
+## Calculo automatico de totales
+
+Por defecto, `XMLMaker` deriva `total_without_taxes`, `total_amount` y `tax_totals` desde las lineas de detalle (factura, liquidacion de compra y nota de credito), usando aritmetica decimal exacta. Esto mantiene el XML cuadrado y evita el error 52 (diferencias en calculos). Los valores calculados sobrescriben los provistos en el payload.
+
+Para enviar los totales manualmente, desactivalo:
+
+```php
+use MTZ\Toolkit\XMLMaker\Config\XmlMakerConfig;
+use MTZ\Toolkit\XMLMaker\XMLMaker;
+
+$maker = new XMLMaker(new XmlMakerConfig(calculateTotals: false));
+```
+
+Ver [Validacion](/modules/validation) para el detalle de `TotalsCalculator`.
+
+## Validacion contra XSD
+
+Antes de firmar, valida el XML contra el esquema oficial incluido:
+
+```php
+use MTZ\Toolkit\XMLMaker\Validation\XsdValidator;
+
+$errors = (new XsdValidator())->validate($xml, XmlDocumentType::Invoice);
+```
+
+Los seis tipos generan XML conforme al XSD oficial del SRI.
+
+## Variantes de factura
+
+La factura admite bloques opcionales que se emiten solo cuando envias su clave en el payload:
+
+| Variante | Clave del payload |
+| --- | --- |
+| Exportacion (comercio exterior, incoterms, fletes) | `export` |
+| Reembolso (detalle de reembolsos) | `reimbursements` |
+| Sustitutiva de guia de remision | `substitute_delivery_guide` |
+| Rubros de terceros | `third_party_items` |
+| Maquina fiscal | `fiscal_machine` |
+| Placa (combustibles) | `plate` |
+
+Ejemplo de exportacion:
+
+```php
+$invoicePayload['export'] = [
+    'foreign_trade' => 'EXPORTADOR',
+    'incoterm' => 'FOB',
+    'incoterm_place' => 'GUAYAQUIL',
+    'origin_country' => '593',
+    'destination_country' => '840',
+    'international_freight' => '0.00',
+    'international_insurance' => '0.00',
+    'customs_expenses' => '0.00',
+    'other_transport_expenses' => '0.00',
+];
+```
+
+## Devolucion de IVA
+
+Para la devolucion de IVA (ANEXO 20), agrega `refund_value` en el impuesto de la linea. Se agrega y se emite como `valorDevolucionIva` en `totalConImpuestos`. Solo aplica con comprador de tipo cedula (05) y el monto debe coincidir con el autorizado por el servicio DIG.
+
+```php
+'taxes' => [
+    ['code' => '2', 'percentage_code' => '0', 'rate' => '12.00', 'taxable_base' => '50.00', 'value' => '6.00', 'refund_value' => '6.00'],
+],
+```
+
 ## XML generado
 
 El nodo raiz se crea con `id="comprobante"` y la version del tipo documental:

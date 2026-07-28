@@ -28,7 +28,7 @@ $company = [
     'legal_name' => 'MTZ TEST S.A.',
     'trade_name' => 'MTZ TEST',
     'head_office_address' => 'Quito, Av. Amazonas N34-120',
-    'special_taxpayer' => '123',
+    'special_taxpayer_number' => '123',
     'requires_accounting' => 'SI',
 ];
 
@@ -66,6 +66,60 @@ $details = [
         'unit_price' => '10.000000',
         'discount' => '0.00',
         'total_without_tax' => '10.00',
+    ],
+];
+
+$purchaseSettlementDetails = [
+    [
+        'main_code' => 'IVA5',
+        'quantity' => '1.00',
+        'description' => 'IVA5',
+        'unit_price' => '100.00',
+        'discount' => '0.00',
+        'total_without_tax' => '100.00',
+        'taxes' => [
+            [
+                'code' => '2',
+                'percentage_code' => '5',
+                'rate' => '5.00',
+                'taxable_base' => '100.00',
+                'value' => '5.00',
+            ],
+        ],
+    ],
+    [
+        'main_code' => 'IVA15',
+        'quantity' => '1.00',
+        'description' => 'IVA15',
+        'unit_price' => '180.00',
+        'discount' => '0.00',
+        'total_without_tax' => '180.00',
+        'taxes' => [
+            [
+                'code' => '2',
+                'percentage_code' => '4',
+                'rate' => '15.00',
+                'taxable_base' => '180.00',
+                'value' => '27.00',
+            ],
+        ],
+    ],
+    [
+        'main_code' => 'IVA15ESP',
+        'quantity' => '1.00',
+        'description' => 'IVA15ESP',
+        'unit_price' => '50.00',
+        'discount' => '0.00',
+        'total_without_tax' => '50.00',
+        'taxes' => [
+            [
+                'code' => '2',
+                'percentage_code' => '4',
+                'rate' => '15.00',
+                'taxable_base' => '50.00',
+                'value' => '7.50',
+            ],
+        ],
     ],
 ];
 
@@ -113,13 +167,32 @@ $documents = [
                 'name' => 'PROVEEDOR TEST',
                 'address' => 'Cuenca',
             ],
-            'details' => $details,
-            'payments' => $payments,
-            'subtotal_12' => '10.00',
-            'total_without_taxes' => '10.00',
+            'details' => $purchaseSettlementDetails,
+            'payments' => [
+                [
+                    'method' => '01',
+                    'total' => '369.50',
+                ],
+            ],
+            'tax_totals' => [
+                [
+                    'code' => '2',
+                    'percentage_code' => '5',
+                    'rate' => '5.00',
+                    'taxable_base' => '100.00',
+                    'value' => '5.00',
+                ],
+                [
+                    'code' => '2',
+                    'percentage_code' => '4',
+                    'rate' => '15.00',
+                    'taxable_base' => '230.00',
+                    'value' => '34.50',
+                ],
+            ],
+            'total_without_taxes' => '330.00',
             'total_discount' => '0.00',
-            'vat' => '1.50',
-            'total_amount' => '11.50',
+            'total_amount' => '369.50',
         ],
     ],
     [
@@ -137,6 +210,15 @@ $documents = [
                 'reason' => 'Devolución parcial',
             ],
             'details' => $details,
+            'tax_totals' => [
+                [
+                    'code' => '2',
+                    'percentage_code' => '4',
+                    'rate' => '15.00',
+                    'taxable_base' => '10.00',
+                    'value' => '1.50',
+                ],
+            ],
             'total_without_taxes' => '10.00',
             'vat' => '1.50',
             'modified_document_total' => '11.50',
@@ -163,6 +245,15 @@ $documents = [
                 ],
             ],
             'payments' => $payments,
+            'tax_totals' => [
+                [
+                    'code' => '2',
+                    'percentage_code' => '4',
+                    'rate' => '15.00',
+                    'taxable_base' => '10.00',
+                    'value' => '1.50',
+                ],
+            ],
             'total_without_taxes' => '10.00',
             'vat' => '1.50',
             'total_amount' => '11.50',
@@ -194,6 +285,9 @@ $documents = [
                     'supporting_document_code' => '01',
                     'supporting_document_number' => '001-001-000000025',
                     'supporting_document_authorization' => '1305202601179001234500110010010000000251234567817',
+                    'supporting_document_emission_date' => '13/05/2026',
+                    'customs_document' => '-',
+                    'destination_establishment_code' => '-',
                     'route' => 'Quito - Guayaquil',
                     'details' => [
                         [
@@ -243,7 +337,16 @@ $documents = [
                         [
                             'code' => '1',
                             'withholding_code' => '303',
+                            'taxable_base' => '100.00',
+                            'percentage' => '10.00',
                             'value' => '10.00',
+                        ],
+                        [
+                            'code' => '2',
+                            'withholding_code' => '1',
+                            'taxable_base' => '100.00',
+                            'percentage' => '30.00',
+                            'value' => '30.00',
                         ],
                     ],
                 ],
@@ -252,39 +355,59 @@ $documents = [
     ],
 ];
 
-foreach ($documents as $document)
+$variants = [
+    'with-logo' => $company + [
+        'logo_path' => __DIR__ . '/assets/logo-dark.png',
+    ],
+    'without-logo' => $company,
+];
+
+foreach ($variants as $variant => $variantCompany)
 {
-    $accessKey = $accessKeyGenerator->generate(
-        AccessKeyData::make(
-            emissionDate: '2026-05-13',
-            documentType: $document['access_type'],
-            ruc: $company['ruc'],
-            environment: Environment::Testing,
-            sequential: $document['sequential'],
-            numericCode: '12345678',
-            establishmentCode: '001',
-            emissionPointCode: '001',
-        ),
-    );
+    $variantDirectory = $outputDirectory . '/' . $variant;
 
-    $pdf = $generator->generate(
-        RideData::make(
-            documentType: $document['type'],
-            accessKey: $accessKey,
-            data: $document['data'],
-            authorizationNumber: $accessKey,
-            authorizationDate: '13/05/2026 10:30:00',
-        ),
-    );
-
-    $path = $outputDirectory . '/' . $pdf->filename;
-    $pdf->saveTo($path);
-
-    echo $path . PHP_EOL;
-
-    if ($openFiles)
+    if (! is_dir($variantDirectory))
     {
-        openFile($path);
+        mkdir($variantDirectory, 0775, true);
+    }
+
+    foreach ($documents as $document)
+    {
+        $accessKey = $accessKeyGenerator->generate(
+            AccessKeyData::make(
+                emissionDate: '2026-05-13',
+                documentType: $document['access_type'],
+                ruc: $variantCompany['ruc'],
+                environment: Environment::Testing,
+                sequential: $document['sequential'],
+                numericCode: '12345678',
+                establishmentCode: '001',
+                emissionPointCode: '001',
+            ),
+        );
+
+        $documentData = $document['data'];
+        $documentData['company'] = $variantCompany;
+
+        $pdf = $generator->generate(
+            RideData::make(
+                documentType: $document['type'],
+                accessKey: $accessKey,
+                data: $documentData,
+                authorizationNumber: $accessKey,
+                authorizationDate: '13/05/2026 10:30:00',
+            ),
+        );
+
+        $path = $variantDirectory . '/' . $pdf->filename;
+        $pdf->saveTo($path);
+
+        echo $path . PHP_EOL;
+
+        if ($openFiles)
+        {
+            openFile($path);
+        }
     }
 }
 

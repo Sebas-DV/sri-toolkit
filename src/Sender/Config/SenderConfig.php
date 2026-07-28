@@ -24,6 +24,11 @@ final readonly class SenderConfig
     /** @var string WSDL URL for the testing authorization endpoint. */
     private const TEST_AUTHORIZATION_URL = 'https://celcer.sri.gob.ec/comprobantes-electronicos-ws/AutorizacionComprobantesOffline?wsdl';
 
+    /** @var string WSDL URL for the production consultation endpoint. */
+    private const PRODUCTION_CONSULTATION_URL = 'https://cel.sri.gob.ec/comprobantes-electronicos-ws/ConsultaComprobante?wsdl';
+    /** @var string WSDL URL for the testing consultation endpoint. */
+    private const TEST_CONSULTATION_URL = 'https://celcer.sri.gob.ec/comprobantes-electronicos-ws/ConsultaComprobante?wsdl';
+
     /**
      * @param Environment $environment The target SRI environment (testing or production).
      * @param int $maxAttempts Maximum number of authorization retry attempts.
@@ -62,6 +67,18 @@ final readonly class SenderConfig
         return $this->environment === Environment::Testing
             ? self::TEST_AUTHORIZATION_URL
             : self::PRODUCTION_AUTHORIZATION_URL;
+    }
+
+    /**
+     * Returns the WSDL URL for the consultation web service based on the current environment.
+     *
+     * @return string The consultation WSDL URL.
+     */
+    public function consultationWsdl(): string
+    {
+        return $this->environment === Environment::Testing
+            ? self::TEST_CONSULTATION_URL
+            : self::PRODUCTION_CONSULTATION_URL;
     }
 
     /**

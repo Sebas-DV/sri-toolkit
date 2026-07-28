@@ -1,0 +1,89 @@
+{% set tradeName = company.trade_name|default('') %}
+{% set legalName = company.legal_name|default('') %}
+{% set headOffice = company.head_office_address|default('') %}
+{% set branch = data.establishment_address|default(company.establishment_address|default('')) %}
+{% set special = data.special_taxpayer_number|default(company.special_taxpayer_number|default('')) %}
+{% set accounting = data.requires_accounting|default(company.requires_accounting|default('NO')) %}
+{% set withholdingAgent = data.withholding_agent_resolution|default(company.withholding_agent_resolution|default(company.withholding_agent|default(''))) %}
+{% set rimpe = data.rimpe_label|default(company.rimpe_label|default(company.rimpe_regime_taxpayer|default(''))) %}
+
+<table class="invoice-header">
+    <tr>
+        <td class="invoice-header-left">
+            <div class="invoice-logo-box">
+                {% if companyLogo %}
+                    <img src="{{ companyLogo }}" class="invoice-logo" alt="Logo">
+                {% else %}
+                    <span class="invoice-no-logo">NO LOGO</span>
+                {% endif %}
+            </div>
+
+            <div class="invoice-box invoice-company-box">
+                <div class="invoice-header-sub">{{ legalName }}</div>
+
+                {% if tradeName and tradeName != legalName %}
+                    <div class="invoice-company-title">{{ tradeName }}</div>
+                {% endif %}
+
+                <div>
+                    <span class="bold">Dirección Matriz:</span>
+                    {{ headOffice }}
+                </div>
+                <div class="invoice-line-gap">
+                    <span class="bold">Dirección Sucursal:</span>
+                    {{ branch }}
+                </div>
+
+                <div class="invoice-company-meta">
+                    {% if special %}
+                        <div><span class="bold">Contribuyente Especial Nro:</span> {{ special }}</div>
+                    {% endif %}
+
+                    <table>
+                        <tr>
+                            <td><span class="bold">OBLIGADO A LLEVAR CONTABILIDAD:</span></td>
+                            <td class="invoice-meta-value bold">{{ accounting }}</td>
+                        </tr>
+                        {% if withholdingAgent %}
+                            <tr>
+                                <td><span class="bold">Agente de Retención Resolución No.:</span></td>
+                                <td class="invoice-meta-value bold">{{ withholdingAgent }}</td>
+                            </tr>
+                        {% endif %}
+                        {% if rimpe %}
+                            <tr>
+                                <td><span class="bold">Contribuyente Régimen RIMPE:</span></td>
+                                <td class="invoice-meta-value bold">{{ rimpe }}</td>
+                            </tr>
+                        {% endif %}
+                    </table>
+                </div>
+            </div>
+        </td>
+
+        <td class="invoice-header-spacer">&nbsp;</td>
+
+        <td class="invoice-header-right">
+            <div class="invoice-box invoice-document-box">
+                <div class="invoice-ruc-title">R.U.C.: {{ company.ruc|default('') }}</div>
+                <div class="invoice-document-type">{{ documentTitle }}</div>
+                <div><span class="bold">No.:</span> {{ documentNumber }}</div>
+
+                <div class="invoice-line-gap"><span class="bold">NÚMERO DE AUTORIZACIÓN:</span></div>
+                <div class="invoice-access-key">{{ authorizationNumber|default(accessKey) }}</div>
+
+                <div class="invoice-authorization-meta">
+                    <div><span class="bold">FECHA Y HORA DE AUTORIZACIÓN:</span> {{ authorizationDate|default('') }}</div>
+                    <div><span class="bold">AMBIENTE:</span> {{ environmentLabel }}</div>
+                    <div><span class="bold">EMISIÓN:</span> {{ emissionLabel }}</div>
+                </div>
+
+                <div class="invoice-barcode-box">
+                    <div class="bold invoice-barcode-title">CLAVE DE ACCESO</div>
+                    <img src="{{ accessKeyBarcode }}" class="invoice-barcode" alt="Código de barras">
+                    <div class="invoice-access-key invoice-barcode-key">{{ accessKey }}</div>
+                </div>
+            </div>
+        </td>
+    </tr>
+</table>

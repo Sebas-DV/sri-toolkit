@@ -1,53 +1,434 @@
 {% extends 'layouts/ride.html.twig' %}
 
+{% block document_styles %}
+        body {
+            font-family: Helvetica, Arial, sans-serif;
+            font-size: 10px;
+            color: #000;
+            line-height: 1.35;
+            margin: 0;
+            padding: 0;
+        }
+
+        .debit-note-box {
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            padding: 8px;
+            background: #fff;
+        }
+
+        .debit-note-header {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin-bottom: 10px;
+        }
+
+        .debit-note-header-left,
+        .debit-note-header-right {
+            width: 48%;
+            vertical-align: top;
+        }
+
+        .debit-note-header-spacer {
+            width: 4%;
+        }
+
+        .debit-note-logo-box {
+            border: none;
+            background: transparent;
+            padding: 0;
+            text-align: center;
+            height: 66px;
+            line-height: 66px;
+            margin-bottom: 6px;
+        }
+
+        .debit-note-logo {
+            max-width: 270px;
+            max-height: 64px;
+            vertical-align: middle;
+        }
+
+        .debit-note-no-logo {
+            color: #dc2626;
+            font-size: 28px;
+            font-weight: bold;
+            letter-spacing: 2px;
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+        .debit-note-company-box {
+            height: 140px;
+        }
+
+        .debit-note-document-box {
+            height: 212px;
+        }
+
+        .debit-note-header-sub {
+            font-size: 9px;
+            font-weight: bold;
+            margin-bottom: 3px;
+            text-transform: uppercase;
+        }
+
+        .debit-note-company-title {
+            font-size: 12px;
+            font-weight: bold;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+        }
+
+        .debit-note-ruc-title {
+            font-size: 13px;
+            font-weight: bold;
+            margin-bottom: 2px;
+        }
+
+        .debit-note-document-type {
+            font-size: 15px;
+            font-weight: bold;
+            margin-bottom: 4px;
+            letter-spacing: 0.5px;
+        }
+
+        .debit-note-access-key {
+            font-family: Courier, monospace;
+            font-size: 8px;
+            word-break: break-all;
+        }
+
+        .debit-note-line-gap {
+            margin-top: 3px;
+        }
+
+        .debit-note-company-meta {
+            margin-top: 8px;
+        }
+
+        .debit-note-company-meta table {
+            width: 100%;
+        }
+
+        .debit-note-company-meta tr + tr td {
+            padding-top: 3px;
+        }
+
+        .debit-note-meta-value {
+            text-align: right;
+        }
+
+        .debit-note-authorization-meta {
+            margin-top: 5px;
+        }
+
+        .debit-note-barcode-box {
+            text-align: center;
+            padding-top: 14px;
+        }
+
+        .debit-note-barcode-title {
+            font-size: 8px;
+            margin-bottom: 2px;
+        }
+
+        .debit-note-barcode {
+            width: 100%;
+            height: 35px;
+            display: block;
+        }
+
+        .debit-note-barcode-key {
+            margin-top: 2px;
+        }
+
+        .debit-note-customer-box {
+            margin-bottom: 10px;
+        }
+
+        .debit-note-customer-box table,
+        .debit-note-bottom-layout,
+        .debit-note-additional table {
+            width: 100%;
+        }
+
+        .debit-note-customer-main {
+            width: 60%;
+        }
+
+        .debit-note-divider {
+            border: 0;
+            border-top: 1px solid #cbd5e1;
+            margin: 6px 0;
+        }
+
+        .debit-note-reference-label {
+            width: 35%;
+        }
+
+        .debit-note-reference-value {
+            width: 65%;
+        }
+
+        .debit-note-reference-row td {
+            padding-top: 3px;
+        }
+
+        .debit-note-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-size: 9px;
+            color: #000;
+            margin-bottom: 10px;
+        }
+
+        .debit-note-table th {
+            background: #f8fafc;
+            color: #000;
+            font-weight: bold;
+            padding: 5px 6px;
+            border-bottom: 1px solid #cbd5e1;
+            border-right: 1px solid #cbd5e1;
+            text-transform: uppercase;
+        }
+
+        .debit-note-table th:last-child {
+            border-right: none;
+        }
+
+        .debit-note-table td {
+            padding: 5px 6px;
+            border-bottom: 1px solid #cbd5e1;
+            border-right: 1px solid #cbd5e1;
+            color: #000;
+        }
+
+        .debit-note-table td:last-child {
+            border-right: none;
+        }
+
+        .debit-note-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .debit-note-table th:first-child {
+            border-top-left-radius: 5px;
+        }
+
+        .debit-note-table th:last-child {
+            border-top-right-radius: 5px;
+        }
+
+        .debit-note-table tr:last-child td:first-child {
+            border-bottom-left-radius: 5px;
+        }
+
+        .debit-note-table tr:last-child td:last-child {
+            border-bottom-right-radius: 5px;
+        }
+
+        .debit-note-text-center {
+            text-align: center;
+        }
+
+        .debit-note-text-right {
+            text-align: right;
+        }
+
+        .debit-note-bottom-left {
+            width: 52%;
+            vertical-align: top;
+        }
+
+        .debit-note-bottom-spacer {
+            width: 3%;
+        }
+
+        .debit-note-bottom-right {
+            width: 45%;
+            vertical-align: top;
+        }
+
+        .debit-note-additional {
+            margin-bottom: 10px;
+        }
+
+        .debit-note-additional-title {
+            font-size: 9px;
+            margin-bottom: 4px;
+            text-align: center;
+        }
+
+        .debit-note-additional-content {
+            border-top: 1px solid #cbd5e1;
+            padding-top: 4px;
+        }
+
+        .debit-note-additional-label {
+            width: 20%;
+        }
+
+        .debit-note-additional-value {
+            width: 80%;
+        }
+
+        .debit-note-additional-row td {
+            padding-top: 2px;
+        }
+
+        .debit-note-payment,
+        .debit-note-totals {
+            margin-bottom: 0;
+        }
+
+        .debit-note-totals tr:last-child td {
+            font-size: 10px;
+            font-weight: bold;
+            background: #f8fafc;
+        }
+{% endblock %}
+
+{% block document_header %}
+    {% include 'partials/debit-note-header.html.twig' %}
+{% endblock %}
+
 {% block content %}
     {% set customer = data.customer|default({}) %}
     {% set referenced = data.referenced_document|default({}) %}
+    {% set additionalInformation = data.additional_info|default({}) %}
 
-    <div class="box">
-        <table class="plain">
+    <div class="debit-note-box debit-note-customer-box">
+        <table cellspacing="0" cellpadding="0">
             <tr>
-                <td style="width: 62%;">
-                    <div><span class="bold">Razón Social / Nombres y Apellidos:</span> {{ customer.name|default('') }}</div>
-                    <div><span class="bold">Fecha Emisión:</span> {{ data.date|default('') }}</div>
-                    <div><span class="bold">Dirección:</span> {{ customer.address|default('') }}</div>
+                <td class="debit-note-customer-main">
+                    <div><span class="bold">Razón Social / Nombres y Apellidos:</span> {{ customer.name|default('N/A') }}</div>
+                    <div class="debit-note-line-gap"><span class="bold">Identificación:</span> {{ customer.identification_number|default('N/A') }}</div>
+                    <div class="debit-note-line-gap"><span class="bold">Fecha Emisión:</span> {{ data.date|default('N/A') }}</div>
                 </td>
-                <td style="width: 38%;">
-                    <div><span class="bold">Identificación:</span> {{ customer.identification_number|default('') }}</div>
-                    <div><span class="bold">Comprobante que se modifica:</span> {{ referenced.number|default('') }}</div>
-                    <div><span class="bold">Fecha emisión comprobante:</span> {{ referenced.emission_date|default('') }}</div>
-                </td>
+            </tr>
+        </table>
+
+        <div class="debit-note-divider"></div>
+
+        <table cellspacing="0" cellpadding="0">
+            <tr>
+                <td class="debit-note-reference-label"><span class="bold">Comprobante que se modifica:</span></td>
+                <td class="debit-note-reference-value">{{ referencedDocumentTitle }}: {{ referenced.number|default('N/A') }}</td>
+            </tr>
+            <tr class="debit-note-reference-row">
+                <td><span class="bold">Fecha Emisión (Comprobante a modificar):</span></td>
+                <td>{{ referenced.emission_date|default('N/A') }}</td>
             </tr>
         </table>
     </div>
 
-    <table class="data-table">
-        <tr><th>Razón de Modificación</th><th>Valor</th></tr>
+    <table class="debit-note-table">
+        <thead>
+        <tr>
+            <th width="70%" class="debit-note-text-center">Razón de la Modificación</th>
+            <th width="30%" class="debit-note-text-center">Valor de la Modificación</th>
+        </tr>
+        </thead>
+        <tbody>
         {% for reason in data.reasons|default([]) %}
             <tr>
-                <td style="text-align: left;">{{ reason.reason|default('') }}</td>
-                <td class="right">{{ reason.amount|default('0.00') }}</td>
+                <td>{{ reason.reason|default('') }}</td>
+                <td class="debit-note-text-right">{{ reason.amount|default('0.00') }}</td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="2" class="debit-note-text-center">Sin motivos registrados</td>
             </tr>
         {% endfor %}
+        </tbody>
     </table>
 
-    <div class="spacer"></div>
-    <table style="border: none;">
+    <table class="debit-note-bottom-layout" cellspacing="0" cellpadding="0">
         <tr>
-            <td style="width: 58%; border: none; padding: 0;">
-                <table class="data-table" style="width: 85%;">
-                    <tr><th>Forma de Pago</th><th>Valor</th></tr>
+            <td class="debit-note-bottom-left">
+                <div class="debit-note-box debit-note-additional">
+                    <div class="bold debit-note-additional-title">Información Adicional</div>
+                    <div class="debit-note-additional-content">
+                        <table cellspacing="0" cellpadding="0">
+                            {% if customer.address|default('') %}
+                                <tr>
+                                    <td class="debit-note-additional-label"><span class="bold">Dirección:</span></td>
+                                    <td class="debit-note-additional-value">{{ customer.address }}</td>
+                                </tr>
+                            {% endif %}
+
+                            {% if additionalInformation is mapping %}
+                                {% for name, value in additionalInformation %}
+                                    <tr class="debit-note-additional-row">
+                                        <td class="debit-note-additional-label"><span class="bold">{{ name }}:</span></td>
+                                        <td class="debit-note-additional-value">{{ value }}</td>
+                                    </tr>
+                                {% endfor %}
+                            {% else %}
+                                {% for info in additionalInformation %}
+                                    <tr class="debit-note-additional-row">
+                                        <td class="debit-note-additional-label"><span class="bold">{{ info.name|default('') }}:</span></td>
+                                        <td class="debit-note-additional-value">{{ info.value|default('') }}</td>
+                                    </tr>
+                                {% endfor %}
+                            {% endif %}
+                        </table>
+                    </div>
+                </div>
+
+                <table class="debit-note-table debit-note-payment">
+                    <thead>
+                    <tr>
+                        <th width="70%" class="debit-note-text-center">Forma de pago</th>
+                        <th width="30%" class="debit-note-text-center">Valor</th>
+                    </tr>
+                    </thead>
+                    <tbody>
                     {% for payment in data.payments|default([]) %}
-                        <tr><td style="text-align: left;">{{ payment.method_label|default(payment.method|default('')) }}</td><td class="right">{{ payment.total|default('') }}</td></tr>
+                        {% set method = payment.method|default('') %}
+                        {% set paymentLabel = payment.name|default(payment.method_label|default(paymentMethods[method]|default(''))) %}
+                        <tr>
+                            <td>
+                                {{ method and not (paymentLabel starts with method) ? method ~ ' - ' ~ paymentLabel : paymentLabel }}
+                            </td>
+                            <td class="debit-note-text-right bold">{{ payment.total|default('0.00') }}</td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td>01 - SIN UTILIZACIÓN DEL SISTEMA FINANCIERO</td>
+                            <td class="debit-note-text-right bold">{{ data.total_amount|default('0.00') }}</td>
+                        </tr>
                     {% endfor %}
+                    </tbody>
                 </table>
             </td>
-            <td style="width: 2%; border: none;"></td>
-            <td style="width: 40%; border: none; padding: 0;">
-                <table class="totals">
-                    <tr><td>SUBTOTAL SIN IMPUESTOS</td><td>{{ data.total_without_taxes|default('0.00') }}</td></tr>
-                    <tr><td>IVA</td><td>{{ data.vat|default('0.00') }}</td></tr>
-                    <tr><td class="bold">VALOR TOTAL</td><td class="bold">{{ data.total_amount|default('0.00') }}</td></tr>
+
+            <td class="debit-note-bottom-spacer">&nbsp;</td>
+
+            <td class="debit-note-bottom-right">
+                <table class="debit-note-table debit-note-totals">
+                    <tbody>
+                    <tr><td>SUBTOTAL TARIFA ESPECIAL</td><td class="debit-note-text-right">{{ debitNoteTotals.subtotal_special }}</td></tr>
+                    {% for subtotal in debitNoteTotals.subtotal_rates %}
+                        <tr><td>SUBTOTAL {{ subtotal.rate }}%</td><td class="debit-note-text-right">{{ subtotal.value }}</td></tr>
+                    {% endfor %}
+                    <tr><td>SUBTOTAL 0%</td><td class="debit-note-text-right">{{ debitNoteTotals.subtotal_zero }}</td></tr>
+                    <tr><td>SUBTOTAL NO OBJETO DE IVA</td><td class="debit-note-text-right">{{ debitNoteTotals.subtotal_not_subject }}</td></tr>
+                    <tr><td>SUBTOTAL EXENTO DE IVA</td><td class="debit-note-text-right">{{ debitNoteTotals.subtotal_exempt }}</td></tr>
+                    <tr><td>SUBTOTAL SIN IMPUESTOS</td><td class="debit-note-text-right">{{ debitNoteTotals.total_without_taxes }}</td></tr>
+                    <tr><td>ICE</td><td class="debit-note-text-right">{{ debitNoteTotals.ice }}</td></tr>
+                    <tr><td>IVA TARIFA ESPECIAL</td><td class="debit-note-text-right">{{ debitNoteTotals.vat_special }}</td></tr>
+                    {% for vat in debitNoteTotals.vat_rates %}
+                        <tr><td>IVA {{ vat.rate }}%</td><td class="debit-note-text-right">{{ vat.value }}</td></tr>
+                    {% endfor %}
+                    <tr><td>IRBPNR</td><td class="debit-note-text-right">{{ debitNoteTotals.irbpnr }}</td></tr>
+                    <tr><td>VALOR TOTAL</td><td class="debit-note-text-right">$ {{ debitNoteTotals.total }}</td></tr>
+                    </tbody>
                 </table>
             </td>
         </tr>
