@@ -56,6 +56,21 @@ final class ConsultationClientTest extends TestCase
     }
 
     #[Test]
+    public function it_reports_a_pending_annulment(): void
+    {
+        $client = $this->client(new FakeSoapClient(consultationResponses: [
+            self::stateResponse(estadoAutorizacion: 'PENDIENTE DE ANULAR'),
+        ]));
+
+        $result = $client->query(self::ACCESS_KEY);
+
+        $this->assertTrue($result->success);
+        $this->assertTrue($result->isPendingAnnulment());
+        $this->assertFalse($result->isAnnulled());
+        $this->assertSame(ConsultationStatus::PendingAnnulment, $result->status);
+    }
+
+    #[Test]
     public function it_returns_failure_when_the_query_is_rejected(): void
     {
         $fakeSoapClient = new FakeSoapClient(consultationResponses: [

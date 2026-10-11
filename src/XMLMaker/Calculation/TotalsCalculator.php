@@ -81,18 +81,15 @@ final class TotalsCalculator
 
                 $key = $code . '|' . $percentageCode;
 
-                if (! isset($groups[$key]))
-                {
-                    $groups[$key] = [
-                        'code' => $code,
-                        'percentage_code' => $percentageCode,
-                        'rate' => $rate,
-                        'base' => Money::zero(self::CURRENCY),
-                        'value' => Money::zero(self::CURRENCY),
-                        'refund' => Money::zero(self::CURRENCY),
-                        'has_refund' => false,
-                    ];
-                }
+                $groups[$key] ??= [
+                    'code' => $code,
+                    'percentage_code' => $percentageCode,
+                    'rate' => $rate,
+                    'base' => Money::zero(self::CURRENCY),
+                    'value' => Money::zero(self::CURRENCY),
+                    'refund' => Money::zero(self::CURRENCY),
+                    'has_refund' => false,
+                ];
 
                 $groups[$key]['base'] = $groups[$key]['base']->plus($base, RoundingMode::HalfUp);
                 $groups[$key]['value'] = $groups[$key]['value']->plus($value, RoundingMode::HalfUp);

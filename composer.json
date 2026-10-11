@@ -57,7 +57,7 @@
         "ext-openssl": "*",
         "ext-soap": "*",
         "aws/aws-sdk-php": "^3.381",
-        "brick/money": "^0.14.0",
+        "brick/money": "^0.15.2",
         "dompdf/dompdf": "^3.1",
         "picqer/php-barcode-generator": "^3.2",
         "ramsey/uuid": "^4.9",
