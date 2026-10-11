@@ -114,6 +114,19 @@ $consulta->authorizationDate;
 
 Estados posibles: `AUTORIZADO`, `NO AUTORIZADO`, `PENDIENTE DE ANULAR`, `ANULADO`, y `RECHAZADA` cuando la clave esta fuera de rango o no existe.
 
+## Anulacion de comprobantes
+
+El SRI no expone un web service para anular un comprobante autorizado. La anulacion se solicita en el portal SRI en linea y requiere la aceptacion del adquirente; recien entonces el comprobante pasa a `ANULADO`. Para revertir fiscalmente una factura se emite una nota de credito (ver [XMLMaker](/modules/xml-maker)).
+
+El toolkit detecta el estado de anulacion con `queryStatus()`:
+
+```php
+$consulta = $sender->queryStatus($accessKey);
+
+$consulta->isPendingAnnulment(); // solicitud de anulacion pendiente de aceptacion
+$consulta->isAnnulled();         // ya anulado
+```
+
 ## Envio por lote
 
 `sendBatch()` arma el XML `<lote>`, lo envia a recepcion y luego autoriza el lote por su clave. Limite: 50 comprobantes o 500 kB por lote.

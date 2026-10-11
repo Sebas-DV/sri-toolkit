@@ -15,10 +15,7 @@ final class Catalogs
 
     public static function registry(): CatalogRegistry
     {
-        if (self::$registry === null)
-        {
-            self::$registry = self::freshRegistry();
-        }
+        self::$registry ??= self::freshRegistry();
 
         return self::$registry;
     }

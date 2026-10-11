@@ -84,6 +84,14 @@ final readonly class ConsultationResult
     }
 
     /**
+     * Whether the voucher has an annulment request awaiting the buyer's acceptance.
+     */
+    public function isPendingAnnulment(): bool
+    {
+        return $this->status === ConsultationStatus::PendingAnnulment;
+    }
+
+    /**
      * @return array<string, mixed>
      */
     public function toArray(): array
